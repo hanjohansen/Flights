@@ -9,8 +9,8 @@
 @inject IGameRepository GameRepo
 
 
-<div class="flex flex-row">
-    <div class="flex flex-column flex-auto px-2">
+<div class="flex flex-row mx-1">
+    <div class="flex flex-column flex-auto mr-1">
         @foreach(var stat in CurrentGame.PlayerStates){
             <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
         }

@@ -9,22 +9,29 @@
                         <div class="text-3xl">
                             @Player.PlayerName
                         </div>
-                        <div class="text-6xl font-bold">
-                            @Player.Points
+                        <div class="text-6xl font-bold h-[60px]">
+                            @if(Player.Rank == null){
+                                @Player.Points   
+                            }else{
+                                <div class="flex flex-row">
+                                    <div class="">
+                                        <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
+                                    </div>
+                                    <div class="ml-1 text-6xl font-bold text-gray-500">
+                                        @Player.Rank
+                                    </div>
+                                </div>
+                            }                                                     
                         </div>
                     </MudStack>
                 </div>
-                <div class="">
-                    <MudStack Spacing="0">
-                        <div class="flex flex-row ">
-                            <div class="">
-                                <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Small" Color="Color.Default"/>
-                            </div>
-                            <div class="ml-1">
-                                @Player.PointAvg
-                            </div>
-                        </div>
-                    </MudStack>
+                <div class="flex flex-row items-end mb-1">
+                    <div class="">
+                        <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Small" Color="Color.Default"/>
+                    </div>
+                    <div class="ml-1">
+                        @Player.PointAvg
+                    </div>
                 </div>
             </div>
             <div class="col-span-2">
@@ -47,6 +54,6 @@
 
         return Player.PlayerId == CurrentPlayerId
             ? baseClasses + "border-green-500"
-            : baseClasses + "border-gray-300";
+            : baseClasses + "border-gray-400";
     }
 }
