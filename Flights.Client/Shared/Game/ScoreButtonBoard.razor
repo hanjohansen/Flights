@@ -1,0 +1,63 @@
+@using Flights.Domain.Entities
+@using Flights.Domain.Models
+
+@inject NavigationManager NavigationManager
+
+<div class="rounded-md border border-gray-300 mud-elevation-4 h-[555px] mr-2">
+
+    <div class="grid grid-cols-5 gap-2 pt-2 px-2">
+        @for(var i = 1; i <= 20; i++){
+            <div>
+                <ScoreButton Number="@i" ReportScore="@ReportScore"/>
+            </div>
+        }
+        <div>
+            @* empty *@
+        </div>
+        <BullsButton SelectedModifier="@SelectedModifier" ReportScore="@ReportScore"/>
+        <ScoreButton Number="0" ReportScore="@ReportScore"/>
+    </div>
+    <div class="grid grid-cols-2 gap-3 p-2">
+        <ModifierButton Target="DartModifier.Double"
+            Selected="@SelectedModifier"
+            ModifierChanged="@ModifierChanged"/>
+        <ModifierButton Target="DartModifier.Triple"
+            Selected="@SelectedModifier"
+            ModifierChanged="@ModifierChanged"/>
+    </div>
+    <div class="grid grid-cols-5 gap-3 p-2 mt-4">
+        <div class="col-span-3 rounded border border-red-500 text-center py-2 cursor-pointer">
+            <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+        </div>      
+        <div class="col-span-2 rounded border bg-red-500 text-center py-2 cursor-pointer"
+            @onclick="GoToGames">
+            <MudIcon Icon="@Icons.Material.Outlined.Close" Size="Size.Large" Color="Color.Default"/>
+        </div>      
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public EventCallback<StatModel> ReportDart {get;set;}
+
+    public DartModifier SelectedModifier {get;set;} = DartModifier.None;
+
+    private void ModifierChanged(DartModifier modifier){
+        if(SelectedModifier == modifier){
+            SelectedModifier = DartModifier.None;
+            return;
+        }
+        
+        SelectedModifier = modifier;
+    }
+
+    private async Task ReportScore(int score){
+        await ReportDart.InvokeAsync(StatModel.Init(SelectedModifier, score));
+
+        SelectedModifier = DartModifier.None;
+    }
+
+    private void GoToGames(){
+        NavigationManager.NavigateTo("/games");
+    }
+}

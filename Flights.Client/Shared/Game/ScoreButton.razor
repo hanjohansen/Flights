@@ -1,0 +1,19 @@
+<div class="rounded bg-gray-400 cursor-pointer mud-elevation-5" @onclick="OnClick">
+    <div class="w-[65px] h-[65px]">
+        <div class="text-center text-2xl text-white pt-4">
+            @Number
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public int Number {get;set;}
+
+    [Parameter]
+    public EventCallback<int> ReportScore {get;set;}
+
+    private async Task OnClick(){
+        await ReportScore.InvokeAsync(Number);
+    }  
+}

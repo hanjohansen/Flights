@@ -1,0 +1,31 @@
+﻿@using Flights.Domain.Entities
+
+<div class="@GetClasses()" @onclick="@HandleSelectionChange">
+    <div class="text-2xl">
+          @Player.Name
+    </div>
+</div>
+
+@code{
+
+    [Parameter]
+    public PlayerEntity Player {get;set;} = null!;
+          
+    [Parameter]
+    public EventCallback<Guid> OnSelectionChange {get;set;}
+
+    private bool IsSelected {get;set;}
+
+    public string GetClasses(){
+        var baseClasses = "cursor-pointer mb-2 rounded p-2 ";
+        return IsSelected
+            ? baseClasses + "bg-blue-500"
+            : baseClasses + "hover:bg-gray-200";
+    }
+
+    private async Task HandleSelectionChange(){
+        IsSelected = !IsSelected;
+        await OnSelectionChange.InvokeAsync(Player.Id);
+    }
+
+}

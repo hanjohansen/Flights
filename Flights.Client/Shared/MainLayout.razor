@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Flights</PageTitle>
+
+<MudThemeProvider Theme="@CustomTheme"/>
+<MudPopoverProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <AppBar/>
+    <MudMainContent>
+        <div class="pt-1">
+            @Body
+        </div>        
+    </MudMainContent>
+</MudLayout>
+
+@code{
+    MudTheme CustomTheme = new MudTheme()
+    {
+        LayoutProperties = new LayoutProperties()
+        {
+            AppbarHeight = "30px"
+        }
+    };
+}

@@ -1,0 +1,34 @@
+@using Flights.Domain.Entities;
+
+<div class="@GetClasses()" @onclick="OnClick">
+    <div class="text-center my-4 text-2xl">
+        Bullseye
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public DartModifier SelectedModifier {get;set;}
+
+    [Parameter]
+    public EventCallback<int> ReportScore {get;set;}
+
+    private async Task OnClick(){
+        if(SelectedModifier != DartModifier.Triple)
+            await ReportScore.InvokeAsync(25);
+    }  
+
+    private string GetClasses(){
+        var baseClass = "col-span-2 cursor-pointer rounded mud-elevation-5 ";
+
+        switch(SelectedModifier){
+            case DartModifier.Double:
+                return baseClass + "bg-red-500 text-white";
+            case DartModifier.Triple:
+                return baseClass + "bg-gray-300 text-gray-400";
+            case DartModifier.None:
+            default:
+                return baseClass + "bg-green-500 text-white";
+        }
+    }
+}

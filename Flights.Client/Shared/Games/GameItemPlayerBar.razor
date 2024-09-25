@@ -1,0 +1,34 @@
+@using Flights.Domain.Entities
+
+<div class="flex flex-row">
+    @for(var i = 0; i < 3; i++){
+        if(i <= Players.Count -1){
+            var player = Players[i];
+            <div class="rounded-xl bg-blue-500 px-2 mr-1">
+                <div class="text-white text-xs">
+                    @player.Player.Name
+                </div>                
+            </div>
+        }
+    }
+
+    @if(GetAdditionalPlayers() > 0){
+        <div class="rounded-xl bg-gray-400 px-2">
+            <div class="text-white text-xs">
+                +@GetAdditionalPlayers()
+            </div>            
+        </div>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public List<GamePlayerEntity> Players {get;set;} = null!;
+
+    public int GetAdditionalPlayers(){
+        if(Players.Count <= 3)
+            return 0;
+
+        return Players.Count - 3;
+    }
+}

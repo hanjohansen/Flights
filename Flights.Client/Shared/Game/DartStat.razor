@@ -1,0 +1,57 @@
+@using Flights.Domain.Entities
+@using Flights.Domain.State
+
+<div class="text-center border-b">
+    <div class="text-2xl">
+        @GetDartPointsValue()
+    </div>
+    <div class="text-gray-400 text-xs">
+        @GetDartPointsString()
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public DartState? Dart {get;set;}
+
+    private string GetDartPointsString(){
+        if(Dart == null)
+            return "-";
+
+        var points = "";
+
+        switch(Dart.Modifier){
+            case DartModifier.Double:
+                points += "D/";
+                break;
+            case DartModifier.Triple:
+                points += "T/";
+                break;
+        }
+
+        points += Dart.Value;
+        return points;
+    }
+
+        private string GetDartPointsValue(){
+        if(Dart == null)
+            return "-";
+
+        var points = 0;
+
+        switch(Dart.Modifier){
+            case DartModifier.Double:
+                points = 2 * Dart.Value;
+                break;
+            case DartModifier.Triple:
+                points = 3 * Dart.Value;
+                break;
+            case DartModifier.None:
+            default:
+                points = Dart.Value;
+                break;
+        }
+
+        return points.ToString();
+    }
+}

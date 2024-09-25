@@ -1,0 +1,39 @@
+﻿@using Flights.Infrastructure.Port
+
+@inject ISnackbar Snackbar
+@inject IPlayerRepository PlayerRepo
+
+<MudDialog>
+    <TitleContent>
+        Add new player
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="PlayerName" Label="Player name" Variant="Variant.Text"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+    
+    private string PlayerName { get; set; } = string.Empty;
+
+    private async Task Submit()
+    {
+        try
+        {
+            await PlayerRepo.CreatePlayer(PlayerName);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch(Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

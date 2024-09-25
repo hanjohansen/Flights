@@ -1,0 +1,81 @@
+﻿@page "/"
+@page "/games"
+@using Flights.Infrastructure.Port
+@using Flights.Domain.Entities
+@using Flights.Client.Shared.Toolkit
+@using Flights.Client.Shared.Games
+
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IGameRepository GamesRepo
+
+<PageTitle>Flights</PageTitle>
+
+<div class="flex flex-row justify-center">
+    <div class="flex flex-col mr-8">        
+        <BigRoundButton OnClick="@GoToCreateGame">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+        </BigRoundButton>
+        <div class="pt-4">
+            <BigRoundButton OnClick="@GoToPlayers">
+                <MudIcon Icon="@Icons.Material.Filled.Group" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
+    </div>
+    <div class="h-[550px] overflow-y-auto pr-4">
+        @if (Games.Any())
+        {   
+            foreach (var game in Games)
+            {
+                <div>
+                    <GameItem Game="@game"/>
+                </div>
+            }
+        }
+        else
+        {
+            <MudPaper>
+                <div class="p-4 text-4xl">
+                    No games present
+                </div>
+            </MudPaper>
+        }
+    </div>
+</div>
+
+@code{
+
+    private List<GameEntity> Games { get; set; } = new();
+    
+    public bool ShowCreate { get; set; }
+    
+    protected override async Task OnInitializedAsync(){
+        await base.OnInitializedAsync();
+        
+        var games = await GamesRepo.GetGames();
+        Games = games.Take(20).ToList();
+    }
+
+    private void GoToPlayers()
+    {
+        NavigationManager.NavigateTo("/players");
+    }
+
+    private void GoToCreateGame()
+    {
+        NavigationManager.NavigateTo("/creategame");
+    }
+    
+    private void HandleClick(){
+        try{
+            throw new Exception("something went wrong");
+        }catch(Exception ex){
+            HandleException(ex);
+        }
+    }
+
+    private void HandleException(Exception ex){
+        Snackbar.Add(ex.Message, Severity.Error);
+    }
+}
+

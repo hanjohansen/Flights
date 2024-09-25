@@ -1,0 +1,46 @@
+<div class="@GetClasses()" @onclick="CallClicked">
+    <div class="p-4">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    
+    public enum ButtonType {Primary, Secondary, Warning};
+
+    [Parameter]
+    public RenderFragment? ChildContent {get;set;}
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    
+    [Parameter]
+    public ButtonType Type { get; set; }
+
+    private async Task CallClicked()
+    {        
+        await OnClick.InvokeAsync();
+    }
+
+    private string GetClasses()
+    {
+        var baseClasses = "flex flex-none rounded-full w-24 h-24 items-center justify-center mud-elevation-6 ";
+
+        switch (Type)
+        {
+            case ButtonType.Primary:
+                baseClasses += "bg-blue-800 hover:bg-blue-700";
+                break;
+            case ButtonType.Secondary:
+                baseClasses += "bg-gray-300 hover:bg-gray-400";
+                break;
+            case ButtonType.Warning:
+                baseClasses += "bg-red-800 hover:bg-red-700";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        return baseClasses;
+    }
+}

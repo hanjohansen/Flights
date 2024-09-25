@@ -1,0 +1,19 @@
+﻿@using Flights.Domain.Entities
+
+<div class="border border-gray-100 rounded mb-2 px-4 py-2 mud-elevation-4">
+    <div class="flex flex-row">
+         <div class="text-4xl w-[300px]">
+             @Player.Name
+         </div>   
+         <div>
+             
+         </div>
+    </div>
+</div>
+
+@code{
+
+    [Parameter]
+    public PlayerEntity Player { get; set; } = null!;
+
+}

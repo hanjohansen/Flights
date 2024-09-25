@@ -1,0 +1,124 @@
+﻿@page "/creategame"
+@using Flights.Client.Shared.Games
+@using Flights.Client.Shared.Players
+@using Flights.Domain.Entities
+@using Flights.Infrastructure.Port
+@using Flights.Client.Shared.Toolkit
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IGameRepository GameRepo
+@inject IPlayerRepository PlayerRepo
+@inject NavigationManager NavigationManager
+
+<div class="flex flex-row justify-center">
+    <div class="flex flex-col mr-8">
+        <div class="mb-4">
+            <BigRoundButton OnClick="@GoToGames" Type="BigRoundButton.ButtonType.Secondary  ">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
+        <div>
+            <BigRoundButton OnClick="@HandleNewGame">
+                <MudIcon Icon="@Icons.Material.Filled.PlayArrow" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
+    </div>
+    <div>
+        <MudPaper class="p-4">
+            <MudGrid>
+                <MudItem>
+                    <MudSelect @bind-Value="GameType" HelperText="Game" Style="width: 20rem">
+                        <MudSelectItem Value="GameType.X01">X01</MudSelectItem>
+                        <MudSelectItem Value="GameType.Cricket" Disabled>Cricket</MudSelectItem>
+                        <MudSelectItem Value="GameType.CtCricket" Disabled>Cut-Throat Cricket</MudSelectItem>
+                        <MudSelectItem Value="GameType.Shanghai" Disabled>Shanghai</MudSelectItem>
+                    </MudSelect>
+                    @if(GameType == GameType.X01){
+                        <MudSelect @bind-Value="X01Value" HelperText="Points" Style="width: 20rem" class="mt-12">
+                            <MudSelectItem Value="301">301</MudSelectItem>
+                            <MudSelectItem Value="401" >401</MudSelectItem>
+                            <MudSelectItem Value="501" >501</MudSelectItem>
+                            <MudSelectItem Value="601" >601</MudSelectItem>
+                            <MudSelectItem Value="701" >701</MudSelectItem>
+                            <MudSelectItem Value="801" >801</MudSelectItem>
+                            <MudSelectItem Value="901" >901</MudSelectItem>
+                            <MudSelectItem Value="1001" >1001</MudSelectItem>
+                        </MudSelect>
+                        <MudSelect @bind-Value="InModifier" HelperText="IN" Style="width: 20rem" class="mt-4">
+                            <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
+                            <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
+                            <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
+                            <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
+                        </MudSelect>
+                        <MudSelect @bind-Value="OutModifier" HelperText="OUT" Style="width: 20rem"  class="mt-4">
+                            <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
+                            <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
+                            <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
+                            <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
+                        </MudSelect>
+                    }
+                </MudItem>
+                <MudItem>
+                    <div class="border rounded p-4" style="width: 20rem">
+                        @foreach(var player in Players){
+                            <SelectablePlayer Player="@player" OnSelectionChange="@SelectionChanged"/>
+                        }
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </div>
+</div>
+
+@code{
+
+    private GameType GameType { get; set; }
+    
+    private int X01Value { get; set; } = 301;
+    
+    private InOutModifier InModifier { get; set; }
+    
+    private InOutModifier OutModifier { get; set; }
+
+    private List<PlayerEntity> Players { get; set; } = new();
+
+    private List<Guid> SelectedPlayers { get; set; } = new(); 
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Players = await PlayerRepo.GetPlayers();
+    }
+
+    private void SelectionChanged(Guid playerId){
+        if(SelectedPlayers.Contains(playerId))
+            SelectedPlayers.Remove(playerId);
+        else
+            SelectedPlayers.Add(playerId);
+    } 
+
+    private async Task HandleNewGame(){
+        if(!SelectedPlayers.Any()){
+            Snackbar.Add("No players selected!", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            var state = await GameRepo.CreateGame(SelectedPlayers, GameType, X01Value, InModifier, OutModifier);
+
+            NavigationManager.NavigateTo("/game/" + state.Id);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private void GoToGames()
+    {
+        NavigationManager.NavigateTo("/games");
+    }
+
+}

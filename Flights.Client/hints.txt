@@ -1,0 +1,4 @@
+npx tailwindcss -i ./tailwind.css -o ./wwwroot/css/styles.css --watch
+
+
+dotnet ef migrations add Initial --project ../Flights.Infrastructure/Flights.Infrastructure.csproj --context FlightsDbContext -o Data/Migrations

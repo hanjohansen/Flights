@@ -1,0 +1,43 @@
+﻿@using Flights.Domain.Entities
+@using Flights.Infrastructure.Port
+
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject IGameRepository GamesRepo
+
+<div class="mb-2 cursor-pointer rounded border border-gray-100" @onclick="() => GoToGame()">
+    <MudPaper Elevation="4" Width="400px">
+        <div class="p-4">
+            <div class="font-bold text-4xl">
+                <div class="flex flex-row">
+                    <div>
+                        @Game.Type
+                    </div>
+                    @if(Game.Type == GameType.X01)
+                    {
+                        <div class="text-gray-300 ml-8">
+                            @Game.X01Target
+                        </div>
+                    }
+                </div>           
+            </div>
+            <div class="mt-4">
+                <GameItemPlayerBar Players="@Game.Players"/>
+            </div>
+            <div class="text-xs text-gray-400 mt-1">
+                @Game.Started.ToLocalTime().ToString("dd.MM.yy  HH:mm")
+            </div>
+        </div>
+    </MudPaper>
+</div>
+
+@code{
+
+    [Parameter]
+    public GameEntity Game { get; set; } = null!;
+
+    private void GoToGame()
+    {
+        NavigationManager.NavigateTo("/game/" + Game.Id);
+    }
+}

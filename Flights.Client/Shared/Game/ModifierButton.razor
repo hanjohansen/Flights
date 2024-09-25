@@ -1,0 +1,42 @@
+@using Flights.Domain.Entities;
+@using System.Diagnostics
+
+<div class="@GetClasses()" @onclick="CallToggle">
+    <div class="text-center my-3 text-2xl">
+        @GetCaption()    
+    </div>
+</div>
+
+@code{
+
+    [Parameter]
+    public DartModifier Target {get;set;}
+
+    [Parameter]
+    public DartModifier Selected {get;set;}
+
+    [Parameter]
+    public EventCallback<DartModifier> ModifierChanged {get;set;}
+
+    private string GetCaption(){
+        if(Target == DartModifier.Double)
+            return "Double";
+
+        return "Triple";
+    }
+
+    private string GetClasses(){
+        var baseClass = "mt-2 rounded cursor-pointer mud-elevation-5 ";
+
+        if(Selected == Target)
+            return baseClass + "bg-yellow-500 text-white";
+        else
+            return baseClass + "bg-gray-400 text-gray-100";
+    }
+
+    private async Task CallToggle(){
+        await ModifierChanged.InvokeAsync(Target);
+    }
+}    
+
+

@@ -1,0 +1,43 @@
+﻿@page "/game/{GameId:guid}"
+
+@using Flights.Client.Shared.Game
+@using Flights.Domain.Models
+@using Flights.Domain.State
+@using Flights.Infrastructure.Port
+@using System.Diagnostics
+
+@inject IGameRepository GameRepo
+
+
+<div class="flex flex-row">
+    <div class="flex flex-column flex-auto px-2">
+        @foreach(var stat in CurrentGame.PlayerStates){
+            <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
+        }
+    </div>
+    <div class="flex-shrink">
+        <ScoreButtonBoard ReportDart="@ReportScore"/>
+    </div>
+</div>
+
+@code{
+
+    [Parameter]
+    public Guid GameId { get; set; }
+
+    private GameState CurrentGame {get;set;} = null!;
+    protected override async Task OnInitializedAsync() {
+        Debug.WriteLine("reloading Game");
+        var model = await GameRepo.GetGame(GameId);
+        CurrentGame = model.SolveGameState();
+    }
+
+    private async Task ReportScore(StatModel model){
+        if(CurrentGame.CurrentPlayerId == null)
+            return;
+
+        var newState = await GameRepo.AddPlayerStat(GameId, CurrentGame.CurrentPlayerId!.Value, model);
+
+        CurrentGame = newState;
+    }
+}

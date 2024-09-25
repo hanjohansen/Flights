@@ -1,0 +1,70 @@
+﻿@page "/players"
+@using Flights.Client.Shared.Players
+@using Flights.Domain.Entities
+@using Flights.Infrastructure.Port
+@using Flights.Client.Shared.Toolkit
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IPlayerRepository PlayerRepo
+@inject NavigationManager NavigationManager
+
+<PageTitle>Players</PageTitle>
+
+<div class="flex flex-row justify-center">
+    <div class="flex flex-col mr-8">      
+        <div class="mb-4">
+            <BigRoundButton OnClick="@GoToGames" Type="BigRoundButton.ButtonType.Secondary  ">
+                <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
+        <div>
+            <BigRoundButton OnClick="@HandleNewPlayer">
+                <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
+    </div>
+    <div>
+        @if (!AvailablePlayers.Any())
+        {
+            <div>
+                No Players yet
+            </div>
+        }
+        else
+        {
+            @foreach (var player in AvailablePlayers)
+            {
+                <PlayerItem Player="player"/>
+            }
+        }
+    </div>
+</div>
+
+@code{
+
+    private List<PlayerEntity> AvailablePlayers { get; set; } = new();
+
+    protected override async Task OnInitializedAsync() => await RefreshPlayers();
+
+    private async Task RefreshPlayers()
+    {
+        AvailablePlayers = await PlayerRepo.GetPlayers();
+    }
+    
+    private async Task HandleNewPlayer()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<AddPlayerDialog>("Add player", options);
+        var result = await dialog.Result;
+
+        if (!result?.Canceled ?? false)
+            await RefreshPlayers();
+    }
+    
+    private void GoToGames()
+    {
+        NavigationManager.NavigateTo("/games");
+    }
+}
