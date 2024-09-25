@@ -33,6 +33,7 @@ public class GameRepository : IGameRepository
         await db.Games.AddAsync(model.Entity);
         await db.SaveChangesAsync();
 
+        state = model.SolveGameState(); //required to get id of created game
         return state;
     }
 
