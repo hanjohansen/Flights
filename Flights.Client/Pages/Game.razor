@@ -1,11 +1,13 @@
 ﻿@page "/game/{GameId:guid}"
 
 @using Flights.Client.Shared.Game
+@using Flights.Domain.Exceptions
 @using Flights.Domain.Models
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
 @using System.Diagnostics
 
+@inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
 
 
@@ -16,7 +18,7 @@
         }
     </div>
     <div class="flex-shrink">
-        <ScoreButtonBoard ReportDart="@ReportScore"/>
+        <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RequestRevertDart"/>
     </div>
 </div>
 
@@ -36,8 +38,21 @@
         if(CurrentGame.CurrentPlayerId == null)
             return;
 
-        var newState = await GameRepo.AddPlayerStat(GameId, CurrentGame.CurrentPlayerId!.Value, model);
+        try{
+            CurrentGame = await GameRepo.AddPlayerStat(GameId, CurrentGame.CurrentPlayerId!.Value, model);     
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }              
+    }
 
-        CurrentGame = newState;
+    private async Task RequestRevertDart(){
+        if(CurrentGame.Finished)
+            return;
+
+        try{
+            CurrentGame = await GameRepo.RevertLastDart(GameId);
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }            
     }
 }

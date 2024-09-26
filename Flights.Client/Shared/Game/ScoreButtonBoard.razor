@@ -26,7 +26,8 @@
             ModifierChanged="@ModifierChanged"/>
     </div>
     <div class="grid grid-cols-5 gap-3 p-2 mt-4">
-        <div class="col-span-3 rounded border border-red-500 text-center py-2 cursor-pointer">
+        <div class="col-span-3 rounded border border-red-500 text-center py-2 cursor-pointer"
+            @onclick="RequestRevert">
             <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
         </div>      
         <div class="col-span-2 rounded border bg-red-500 text-center py-2 cursor-pointer"
@@ -39,6 +40,9 @@
 @code{
     [Parameter]
     public EventCallback<StatModel> ReportDart {get;set;}
+
+    [Parameter]
+    public EventCallback RequestRevertDart {get;set;}
 
     public DartModifier SelectedModifier {get;set;} = DartModifier.None;
 
@@ -55,6 +59,10 @@
         await ReportDart.InvokeAsync(StatModel.Init(SelectedModifier, score));
 
         SelectedModifier = DartModifier.None;
+    }
+
+    private async Task RequestRevert(){
+        await RequestRevertDart.InvokeAsync();
     }
 
     private void GoToGames(){

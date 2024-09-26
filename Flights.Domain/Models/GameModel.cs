@@ -131,4 +131,47 @@ public class GameModel
         return remainingPlayers.First(x => 
             x.ThirdDart == null || x.SecondDart == null || x.FirstDart == null);
     }
+
+    public GameState RevertLastDart(){
+        var lastRound = Entity.Rounds.Last();
+
+        var removed = false;
+
+        for(int i = lastRound.RoundStats.Count - 1; i >= 0; i--){
+            var stat = lastRound.RoundStats[i];
+
+            var darts = stat.GetDartsList();
+            
+            if(darts.Count == 0){continue;}
+
+            if(stat.ThirdDart != null)
+            {
+                stat.ThirdDart = null;
+                removed = true;
+                break;
+            }
+
+            if(stat.SecondDart != null)
+            {
+                stat.SecondDart = null;
+                removed = true;
+                break;
+            }
+
+            if(stat.FirstDart != null)
+            {
+                stat.FirstDart = null;
+                removed = true;
+                if(i == 0)
+                    if(Entity.Rounds.Count > 1)
+                        Entity.Rounds.Remove(lastRound);
+                break;
+            }
+        }
+
+        if(!removed)
+            throw new FlightsGameException("No more Darts to remove!");
+
+        return SolveGameState();
+    }
 }
