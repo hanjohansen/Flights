@@ -28,12 +28,11 @@ public class GameRepository : IGameRepository
         }
         
         var model = GameModel.Create(selectedPlayers, GameType.X01, x01Target, inMod, outMod);
-        var state = model.SolveGameState();
 
         await db.Games.AddAsync(model.Entity);
         await db.SaveChangesAsync();
 
-        state = model.SolveGameState(); //required to get id of created game
+        var state = model.SolveGameState();
         return state;
     }
 
