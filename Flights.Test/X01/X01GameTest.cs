@@ -273,7 +273,7 @@ public class X01GameTest{
 
         model.AddPlayerStats(
             players[1].Id,
-            StatModel.Init(7));  //winner!
+            StatModel.Init(7));
         var state = model.AddPlayerStats(
             players[1].Id,
             StatModel.Init(10));  // 2nd winner!

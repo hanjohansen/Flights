@@ -17,17 +17,23 @@ public class X01Solver : IGameSolver
 
         CalculateLastRound();
 
-        var playerStates = GetPlayerState();
-        var finished = playerStates.All(x => x.Rank != null);
+        
+        var finished = _game.Rounds.Last().RoundStats.All(x => x.Rank != null);
         
         _game.Finished = finished
             ? DateTimeOffset.UtcNow
             : null;
             
         Guid? nextPlayerId = GetNextPlayerId();
+        var playerStates = GetPlayerState(nextPlayerId ?? Guid.Empty);
+
         if(!finished && nextPlayerId == null){
-            nextPlayerId = playerStates.First().PlayerId;
-            playerStates = playerStates.Select(x => x with { Darts = new DartsState(null, null, null)})
+            nextPlayerId = _game.Players.First().Player.Id;
+            playerStates = playerStates.Select(x => {
+                if(x.PlayerId == nextPlayerId)
+                    return x with { Darts = new DartsState(null, null, null)};
+                return x;
+                })
                 .ToList();
         }
             
@@ -161,31 +167,47 @@ public class X01Solver : IGameSolver
         }
     }
 
-    private List<PlayerState> GetPlayerState(){
+    private List<PlayerState> GetPlayerState(Guid currentPlayerId){
         var stateResult = new List<PlayerState>();
         var lastRound = _game.Rounds.Last();
+        var roundBefore = _game.Rounds.Count > 1
+            ? _game.Rounds[_game.Rounds.Count - 2]
+            : null;
+        
         foreach(var playerStats in lastRound.RoundStats){
+            var refStat = playerStats;
+
+            if(playerStats.GetDartsList().Count == 0 
+                && !playerStats.IsBust 
+                && playerStats.Rank == null
+                && playerStats.Player.Id != currentPlayerId
+                && roundBefore != null) //player has not thrown this round - refer to round before
+                {
+                    var statIndex = lastRound.RoundStats.IndexOf(playerStats);
+                    refStat = roundBefore.RoundStats[statIndex];
+                }
+
             DartsState? dartState = null;
          
-            var first = playerStats.FirstDart != null
-                ? DartState.FromEntity(playerStats.FirstDart)
+            var first = refStat.FirstDart != null
+                ? DartState.FromEntity(refStat.FirstDart)
                 : null;
-            var second = playerStats.SecondDart != null
-                ? DartState.FromEntity(playerStats.SecondDart)
+            var second = refStat.SecondDart != null
+                ? DartState.FromEntity(refStat.SecondDart)
                 : null;
-            var third = playerStats.ThirdDart != null
-                ? DartState.FromEntity(playerStats.ThirdDart)
+            var third = refStat.ThirdDart != null
+                ? DartState.FromEntity(refStat.ThirdDart)
                 : null;
 
             dartState = new DartsState(first, second, third);            
             
             stateResult.Add(new PlayerState(
-                playerStats.Player.Id,
-                playerStats.Player.Name,
-                playerStats.IsIn,
-                playerStats.IsBust,
-                playerStats.Rank,
-                playerStats.EndPoints,
+                refStat.Player.Id,
+                refStat.Player.Name,
+                refStat.IsIn,
+                refStat.IsBust,
+                refStat.Rank,
+                refStat.EndPoints,
                 CountPlayerAverage(playerStats.Player.Id),
                 dartState));
         }
