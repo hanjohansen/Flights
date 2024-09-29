@@ -245,7 +245,7 @@ public class X01Solver : IGameSolver
         if(allRounds.Count == 0)
             return 0;
 
-        decimal avg = allPoints / allRounds.Count;
+        decimal avg = allPoints / (allRounds.Count * 1.0m);
         return Math.Round(avg, 1);
     }
 }
