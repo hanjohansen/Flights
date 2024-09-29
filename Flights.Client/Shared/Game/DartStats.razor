@@ -1,12 +1,15 @@
 @using Flights.Domain.State
 
 <div class="grid grid-cols-3">
-    <DartStat Dart="@Darts.D1"/>
-    <DartStat Dart="@Darts.D2"/>    
-    <DartStat Dart="@Darts.D3"/>    
+    <DartStat Dart="@Darts.D1" IsBust="@IsBust"/>
+    <DartStat Dart="@Darts.D2" IsBust="@IsBust"/>    
+    <DartStat Dart="@Darts.D3" IsBust="@IsBust"/>    
 </div>
 
 @code{
     [Parameter]
     public DartsState Darts {get;set;} = null!;
+
+    [Parameter]
+    public bool IsBust {get;set;}
 }

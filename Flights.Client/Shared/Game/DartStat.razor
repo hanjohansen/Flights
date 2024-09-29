@@ -1,8 +1,8 @@
 @using Flights.Domain.Entities
 @using Flights.Domain.State
 
-<div class="text-center border-b">
-    <div class="text-2xl">
+<div class="@GetBustFormatting()">
+    <div class="text-3xl">
         @GetDartPointsValue()
     </div>
     <div class="text-gray-400 text-xs">
@@ -13,6 +13,9 @@
 @code{
     [Parameter]
     public DartState? Dart {get;set;}
+
+    [Parameter]
+    public bool IsBust {get;set;}
 
     private string GetDartPointsString(){
         if(Dart == null)
@@ -33,7 +36,7 @@
         return points;
     }
 
-        private string GetDartPointsValue(){
+    private string GetDartPointsValue(){
         if(Dart == null)
             return "-";
 
@@ -53,5 +56,14 @@
         }
 
         return points.ToString();
+    }
+
+    private string GetBustFormatting(){
+        var baseClass = "text-center mt-6 ";
+
+        if(IsBust)
+            baseClass += "text-red-600";
+
+        return baseClass;
     }
 }
