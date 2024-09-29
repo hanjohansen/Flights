@@ -9,10 +9,11 @@
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
+@inject IJSRuntime JSRuntime
 
 
-<div class="flex flex-row mx-1">
-    <div class="flex flex-column flex-auto mr-1">
+<div class="flex flex-row mx-1 h-[560px] overflow-hidden">
+    <div class="flex flex-column flex-auto mr-1 overflow-auto">
         @foreach(var stat in CurrentGame.PlayerStates){
             <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
         }
@@ -39,7 +40,7 @@
             return;
 
         try{
-            CurrentGame = await GameRepo.AddPlayerStat(GameId, CurrentGame.CurrentPlayerId!.Value, model);     
+            CurrentGame = await GameRepo.AddPlayerStat(GameId, CurrentGame.CurrentPlayerId!.Value, model);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }              
@@ -54,5 +55,14 @@
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }            
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        var id = CurrentGame.CurrentPlayerId;
+
+        if(id == null)
+            return;
+
+        await JSRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
     }
 }
