@@ -1,42 +1,45 @@
 ﻿@page "/game/{GameId:guid}"
 
 @using Flights.Client.Shared.Game
+@using Flights.Client.Shared.Game.X01
+@using Flights.Domain.Entities
 @using Flights.Domain.Exceptions
 @using Flights.Domain.Models
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
-@using System.Diagnostics
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
 @inject IJSRuntime JSRuntime
 
-
-<div class="flex flex-row mx-1 h-[560px] overflow-hidden">
-    <div class="flex flex-column flex-auto mr-1 overflow-auto">
-        @foreach(var stat in CurrentGame.PlayerStates){
-            <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
-        }
-    </div>
-    <div class="flex-shrink">
-        <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RequestRevertDart"/>
-    </div>
-</div>
+@if(CurrentGame != null){
+    switch(CurrentGame.Type){
+        case GameType.X01:
+            <X01Game CurrentGame="@CurrentGame" 
+                ReportScore="@ReportScore"
+                RevertDart="@RequestRevertDart"/>
+            break;
+        default:
+            <div>
+                Nothing
+            </div>
+            break;
+    }
+}
 
 @code{
 
     [Parameter]
     public Guid GameId { get; set; }
 
-    private GameState CurrentGame {get;set;} = null!;
+    private GameState? CurrentGame {get;set;} = null!;
     protected override async Task OnInitializedAsync() {
-        Debug.WriteLine("reloading Game");
         var model = await GameRepo.GetGame(GameId);
         CurrentGame = model.SolveGameState();
     }
 
     private async Task ReportScore(StatModel model){
-        if(CurrentGame.CurrentPlayerId == null)
+        if(CurrentGame?.CurrentPlayerId == null)
             return;
 
         try{
@@ -47,7 +50,7 @@
     }
 
     private async Task RequestRevertDart(){
-        if(CurrentGame.Finished)
+        if(CurrentGame?.Finished == true)
             return;
 
         try{
@@ -58,7 +61,7 @@
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender){
-        var id = CurrentGame.CurrentPlayerId;
+        var id = CurrentGame?.CurrentPlayerId;
 
         if(id == null)
             return;
