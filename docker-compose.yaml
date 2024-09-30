@@ -1,0 +1,13 @@
+version: "3.5"
+
+services:
+  flights:
+    container_name: flights
+    build: 
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - 127.0.0.1:8080:80
+    volumes:
+      - ./apidata:/app/apidata:rw
+    restart: always
