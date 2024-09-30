@@ -3,7 +3,7 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="rounded-md border border-gray-300 mud-elevation-4 h-[555px]">
+<div class="rounded-md border border-gray-300 mud-elevation-4 ">
 
     <div class="grid grid-cols-5 gap-2 pt-2 px-2">
         @for(var i = 1; i <= 20; i++){
@@ -17,7 +17,7 @@
         <BullsButton SelectedModifier="@SelectedModifier" ReportScore="@ReportScore"/>
         <ScoreButton Number="0" ReportScore="@ReportScore"/>
     </div>
-    <div class="grid grid-cols-2 gap-3 p-2">
+    <div class="grid grid-cols-2 gap-3 p-2 pt-7">
         <ModifierButton Target="DartModifier.Double"
             Selected="@SelectedModifier"
             ModifierChanged="@ModifierChanged"/>
@@ -25,12 +25,12 @@
             Selected="@SelectedModifier"
             ModifierChanged="@ModifierChanged"/>
     </div>
-    <div class="grid grid-cols-5 gap-3 p-2 mt-4">
-        <div class="col-span-3 rounded border border-red-500 text-center py-2 cursor-pointer"
+    <div class="grid grid-cols-5 gap-3 m-2 mt-24  h-[80px]">
+        <div class="col-span-3 rounded border border-red-500 text-center cursor-pointer pt-5"
             @onclick="RequestRevert">
             <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
         </div>      
-        <div class="col-span-2 rounded border bg-red-500 text-center py-2 cursor-pointer"
+        <div class="col-span-2 rounded border bg-red-500 text-center py-2 cursor-pointer pt-5"
             @onclick="GoToGames">
             <MudIcon Icon="@Icons.Material.Outlined.Close" Size="Size.Large" Color="Color.Default"/>
         </div>      

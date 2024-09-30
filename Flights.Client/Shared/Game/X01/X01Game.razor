@@ -6,7 +6,7 @@
 @inject IJSRuntime JSRuntime
 
 
-<div class="flex flex-row mx-1 h-[560px] overflow-hidden">
+<div class="flex flex-row mx-1 h-[750px] overflow-hidden">
     <div class="flex flex-column flex-auto mr-1 overflow-auto">
         @foreach(var stat in CurrentGame.PlayerStates){
             <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
