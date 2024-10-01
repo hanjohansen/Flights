@@ -1,3 +1,5 @@
+@using System.Reflection
+
 @inject IJSRuntime JSRuntime
 
 <MudAppBar Elevation="3" Style="@($"background:{Colors.Indigo.Darken4};")">
@@ -7,9 +9,21 @@
     <MudText Type="Bold" Class="ml-3">Flights</MudText>
     <MudSpacer />
     <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleFullscreen"/>    
+    <div class="text-xs mt-1">
+        @GetVersion()
+    </div>
 </MudAppBar>
 
 @code{
+
+    public string GetVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly?.GetName()?.Version?.ToString(2) ?? string.Empty;
+
+        return "v " + version;
+    }
+
     public async Task ToggleFullscreen()
     {
         await JSRuntime.InvokeVoidAsync("toggleFullScreen");
