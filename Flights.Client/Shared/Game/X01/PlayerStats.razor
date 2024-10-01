@@ -1,6 +1,6 @@
 @using Flights.Domain.State
 
-<div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3">
+<div id="@Player.PlayerId" class="rounded-lg mb-2 border border-gray-200 shadow-lg mud-elevation-3">
     <div class="@GetBorderClasses()">
         <div class="grid grid-cols-3 ml-2 text-gray-600 py-2 ">
             <div class="grid grid-cols-5">
@@ -50,7 +50,7 @@
     public Guid? CurrentPlayerId {get;set;}
 
     private string GetBorderClasses(){
-        var baseClasses = "rounded-lg border-l-8 ";
+        var baseClasses = "rounded-lg border-l-[15px] my-[-1px] ";
 
         return Player.PlayerId == CurrentPlayerId
             ? baseClasses + "border-green-500"
