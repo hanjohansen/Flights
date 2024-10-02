@@ -1,0 +1,57 @@
+@using Flights.Domain.Entities
+@using Flights.Domain.State
+
+<div class="border rounded-lg mud-elevation-3 mb-2">
+    <div class="grid grid-cols-9 gap-2">
+        <div class="col-start-3 ">  
+            <div class="flex flex-row">
+                <div class="mt-1 mr-1">
+                    <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Medium" Color="Color.Default"/>  
+                </div>                                                       
+                <div class="text-2xl text-slate-700">
+                    @Game?.Round
+                </div> 
+            </div>       
+        </div>
+        <div class="col-span-2 ">
+            <div class="flex flex-row">
+                <div class="mt-1 mr-1">
+                    <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowDown" Size="Size.Medium" Color="Color.Default"/>  
+                </div>                                                       
+                <div class="text-2xl text-slate-700">
+                    @GetModifierString(Game?.InModifier ?? InOutModifier.None)
+                </div> 
+            </div>    
+        </div>
+        <div>
+            <div class="flex flex-row">
+                <div class="mt-1 mr-1">
+                    <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Size="Size.Medium" Color="Color.Default"/>  
+                </div>                                                       
+                <div class="text-2xl text-slate-700">
+                    @GetModifierString(Game?.OutModifier ?? InOutModifier.None)
+                </div> 
+            </div>   
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public GameState? Game {get;set;}
+
+    private string GetModifierString(InOutModifier modifier){
+        switch(modifier){
+            case InOutModifier.None:
+                return "-";
+            case InOutModifier.Double:
+                return "Double";
+            case InOutModifier.Triple:
+                return "Triple";
+            case InOutModifier.FullBull:
+                return "Bullseye";
+            default:
+                return "?";
+        }
+    }
+}    
