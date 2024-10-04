@@ -1,0 +1,29 @@
+@using System.Threading   
+
+@implements IDisposable
+
+<div class="font-bold mt-1">
+    @_time
+</div>
+
+@code{
+
+    private string _time = string.Empty;    
+    private Timer _timer;
+
+    protected override void OnInitialized()
+    {
+        _timer = new Timer(Tick, null, 0, 1000);        
+    }
+
+    private void Tick(object _)
+    {
+        _time = DateTime.Now.ToString("H:mm");
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

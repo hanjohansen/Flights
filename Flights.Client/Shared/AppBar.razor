@@ -1,4 +1,5 @@
 @using System.Reflection
+@using Flights.Client.Shared.Toolkit
 
 @inject IJSRuntime JSRuntime
 
@@ -7,6 +8,8 @@
         <img src="dart.svg" />
     </div>
     <MudText Type="Bold" Class="ml-3">Flights</MudText>
+    <MudSpacer />
+    <Clock/>
     <MudSpacer />
     <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleFullscreen"/>    
     <div class="text-xs mt-1">
