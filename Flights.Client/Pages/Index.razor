@@ -11,7 +11,7 @@
 
 <PageTitle>Flights</PageTitle>
 
-<div class="flex flex-row justify-center mt-4">
+<div class="flex flex-row justify-center mt-4 overflow-hidden">
     <div class="flex flex-col mr-8">        
         <BigRoundButton OnClick="@GoToCreateGame">
             <MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
@@ -22,7 +22,7 @@
             </BigRoundButton>
         </div>
     </div>
-    <div class="h-[550px] overflow-y-auto pr-4">
+    <div class="h-[710px] overflow-y-auto pr-4">
         @if (Games.Any())
         {   
             foreach (var game in Games)
