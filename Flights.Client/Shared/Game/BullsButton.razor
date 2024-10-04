@@ -2,7 +2,7 @@
 
 <div class="@GetClasses()" @onclick="OnClick">
     <div class="text-center my-4 text-2xl mt-6 prevent-select">
-        Bullseye
+        @GetCaption()
     </div>
 </div>
 
@@ -29,6 +29,18 @@
             case DartModifier.None:
             default:
                 return baseClass + "bg-green-600 text-white";
+        }
+    }
+
+    private string GetCaption(){
+        switch(SelectedModifier){
+            case DartModifier.Double:
+                return "Bullseye";
+            case DartModifier.Triple:
+                return "-";
+            case DartModifier.None:
+            default:
+                return "Bulls";
         }
     }
 }
