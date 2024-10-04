@@ -1,4 +1,4 @@
-<div class="rounded bg-gray-500 cursor-pointer mud-elevation-5" @onclick="OnClick">
+<div class="@GetButtonClasses()" @onclick="OnClick">
     <div class="w-[80px] h-[80px]">
         <div class="text-center text-2xl text-white pt-6 prevent-select">
             @Number
@@ -13,7 +13,26 @@
     [Parameter]
     public EventCallback<int> ReportScore {get;set;}
 
+    private bool IsPressed {get;set;}
+
     private async Task OnClick(){
+        IsPressed = true;
+        var timer = new Timer(EndPressed, null, 150, Timeout.Infinite);    
         await ReportScore.InvokeAsync(Number);
     }  
-}
+
+    private void EndPressed(object _)
+    {
+        IsPressed = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetButtonClasses(){
+        var baseClasses = "rounded cursor-pointer mud-elevation-5 ";
+
+        if(IsPressed)      
+            return baseClasses + "bg-gray-300";
+
+        return baseClasses + "bg-gray-500";
+    }
+} 

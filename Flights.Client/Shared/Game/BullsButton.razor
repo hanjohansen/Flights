@@ -13,22 +13,33 @@
     [Parameter]
     public EventCallback<int> ReportScore {get;set;}
 
+    private bool IsPressed {get;set;}
+
     private async Task OnClick(){
+        IsPressed = true;
+        var timer = new Timer(EndPressed, null, 150, Timeout.Infinite);    
+
         if(SelectedModifier != DartModifier.Triple)
             await ReportScore.InvokeAsync(25);
     }  
+
+    private void EndPressed(object _)
+    {
+        IsPressed = false;
+        InvokeAsync(StateHasChanged);
+    }
 
     private string GetClasses(){
         var baseClass = "col-span-2 cursor-pointer rounded mud-elevation-5 ";
 
         switch(SelectedModifier){
             case DartModifier.Double:
-                return baseClass + "bg-red-500 text-white";
+                return baseClass + "text-white " + (IsPressed ? "bg-red-300" : "bg-red-500");
             case DartModifier.Triple:
                 return baseClass + "bg-gray-300 text-gray-400";
             case DartModifier.None:
             default:
-                return baseClass + "bg-green-600 text-white";
+                return baseClass + "text-white " + (IsPressed ? "bg-green-400" : "bg-green-600");
         }
     }
 

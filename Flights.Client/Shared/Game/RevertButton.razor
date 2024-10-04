@@ -1,0 +1,31 @@
+<div class="@GetClasses()" @onclick="@OnClick">
+    <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+</div>
+
+@code{
+    [Parameter]
+    public EventCallback RequestRevertDart {get;set;}
+
+    private bool IsPressed {get;set;}
+
+    private async Task OnClick(){
+        IsPressed = true;
+        var timer = new Timer(EndPressed, null, 150, Timeout.Infinite);    
+        await RequestRevertDart.InvokeAsync();
+    }
+
+    private void EndPressed(object _)
+    {
+        IsPressed = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetClasses(){
+        var baseClass = "rounded border border-red-500 text-center cursor-pointer pt-5 h-[80px] ";
+
+        if(IsPressed)
+            return baseClass + " bg-red-500";
+
+        return baseClass;
+    }
+}
