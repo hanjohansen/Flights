@@ -10,7 +10,8 @@ public record GameState(
     int Round,
     bool Finished,
     Guid? CurrentPlayerId,
-    List<PlayerState> PlayerStates
+    List<PlayerState> PlayerStates,
+    CricketState? CricketState = null
 );
 
 public record PlayerState(
@@ -21,7 +22,8 @@ public record PlayerState(
     int? Rank,
     int Points,
     decimal PointAvg,
-    DartsState? Darts);
+    DartsState? Darts,
+    CricketState? CricketState = null);
 
 public record DartsState(DartState? D1, DartState? D2, DartState? D3);
 
@@ -34,3 +36,15 @@ public record DartState(
         return new DartState(entity.Modifier, entity.Value, entity.GetCalculatedValue());
     }
 };
+
+public enum CricketValue {None, Single, Double, Open, Closed}
+
+public record CricketState(
+    CricketValue V15 = CricketValue.None,
+    CricketValue V16 = CricketValue.None,
+    CricketValue V17 = CricketValue.None,
+    CricketValue V18 = CricketValue.None,
+    CricketValue V19 = CricketValue.None,
+    CricketValue V20 = CricketValue.None,
+    CricketValue Bulls = CricketValue.None
+);

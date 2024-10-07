@@ -1,6 +1,6 @@
 using Flights.Domain.Entities;
 
-namespace Flights.Domain.State.Solvers;
+namespace Flights.Domain.State.Solvers.X01;
 public class X01Solver : IGameSolver
 {
     public X01Solver(GameEntity entity){
