@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Flights.Domain.Entities;
 using Flights.Domain.Models;
 
 namespace Flights.Test.Cricket;
-public class CricketTest
+public class CtCricketTest
 {
     private TestHelpers _helper = new TestHelpers();
 
@@ -12,14 +16,14 @@ public class CricketTest
         
         var model = GameModel.Create(
             players, 
-            GameType.Cricket, 
+            GameType.CtCricket, 
             0, 
             InOutModifier.None, 
             InOutModifier.None);
 
         var state = model.SolveGameState(); 
 
-        Assert.True(state.Type == GameType.Cricket);
+        Assert.True(state.Type == GameType.CtCricket);
         Assert.False(state.Finished);
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.None);
@@ -39,7 +43,7 @@ public class CricketTest
         
         var model = GameModel.Create(
             players, 
-            GameType.Cricket, 
+            GameType.CtCricket, 
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -72,7 +76,7 @@ public class CricketTest
         
         var model = GameModel.Create(
             players, 
-            GameType.Cricket, 
+            GameType.CtCricket, 
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -116,7 +120,7 @@ public class CricketTest
         
         var model = GameModel.Create(
             players, 
-            GameType.Cricket, 
+            GameType.CtCricket, 
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -158,7 +162,7 @@ public class CricketTest
                 Assert.True(playerState.CricketState!.V17 == Domain.State.CricketValue.None);
         }
 
-        //points on 17 should yield points for p1 + p2
+        //points on 17 by p1 + p2 should yield points for p3
         model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.None, 0));
         model.AddPlayerStats(players[0].Id, 
@@ -186,22 +190,20 @@ public class CricketTest
         foreach(var player in players){
             var playerState = state.PlayerStates.First(x => x.PlayerId == player.Id);
 
-            if(players.IndexOf(player) == 0)
-                Assert.True(playerState.Points == 17 * 3);
-            if(players.IndexOf(player) == 1)
-                Assert.True(playerState.Points == 17 * 2);
-            if(players.IndexOf(player) == 2)
+            if(players.IndexOf(player) < 2)
                 Assert.True(playerState.Points == 0);
+            else
+                Assert.True(playerState.Points == 5 * 17);
         }
     }
 
-    [Fact]
+        [Fact]
     public void Game_Finishes_Simple_Correctly(){
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
             players, 
-            GameType.Cricket, 
+            GameType.CtCricket, 
             0, 
             InOutModifier.None, 
             InOutModifier.None);

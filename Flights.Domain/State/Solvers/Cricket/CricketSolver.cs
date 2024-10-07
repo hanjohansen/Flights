@@ -160,8 +160,12 @@ public class CricketSolver : IGameSolver
         if(vValue == CricketValue.Closed){
             return;
         }
+
+        var justReachedOpen = false;
+
         if(vValue < CricketValue.Open){
             var newValue = vValue + 1;
+            justReachedOpen = newValue == CricketValue.Open;
             vProp.SetValue(player, newValue);
             if(newValue < CricketValue.Open)
                 return;
@@ -170,6 +174,10 @@ public class CricketSolver : IGameSolver
             allPlayers.ForEach(x => vProp.SetValue(x, CricketValue.Closed));
             return;
         }
+
+        if(justReachedOpen)
+            return;
+
         if(_game.Type == GameType.Cricket){
             if(otherPlayers.Any(x => (CricketValue)vProp.GetValue(x)! < CricketValue.Open))
                 player.Points += value;
@@ -207,7 +215,12 @@ public class CricketSolver : IGameSolver
                 break;
             }
 
-            if(player.Points > others.Max(x => x.Points)){
+            var playerPoints = player.Points;
+            var otherMaxPoints = others.Max(x => x.Points);
+
+            if(playerPoints == 0 && otherMaxPoints == 0){
+                player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
+            }else if(playerPoints > otherMaxPoints){
                 player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
             }
         }
@@ -224,9 +237,13 @@ public class CricketSolver : IGameSolver
                 break;
             }
 
-            if(player.Points < others.Min(x => x.Points)){
+            var playerPoints = player.Points;
+            var otherMaxPoints = others.Max(x => x.Points);
+
+            if(playerPoints == 0 && otherMaxPoints == 0)
                 player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
-            }
+            else if(playerPoints < otherMaxPoints)
+                player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
         }    
     }
 
