@@ -3,7 +3,11 @@
 
 <div class="flex flex-row">
     <div>
-        Caption
+        @if(!string.IsNullOrEmpty(Caption)){
+            <div class="text-4xl w-[50px] text-center font-bold text-gray-500 mt-4 mr-4">
+                @Caption
+            </div>
+        }
     </div>
     <div>
         <CricketValueIcon IconValue="@IconValue"/>
