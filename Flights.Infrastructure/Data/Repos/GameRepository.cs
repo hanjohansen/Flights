@@ -27,7 +27,7 @@ public class GameRepository : IGameRepository
             selectedPlayers.Add(player);
         }
         
-        var model = GameModel.Create(selectedPlayers, GameType.X01, x01Target, inMod, outMod);
+        var model = GameModel.Create(selectedPlayers, type, x01Target, inMod, outMod);
 
         await db.Games.AddAsync(model.Entity);
         await db.SaveChangesAsync();

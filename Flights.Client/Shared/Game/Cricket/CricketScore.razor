@@ -1,0 +1,22 @@
+@using Flights.Domain.State;
+
+<div class="flex flex-row">
+    <div>
+        Caption
+    </div>
+    <div>
+        Symbol
+    </div>
+</div>
+
+@code{
+
+    [Parameter]
+    public CricketValue Value {get;set;}
+
+    [Parameter]
+    public string Caption {get;set;} = string.Empty;
+
+
+}    
+

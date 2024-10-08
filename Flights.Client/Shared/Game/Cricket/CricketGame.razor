@@ -1,0 +1,39 @@
+@using Flights.Domain.Models
+@using Flights.Domain.State
+<div class="flex flex-row mx-1 h-[750px] overflow-hidden">
+    <div class="flex flex-column flex-auto mr-1 pr-2 overflow-hidden">
+        <div class="flex flex-row overflow-hidden">
+            <div class="flex-shrink border rounded border">
+                <CricketScore Value="@CurrentGame.CricketState.V15"/>
+            </div>
+            <div class="flex flex-column flex-auto overflow-hidden">
+                <div class="@GetGridColumnClasses()">
+                    @foreach(var player in CurrentGame.PlayerStates){
+                        <div>
+                            @player.PlayerName
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-shrink">
+        <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart"/>
+    </div>
+</div>
+
+@code{
+
+    [Parameter]
+    public GameState CurrentGame {get;set;} = null!;
+
+    [Parameter]
+    public EventCallback<StatModel> ReportScore {get;set;}
+
+    [Parameter]
+    public EventCallback RevertDart {get;set;}
+
+    private string GetGridColumnClasses(){
+        return $"grid grid-cols-{CurrentGame.PlayerStates.Count}";
+    }
+}

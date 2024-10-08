@@ -1,6 +1,7 @@
 ﻿@page "/game/{GameId:guid}"
 
 @using Flights.Client.Shared.Game
+@using Flights.Client.Shared.Game.Cricket
 @using Flights.Client.Shared.Game.X01
 @using Flights.Domain.Entities
 @using Flights.Domain.Exceptions
@@ -16,6 +17,11 @@
     switch(CurrentGame.Type){
         case GameType.X01:
             <X01Game CurrentGame="@CurrentGame" 
+                ReportScore="@ReportScore"
+                RevertDart="@RequestRevertDart"/>
+            break;
+        case GameType.Cricket:
+            <CricketGame CurrentGame="@CurrentGame" 
                 ReportScore="@ReportScore"
                 RevertDart="@RequestRevertDart"/>
             break;
