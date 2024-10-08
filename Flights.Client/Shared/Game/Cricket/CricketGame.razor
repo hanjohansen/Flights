@@ -3,15 +3,23 @@
 <div class="flex flex-row mx-1 h-[750px] overflow-hidden">
     <div class="flex flex-column flex-auto mr-1 pr-2 overflow-hidden">
         <div class="flex flex-row overflow-hidden">
-            <div class="flex-shrink border rounded border">
-                <CricketScore Value="@CurrentGame.CricketState.V15"/>
+            <div class="flex-shrink border rounded">
+                <CricketScore Caption="15" IconValue="@CricketValue.None"/>
+                <CricketScore Caption="16" IconValue="@CricketValue.Single"/>
+                <CricketScore Caption="17" IconValue="@CricketValue.None"/>
+                <CricketScore Caption="18" IconValue="@CricketValue.Double"/>
+                <CricketScore Caption="19" IconValue="@CricketValue.Open"/>
+                <CricketScore Caption="20" IconValue="@CricketValue.Closed"/>
+                <CricketScore Caption="B" IconValue="@CricketValue.None"/>
             </div>
             <div class="flex flex-column flex-auto overflow-hidden">
                 <div class="@GetGridColumnClasses()">
-                    @foreach(var player in CurrentGame.PlayerStates){
+                    @if(CurrentGame != null){
+                        foreach(var player in CurrentGame.PlayerStates){
                         <div>
                             @player.PlayerName
                         </div>
+                        }
                     }
                 </div>
             </div>
@@ -25,7 +33,7 @@
 @code{
 
     [Parameter]
-    public GameState CurrentGame {get;set;} = null!;
+    public GameState? CurrentGame {get;set;}
 
     [Parameter]
     public EventCallback<StatModel> ReportScore {get;set;}
