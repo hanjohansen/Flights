@@ -10,13 +10,24 @@
         <div class="p-4">
             <div class="font-bold text-4xl">
                 <div class="flex flex-row">
+                    @if(Game.Finished != null){
+                        <div class="w-[50px]">
+                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
+                        </div>
+                    }
                     <div>
-                        @Game.Type
+                        @GetGameNameString()
                     </div>
                     @if(Game.Type == GameType.X01)
                     {
                         <div class="text-gray-300 ml-8">
                             @Game.X01Target
+                        </div>
+                    }
+                    @if(Game.Type == GameType.CtCricket)
+                    {
+                        <div class="text-gray-300 ml-4 text-2xl  mt-2">
+                            Cut-Throat
                         </div>
                     }
                 </div>           
@@ -39,5 +50,17 @@
     private void GoToGame()
     {
         NavigationManager.NavigateTo("/game/" + Game.Id);
+    }
+
+    private string GetGameNameString(){
+        switch(Game.Type){
+            case GameType.X01:
+                return "X01";
+            case GameType.Cricket:
+            case GameType.CtCricket:
+                return "Cricket";
+            default:
+                return "Shanghai";
+        }
     }
 }

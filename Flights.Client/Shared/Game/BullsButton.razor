@@ -1,7 +1,7 @@
 @using Flights.Domain.Entities;
 
 <div class="@GetClasses()" @onclick="OnClick">
-    <div class="text-center my-4 text-2xl mt-6 prevent-select">
+    <div class="text-2xl prevent-select">
         @GetCaption()
     </div>
 </div>
@@ -30,7 +30,7 @@
     }
 
     private string GetClasses(){
-        var baseClass = "col-span-2 cursor-pointer rounded mud-elevation-5 ";
+        var baseClass = "grid col-span-2 cursor-pointer rounded mud-elevation-5 h-[75px] items-center justify-items-center ";
 
         switch(SelectedModifier){
             case DartModifier.Double:

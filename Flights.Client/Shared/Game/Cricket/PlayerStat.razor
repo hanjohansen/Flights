@@ -10,11 +10,18 @@
                 @if(Player.Rank == null){
                     @Player.Points
                 }else{
-                    @Player.Rank
+                    <div class="flex flex-row justify-center">
+                        <div class="">
+                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
+                        </div>
+                        <div class="ml-1 text-6xl font-bold text-gray-500">
+                            @Player.Rank
+                        </div>
+                    </div>
                 }                
             </div>
         </div>
-        <div class="flex-shrink grid grid-rows-7 gap-8 pl-[70px] pt-[1px]">
+        <div class="flex-shrink grid grid-rows-7 gap-8 pt-[1px] justify-center">
             <CricketScore IconValue="@Player.CricketState?.V15" IsPlayer="@true"/>
             <CricketScore IconValue="@Player.CricketState?.V16" IsPlayer="@true"/>
             <CricketScore IconValue="@Player.CricketState?.V17" IsPlayer="@true"/>
