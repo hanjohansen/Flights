@@ -19,6 +19,9 @@ public class CricketSolver : IGameSolver
         var finished = playerStates.All(x => x.Rank != null);
         var currentPlayerId = GetNextPlayer(playerStates);
 
+        if(finished && _game.Finished == null)
+            _game.Finished = DateTimeOffset.UtcNow;
+
         return new GameState(
             Id: _game.Id,
             Type: _game.Type,
