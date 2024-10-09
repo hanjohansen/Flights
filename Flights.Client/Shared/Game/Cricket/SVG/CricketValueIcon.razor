@@ -1,5 +1,5 @@
 @using Flights.Domain.State
-<svg viewBox="0 0 26.458333 26.458333" width="70" height="70" fill="@GetFillData()">
+<svg viewBox="0 0 26.458333 26.458333" width="60" height="60" fill="@GetFillData()">
     <path d="@GetPathData()"/>
 </svg>
 
@@ -7,6 +7,9 @@
 
     [Parameter]
     public CricketValue? IconValue {get;set;}
+
+    [Parameter]
+    public bool IsPlayer {get;set;}
 
     private const string NonePath = "m 9.7226707,11.586484 h 7.0129923 c 0.910047,0 1.642683,0.732637 1.642683,1.642683 0,0.910047 -0.732636,1.642683 -1.642683,1.642683 H 9.7226707 c -0.9100465,0 -1.6426832,-0.732636 -1.6426832,-1.642683 0,-0.910046 0.7326367,-1.642683 1.6426832,-1.642683 z";
 
@@ -43,6 +46,17 @@
     }
 
     private string GetFillData(){
+        if(!IsPlayer){
+            switch(IconValue){
+                case CricketValue.Single:
+                case CricketValue.Double:
+                case CricketValue.Open:
+                case CricketValue.Closed:
+                    return "#abaaaa";
+                default:
+                    return "#ddd9d9";
+            }      
+        }
         switch(IconValue){
             case CricketValue.Single:
             case CricketValue.Double:
@@ -51,7 +65,7 @@
             case CricketValue.Closed:
                 return "#32af00";
             default:
-                return "#858585";
+                return "#ddd9d9";
         }
     }
 }

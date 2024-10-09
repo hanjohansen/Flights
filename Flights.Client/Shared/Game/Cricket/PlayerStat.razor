@@ -1,0 +1,39 @@
+@using Flights.Domain.State
+
+<div id="@Player.PlayerId" class="rounded-lg mr-2 border border-gray-200 shadow-lg mud-elevation-3 w-[200px]">
+    <div class="@GetBorderClasses()">
+        <div class="text-gray-600 p-2 text-center">
+            <div class="text-3xl">
+                @Player.PlayerName
+            </div>
+            <div class="text-6xl font-bold">
+                @Player.Points
+            </div>
+        </div>
+        <div class="flex-shrink grid grid-rows-7 gap-8 pl-[70px] pt-[1px]">
+            <CricketScore IconValue="@Player.CricketState?.V15" IsPlayer="@true"/>
+            <CricketScore IconValue="@Player.CricketState?.V16" IsPlayer="@true"/>
+            <CricketScore IconValue="@Player.CricketState?.V17" IsPlayer="@true"/>
+            <CricketScore IconValue="@Player.CricketState?.V18" IsPlayer="@true"/>
+            <CricketScore IconValue="@Player.CricketState?.V19" IsPlayer="@true"/>
+            <CricketScore IconValue="@Player.CricketState?.V20" IsPlayer="@true"/>
+            <CricketScore IconValue="@Player.CricketState?.Bulls" IsPlayer="@true"/>
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public PlayerState Player {get;set;} = null!;
+
+    [Parameter]
+    public Guid? CurrentPlayerId {get;set;}
+
+    private string GetBorderClasses(){
+        var baseClasses = "rounded-lg border-t-[15px] my-[-1px] ";
+
+        return Player.PlayerId == CurrentPlayerId
+            ? baseClasses + "border-green-500"
+            : baseClasses + "border-gray-400";
+    }
+}

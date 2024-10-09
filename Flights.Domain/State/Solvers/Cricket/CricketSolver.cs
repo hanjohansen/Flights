@@ -40,7 +40,9 @@ public class CricketSolver : IGameSolver
             })
             .ToList();
 
-        foreach(var round in _game.Rounds)
+        foreach(var round in _game.Rounds){
+            playerStateDtos.ForEach(x => x.Darts = null);
+
             foreach(var player in round.RoundStats){
                 
                 var playerState = playerStateDtos.First(x => x.PlayerId == player.Player.Id);
@@ -54,6 +56,7 @@ public class CricketSolver : IGameSolver
 
                 ProcessPlayerRound(player, playerState, otherPlayers);
             }
+        }
 
         var result = new List<PlayerState>();
         foreach(var state in playerStateDtos){
@@ -283,9 +286,14 @@ public class CricketSolver : IGameSolver
             return null;
         }
 
-        return remaining.FirstOrDefault(x => 
+        var firstWithMissingDarts = remaining.FirstOrDefault(x => 
             x.Darts?.D3 == null ||
             x.Darts?.D2 == null ||
             x.Darts?.D1 == null)?.PlayerId;
+
+        if(firstWithMissingDarts == null)
+            return remaining.First().PlayerId;
+
+        return firstWithMissingDarts;
     }
 }

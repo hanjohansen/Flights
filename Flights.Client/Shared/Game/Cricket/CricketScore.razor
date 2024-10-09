@@ -4,13 +4,13 @@
 <div class="flex flex-row">
     <div>
         @if(!string.IsNullOrEmpty(Caption)){
-            <div class="text-4xl w-[50px] text-center font-bold text-gray-500 mt-4 mr-4">
+            <div class="text-4xl w-[50px] text-center font-bold text-gray-500 mt-2 mr-4">
                 @Caption
             </div>
         }
     </div>
     <div>
-        <CricketValueIcon IconValue="@IconValue"/>
+        <CricketValueIcon IconValue="@IconValue" IsPlayer="@IsPlayer"/>
     </div>
 </div>
 
@@ -22,6 +22,7 @@
     [Parameter]
     public string Caption {get;set;} = string.Empty;
 
-
+    [Parameter]
+    public bool IsPlayer {get;set;}
 }    
 
