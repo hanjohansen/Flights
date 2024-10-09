@@ -255,5 +255,28 @@ public class CtCricketTest
         Assert.True(state.PlayerStates[0].Rank == 1);
         Assert.True(state.PlayerStates[1].Rank == null);
         Assert.True(state.PlayerStates[2].Rank == null);
+
+        //next player should now be p2
+        Assert.True(state.CurrentPlayerId == players[1].Id);
+
+        //adding new dart should keep ranking
+        state = model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.Double, 25));
+
+        Assert.True(state.PlayerStates[0].Rank == 1);
+        Assert.True(state.PlayerStates[1].Rank == null);
+        Assert.True(state.PlayerStates[2].Rank == null);
+
+        Assert.True(state.CurrentPlayerId == players[1].Id);
+
+        //p2 throws winning dart
+        state = model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.None, 25));
+
+        Assert.True(state.PlayerStates[0].Rank == 1);
+        Assert.True(state.PlayerStates[1].Rank == 2);
+        Assert.True(state.PlayerStates[2].Rank == 3);
+
+        Assert.True(state.CurrentPlayerId == null);
     }
 }

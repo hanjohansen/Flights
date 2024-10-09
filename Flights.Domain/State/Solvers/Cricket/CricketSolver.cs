@@ -46,15 +46,25 @@ public class CricketSolver : IGameSolver
             foreach(var player in round.RoundStats){
                 
                 var playerState = playerStateDtos.First(x => x.PlayerId == player.Player.Id);
+
+                if(playerState.Rank == null)
+                    playerState.Rank = player.Rank;
+
                 var darts = player.GetDartsList();
 
-                if(!darts.Any() || player.Rank != null)
+                if(!darts.Any()){
+                    player.Rank = playerState.Rank;
+                    player.EndPoints = playerState.Points;
                     continue;
+                }                    
                
                 var otherPlayers = playerStateDtos.ToList();
                 otherPlayers.Remove(playerState);
 
                 ProcessPlayerRound(player, playerState, otherPlayers);
+
+                player.Rank = playerState.Rank;
+                player.EndPoints = playerState.Points;
             }
         }
 
@@ -99,10 +109,12 @@ public class CricketSolver : IGameSolver
         var all = otherPlayers.ToList();
         all.Add(playerState);
 
-        foreach(var dart in darts)
+        foreach(var dart in darts){
             ProcessDart(dart, playerState, otherPlayers);
             CheckRanks(all);
         }
+    }
+
 
     private void ProcessDart(DartStatEntity dart, CricketStateDto player, List<CricketStateDto> otherPlayers){
         if(!DartIsRelevant(dart))
@@ -208,46 +220,68 @@ public class CricketSolver : IGameSolver
     }
 
     private void CheckRanksCricket(List<CricketStateDto> players){
-        foreach(var player in players){
-            if(!player.AllOpen() || player.Rank != null)
-                continue;
-            
-            var others = players.Where(x => x.PlayerId != player.PlayerId && x.Rank == null).ToList();
-            if(others.Count == 1){
-                others[0].Rank = players.Count;
-                break;
-            }
+        var rankingChanged = false;
 
-            var playerPoints = player.Points;
-            var otherMaxPoints = others.Max(x => x.Points);
+        do{
+            rankingChanged = false;
 
-            if(playerPoints == 0 && otherMaxPoints == 0){
-                player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
-            }else if(playerPoints > otherMaxPoints){
-                player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
+            foreach(var player in players){
+                if(player.Rank != null)
+                    continue;
+
+                var others = players.Where(x => x.PlayerId != player.PlayerId && x.Rank == null).ToList();
+
+                if(!player.AllOpen()){
+                    if(!others.Any())
+                        player.Rank = players.Count;
+                    continue;
+                }          
+
+                var playerPoints = player.Points;
+                var otherMaxPoints = others.Max(x => x.Points);
+
+                if(playerPoints == 0 && otherMaxPoints == 0){
+                    player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
+                    rankingChanged = true;
+                }else if(playerPoints > otherMaxPoints){
+                    rankingChanged = true;
+                    player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
+                }
             }
-        }
+        }while(rankingChanged);
     }
 
     private void CheckRanksCtCricket(List<CricketStateDto> players){
-        foreach(var player in players){
-            if(!player.AllOpen() || player.Rank != null)
-                continue;
-            
-            var others = players.Where(x => x.PlayerId != player.PlayerId && x.Rank == null).ToList();
-            if(others.Count == 1){
-                others[0].Rank = players.Count;
-                break;
-            }
+        var rankingChanged = false;
 
-            var playerPoints = player.Points;
-            var otherMaxPoints = others.Max(x => x.Points);
+        do{
+            rankingChanged = false;
 
-            if(playerPoints == 0 && otherMaxPoints == 0)
-                player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
-            else if(playerPoints < otherMaxPoints)
-                player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
-        }    
+            foreach(var player in players){
+                if(player.Rank != null)
+                    continue;
+                
+                var others = players.Where(x => x.PlayerId != player.PlayerId && x.Rank == null).ToList();
+
+                if(!player.AllOpen()){
+                    if(!others.Any())
+                        player.Rank = players.Count;
+                    continue;
+                }   
+
+                var playerPoints = player.Points;
+                var otherMaxPoints = others.Max(x => x.Points);
+
+                if(playerPoints == 0 && otherMaxPoints == 0){
+                    player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
+                    rankingChanged = true;
+                }else if(playerPoints < otherMaxPoints){
+                    player.Rank = (players.Max(x => x.Rank) ?? 0) + 1;
+                    rankingChanged = true;
+                }
+            } 
+        }while(rankingChanged);
+   
     }
 
     private CricketState SummarizeStates(List<CricketState> states){
@@ -280,7 +314,7 @@ public class CricketSolver : IGameSolver
     }
 
     private Guid? GetNextPlayer(List<PlayerState> players){
-        var remaining = players.Where(x => x.Rank == null);
+        var remaining = players.Where(x => x.Rank == null).ToList();
 
         if(!remaining.Any()){
             return null;

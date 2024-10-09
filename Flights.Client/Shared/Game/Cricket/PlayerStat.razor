@@ -7,7 +7,11 @@
                 @Player.PlayerName
             </div>
             <div class="text-6xl font-bold">
-                @Player.Points
+                @if(Player.Rank == null){
+                    @Player.Points
+                }else{
+                    @Player.Rank
+                }                
             </div>
         </div>
         <div class="flex-shrink grid grid-rows-7 gap-8 pl-[70px] pt-[1px]">
