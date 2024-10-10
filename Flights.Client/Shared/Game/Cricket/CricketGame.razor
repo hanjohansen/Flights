@@ -36,6 +36,6 @@
     public EventCallback RevertDart {get;set;}
 
     private string GetGridColumnClasses(){
-        return $"grid grid-cols-{CurrentGame.PlayerStates.Count}";
+        return $"grid grid-cols-{CurrentGame?.PlayerStates.Count ?? 1}";
     }
 }

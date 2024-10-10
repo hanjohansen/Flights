@@ -14,7 +14,7 @@
         await RequestRevertDart.InvokeAsync();
     }
 
-    private void EndPressed(object _)
+    private void EndPressed(object? _)
     {
         IsPressed = false;
         InvokeAsync(StateHasChanged);
