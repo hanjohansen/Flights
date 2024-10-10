@@ -1,13 +1,16 @@
 @using System.Reflection
 @using Flights.Client.Shared.Toolkit
 
+@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
 <MudAppBar Elevation="3" Style="@($"background:{Colors.Indigo.Darken4};")">
-    <div class="w-4 h-4">
-        <img src="dart.svg" />
+    <div class="flex flex-row cursor-pointer" @onclick="GoToIndex">
+        <div class="w-4 h-4 mt-1">
+            <img src="dart.svg" />
+        </div>
+        <MudText Typo="Typo.button" HtmlTag="h3" Class="ml-3">Flights</MudText>
     </div>
-    <MudText Typo="Typo.button" HtmlTag="h3" Class="ml-3">Flights</MudText>
     <MudSpacer />
     <Clock/>
     <MudSpacer />
@@ -30,5 +33,10 @@
     public async Task ToggleFullscreen()
     {
         await JSRuntime.InvokeVoidAsync("toggleFullScreen");
+    }
+
+    private void GoToIndex()
+    {
+        NavigationManager.NavigateTo("/games");
     }
 }
