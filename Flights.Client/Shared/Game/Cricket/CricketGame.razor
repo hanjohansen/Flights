@@ -1,5 +1,8 @@
 @using Flights.Domain.Models
 @using Flights.Domain.State
+
+@inject IJSRuntime JSRuntime
+
 <div class="flex flex-row mx-1 h-[750px] overflow-hidden">
     <div class="flex flex-auto overflow-x-auto">
         @if(CurrentGame != null){
@@ -8,7 +11,7 @@
             }
         }
     </div>
-    <div class="flex shrink">
+    <div class="flex">
         <div class="flex flex-row">
             <div class="border border-gray-300 rounded grid grid-rows-7 gap-8 p-2 mr-2 mt-[118px] mud-elevation-3">
                 <CricketScore Caption="15" IconValue="@CurrentGame?.CricketState?.V15"/>
@@ -37,5 +40,14 @@
 
     private string GetGridColumnClasses(){
         return $"grid grid-cols-{CurrentGame?.PlayerStates.Count ?? 1}";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        var id = CurrentGame?.CurrentPlayerId;
+
+        if(id == null)
+            return;
+
+        await JSRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
     }
 }
