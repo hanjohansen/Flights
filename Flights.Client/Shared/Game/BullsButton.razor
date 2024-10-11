@@ -17,10 +17,13 @@
 
     private async Task OnClick(){
         IsPressed = true;
-        var timer = new Timer(EndPressed, null, 150, Timeout.Infinite);    
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);    
 
         if(SelectedModifier != DartModifier.Triple)
             await ReportScore.InvokeAsync(25);
+
+        await Task.Delay(200);
+        timer.Dispose();
     }  
 
     private void EndPressed(object? _)

@@ -10,8 +10,12 @@
 
     private async Task OnClick(){
         IsPressed = true;
-        var timer = new Timer(EndPressed, null, 150, Timeout.Infinite);    
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);    
+
         await RequestRevertDart.InvokeAsync();
+
+        await Task.Delay(200);
+        timer.Dispose();
     }
 
     private void EndPressed(object? _)

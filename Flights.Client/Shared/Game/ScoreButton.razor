@@ -2,6 +2,7 @@
     <div class="text-2xl text-white prevent-select">
         @Number
     </div>
+    <div class="bg-green-400" hidden
 </div>
 
 @code{
@@ -15,8 +16,12 @@
 
     private async Task OnClick(){
         IsPressed = true;
-        var timer = new Timer(EndPressed, null, 150, Timeout.Infinite);    
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);
+
         await ReportScore.InvokeAsync(Number);
+
+        await Task.Delay(200);
+        timer.Dispose();
     }  
 
     private void EndPressed(object? _)
@@ -29,7 +34,7 @@
         var baseClasses = "w-[80px] h-[80px] rounded cursor-pointer mud-elevation-5 grid items-center justify-items-center ";
 
         if(IsPressed)      
-            return baseClasses + "bg-gray-300";
+            return baseClasses + "bg-green-400"; 
 
         return baseClasses + "bg-gray-500";
     }
