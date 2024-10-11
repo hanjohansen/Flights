@@ -3,6 +3,8 @@ version: "3.5"
 services:
   flights:
     container_name: flights
+    environment:
+        - TZ=Europe/Berlin
     build: 
       context: .
       dockerfile: dockerfile
