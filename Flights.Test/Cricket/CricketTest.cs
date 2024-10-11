@@ -1,5 +1,6 @@
 using Flights.Domain.Entities;
 using Flights.Domain.Models;
+using Flights.Domain.State;
 
 namespace Flights.Test.Cricket;
 public class CricketTest
@@ -276,5 +277,205 @@ public class CricketTest
         Assert.True(state.PlayerStates[2].Rank == 3);
 
         Assert.True(state.CurrentPlayerId == null);
+    }
+
+    [Fact]
+    public void Game_Finishes_Complex_Correctly(){
+        var players = _helper.GetPlayers(4);
+        
+        var model = GameModel.Create(
+            players, 
+            GameType.Cricket, 
+            0, 
+            InOutModifier.None, 
+            InOutModifier.None);
+
+        var state = model.SolveGameState(); 
+
+        //first round
+        model.AddPlayerStats(players[0].Id, 
+            StatModel.Init(DartModifier.Triple, 15), 
+            StatModel.Init(DartModifier.Triple, 16), 
+            StatModel.Init(DartModifier.Triple, 17));
+
+        model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.Triple, 15), 
+            StatModel.Init(DartModifier.Triple, 16), 
+            StatModel.Init(DartModifier.Triple, 17));
+
+        model.AddPlayerStats(players[2].Id, 
+            StatModel.Init(DartModifier.Triple, 15), 
+            StatModel.Init(DartModifier.Triple, 16), 
+            StatModel.Init(DartModifier.Triple, 17));
+
+        model.AddPlayerStats(players[3].Id, 
+            StatModel.Init(DartModifier.Triple, 15), 
+            StatModel.Init(DartModifier.Triple, 16), 
+            StatModel.Init(DartModifier.Triple, 17));
+
+        //second round
+        model.AddPlayerStats(players[0].Id, 
+            StatModel.Init(DartModifier.Triple, 18), 
+            StatModel.Init(DartModifier.Triple, 19), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.Triple, 18), 
+            StatModel.Init(DartModifier.Triple, 19), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[2].Id, 
+            StatModel.Init(DartModifier.Triple, 18), 
+            StatModel.Init(DartModifier.Triple, 19), 
+            StatModel.Init(0));
+
+        state = model.AddPlayerStats(players[3].Id, 
+            StatModel.Init(DartModifier.Triple, 18), 
+            StatModel.Init(DartModifier.Triple, 19), 
+            StatModel.Init(0));
+
+        //     p1  p2  p3  p4
+        //      0   0   0   0
+        //
+        // 15   0   0   0   0
+        // 16   0   0   0   0
+        // 17   0   0   0   0
+        // 18   0   0   0   0
+        // 19   0   0   0   0
+        // 20   -   -   -   -
+        // B    -   -   -   -
+
+        foreach(var player in state.PlayerStates){
+            Assert.True(player.CricketState!.V15 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V16 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V17 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V18 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V19 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V20 == Domain.State.CricketValue.None);
+            Assert.True(player.CricketState!.Bulls == Domain.State.CricketValue.None);
+            Assert.True(player.Points == 0);
+        }
+
+        //third round
+        model.AddPlayerStats(players[0].Id, 
+            StatModel.Init(DartModifier.Double, 20), // !!!!!!!!
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.Triple, 20), 
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[2].Id, 
+            StatModel.Init(DartModifier.Triple, 20), 
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        state = model.AddPlayerStats(players[3].Id, 
+            StatModel.Init(DartModifier.Triple, 20), 
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        //     p1  p2  p3  p4
+        //      0   0   0   0
+        //
+        // 15   0   0   0   0
+        // 16   0   0   0   0
+        // 17   0   0   0   0
+        // 18   0   0   0   0
+        // 19   0   0   0   0
+        // 20   x   Q   Q   Q
+        // B    -   -   -   -
+
+        Assert.True(state.CricketState!.V20 == CricketValue.Open);
+
+        foreach(var player in state.PlayerStates){
+            Assert.True(player.CricketState!.V15 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V16 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V17 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V18 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V19 == Domain.State.CricketValue.Closed);
+            //Assert.True(player.CricketState!.V20 == Domain.State.CricketValue.None);
+            Assert.True(player.CricketState!.Bulls == Domain.State.CricketValue.None);
+            Assert.True(player.Points == 0);
+        }
+
+        //fourth round
+        model.AddPlayerStats(players[0].Id, 
+            StatModel.Init(0), // !!!!!!!!
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.None, 20), 
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[2].Id, 
+            StatModel.Init(DartModifier.Double, 20), 
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        state = model.AddPlayerStats(players[3].Id, 
+            StatModel.Init(DartModifier.Triple, 20), 
+            StatModel.Init(0), 
+            StatModel.Init(0));
+
+        //     p1  p2  p3  p4
+        //      0  20  40  60
+        //
+        // 15   0   0   0   0
+        // 16   0   0   0   0
+        // 17   0   0   0   0
+        // 18   0   0   0   0
+        // 19   0   0   0   0
+        // 20   x   Q   Q   Q
+        // B    -   -   -   -
+
+        var points = 0;
+        foreach(var player in state.PlayerStates){
+            Assert.True(player.Points == points);
+            points += 20;
+        }
+
+        //fîfth round
+        model.AddPlayerStats(players[0].Id, 
+            StatModel.Init(DartModifier.Double, 25),
+            StatModel.Init(25), 
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[1].Id, 
+            StatModel.Init(DartModifier.Double, 25),
+            StatModel.Init(25),  
+            StatModel.Init(0));
+
+        state = model.AddPlayerStats(players[2].Id, 
+            StatModel.Init(DartModifier.Double, 25),
+            StatModel.Init(25),  
+            StatModel.Init(0));
+
+        model.AddPlayerStats(players[3].Id, StatModel.Init(DartModifier.Double, 25));
+        state = model.AddPlayerStats(players[3].Id, StatModel.Init(25));                         //finishing dart
+        
+
+        //     p1  p2  p3  p4
+        //      0  20  40  60
+        //
+        // 15   0   0   0   0
+        // 16   0   0   0   0
+        // 17   0   0   0   0
+        // 18   0   0   0   0
+        // 19   0   0   0   0
+        // 20   x   Q   Q   Q
+        // B    0   0   0   0
+        //
+        //      4   3   2   1
+
+        var rank = 4;
+        foreach(var player in state.PlayerStates){
+            Assert.True(player.Rank == rank);
+            rank--;
+        }
     }
 }
