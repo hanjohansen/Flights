@@ -22,7 +22,7 @@
                 <CricketScore Caption="20" IconValue="@CurrentGame?.CricketState?.V20"/>
                 <CricketScore Caption="B" IconValue="@CurrentGame?.CricketState?.Bulls"/>
             </div>
-            <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart"/>
+            <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart" ReportMiss="@ReportMiss"/>
         </div>        
     </div>
 </div>
@@ -34,6 +34,9 @@
 
     [Parameter]
     public EventCallback<StatModel> ReportScore {get;set;}
+
+    [Parameter]
+    public EventCallback ReportMiss {get;set;}
 
     [Parameter]
     public EventCallback RevertDart {get;set;}

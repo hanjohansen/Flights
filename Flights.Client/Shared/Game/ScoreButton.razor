@@ -1,11 +1,18 @@
 <div class="@GetButtonClasses()" @onclick="OnClick">
     <div class="text-2xl text-white prevent-select">
-        @Number
+        @if(Caption is not null){
+            @Caption
+        }else{
+            @Number
+        }
     </div>
-    <div class="bg-green-400" hidden
+    <div class="bg-green-400" hidden/>
 </div>
 
 @code{
+    [Parameter]
+    public string? Caption {get;set;}
+
     [Parameter]
     public int Number {get;set;}
 

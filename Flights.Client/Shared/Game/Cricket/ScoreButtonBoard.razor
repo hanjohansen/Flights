@@ -13,11 +13,8 @@
             </div>
         }
         <BullsButton SelectedModifier="@SelectedModifier" ReportScore="@ReportScore"/>
-        <div class="col-span-2">
-            <div class="w-[80px] ml-[45px]">
-                <ScoreButton Number="0" ReportScore="@ReportScore"/>
-            </div>
-        </div>   
+        <ScoreButton Number="0" ReportScore="@ReportScore"/>
+        <ScoreButton Caption="XXX" Number="0" ReportScore="@ReportNullDart"/>
     </div>
     <div class="px-2">        
         <ModifierButton Target="DartModifier.Double"
@@ -43,6 +40,9 @@
     public EventCallback<StatModel> ReportDart {get;set;}
 
     [Parameter]
+    public EventCallback ReportMiss {get;set;}
+
+    [Parameter]
     public EventCallback RequestRevertDart {get;set;}
 
     public DartModifier SelectedModifier {get;set;} = DartModifier.None;
@@ -58,7 +58,11 @@
 
     private async Task ReportScore(int score){
         await ReportDart.InvokeAsync(StatModel.Init(SelectedModifier, score));
+        SelectedModifier = DartModifier.None;
+    }
 
+    private async Task ReportNullDart(int score){
+        await ReportMiss.InvokeAsync();
         SelectedModifier = DartModifier.None;
     }
 

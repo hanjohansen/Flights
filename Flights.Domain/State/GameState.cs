@@ -25,7 +25,17 @@ public record PlayerState(
     DartsState? Darts,
     CricketState? CricketState = null);
 
-public record DartsState(DartState? D1, DartState? D2, DartState? D3);
+public record DartsState(DartState? D1, DartState? D2, DartState? D3){
+    public int RemainingDarts(){
+        if(D1 is null)
+            return 3;
+        if(D2 is null)
+            return 2;
+        if(D3 is null)
+            return 1;
+        return 0;
+    }
+};
 
 public record DartState(
     DartModifier Modifier,

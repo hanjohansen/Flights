@@ -24,6 +24,7 @@
         case GameType.CtCricket:
             <CricketGame CurrentGame="@CurrentGame" 
                 ReportScore="@ReportScore"
+                ReportMiss="@ReportNullDart"
                 RevertDart="@RequestRevertDart"/>
             break;
         default:
@@ -54,6 +55,21 @@
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }              
+    }
+
+    private async Task ReportNullDart(){
+        if(CurrentGame?.CurrentPlayerId == null)
+            return;
+
+        var currentPlayer = CurrentGame.PlayerStates.First(x => x.PlayerId == CurrentGame.CurrentPlayerId);
+
+        if(currentPlayer == null)
+            return;
+
+        var remainingDarts = currentPlayer.Darts?.RemainingDarts() ?? 3;
+
+        for(int i = remainingDarts; i > 0; i--)
+            await ReportScore(StatModel.Init(0));
     }
 
     private async Task RequestRevertDart(){
