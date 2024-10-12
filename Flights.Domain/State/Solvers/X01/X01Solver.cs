@@ -26,9 +26,11 @@ public class X01Solver : IGameSolver
             
         Guid? nextPlayerId = GetNextPlayerId();
         var playerStates = GetPlayerState(nextPlayerId ?? Guid.Empty);
+        var rounds = _game.Rounds.Count;
 
         if(!finished && nextPlayerId == null){
             nextPlayerId = _game.Rounds.Last().RoundStats.FirstOrDefault(x => x.Rank == null)?.Player.Id;
+            rounds++;
             playerStates = playerStates.Select(x => {
                 if(x.PlayerId == nextPlayerId)
                     return x with { Darts = new DartsState(null, null, null)};
@@ -43,7 +45,7 @@ public class X01Solver : IGameSolver
             _game.InModifier,
             _game.OutModifier,
             _game.Started,
-            _game.Rounds.Count,
+            rounds,
             finished,
             nextPlayerId,
             playerStates);
