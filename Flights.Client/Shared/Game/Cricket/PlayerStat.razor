@@ -6,12 +6,20 @@
             <div class="text-3xl">
                 @Player.PlayerName
             </div>
-            <div class="text-6xl font-bold">
+            <div>
                 @if(Player.Rank == null){
-                    @Player.Points
+                    <div class="flex flex-row justify-center">
+                        <div class="ml-2 mr-2">
+                            <PlayerDarts Darts="@Player.Darts"/>
+                        </div>
+                        <div class="text-6xl font-bold">
+                            @Player.Points
+                        </div>
+                    </div>
+                    
                 }else{
                     <div class="flex flex-row justify-center">
-                        <div class="">
+                        <div class="mt-4">
                             <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
                         </div>
                         <div class="ml-1 text-6xl font-bold text-gray-500">
@@ -44,7 +52,7 @@
         var baseClasses = "rounded-lg border-t-[15px] my-[-1px] ";
 
         return Player.PlayerId == CurrentPlayerId
-            ? baseClasses + "border-green-500"
+            ? baseClasses + "border-green-600"
             : baseClasses + "border-gray-400";
     }
 }

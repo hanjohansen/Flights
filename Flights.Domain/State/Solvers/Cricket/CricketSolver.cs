@@ -23,7 +23,8 @@ public class CricketSolver : IGameSolver
             rounds++;
             var remaining = playerStates.Where(x => x.Rank == null).ToList();
             currentPlayerId = remaining.FirstOrDefault()?.PlayerId;
-        }
+            playerStates = playerStates.Select(x => x with {Darts = null}).ToList();        
+            }
 
         if(finished && _game.Finished == null)
             _game.Finished = DateTimeOffset.UtcNow;

@@ -1,0 +1,38 @@
+@using Flights.Domain.State
+
+<div>
+    <div class="mb-1">
+        <svg width="@Size" height="@Size">
+            <circle cx="@(Size/2)" cy="@(Size/2)" r="@(Size/2)" fill="@GetFill(Darts?.D1)" />
+        </svg>
+    </div>
+    <div class="mb-1">
+        <svg width="@Size" height="@Size">
+            <circle cx="@(Size/2)" cy="@(Size/2)" r="@(Size/2)" fill="@GetFill(Darts?.D2)" />
+        </svg>
+    </div>
+    <div>
+        <svg width="@Size" height="@Size">
+            <circle cx="@(Size/2)" cy="@(Size/2)" r="@(Size/2)" fill="@GetFill(Darts?.D3)" />
+        </svg>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public DartsState? Darts {get;set;}
+
+    private int Size {get;set;} = 16;
+
+    private string GetFill(DartState? dart){
+        if(dart == null)
+            return "#d5d5d5";
+
+        if(dart.Value == 0)
+            return "#ef4444";  //red
+        else
+            return "#16a34a"; //green
+
+        return "#d5d5d5";
+    }
+}
