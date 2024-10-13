@@ -2,14 +2,14 @@
 
 <div id="@Player.PlayerId" class="rounded-lg mb-2 border border-gray-200 shadow-lg mud-elevation-3">
     <div class="@GetBorderClasses()">
-        <div class="grid grid-cols-3 text-gray-600 py-2 ">
-            <div class="grid grid-cols-5">
-                <div class="col-span-3 pl-1">
+        <div class="grid grid-cols-2 text-gray-600 py-2 ">
+            <div class="grid grid-cols-4">
+                <div class="col-span-3 pl-2">
                     <MudStack Spacing="0">
-                        <div class="text-3xl">
+                        <div class="text-6xl">
                             @Player.PlayerName
                         </div>
-                        <div class="text-6xl font-bold h-[60px]">
+                        <div class="text-8xl font-bold">
                             @if(Player.Rank == null){
                                 @Player.Points   
                             }else{
@@ -25,16 +25,16 @@
                         </div>
                     </MudStack>
                 </div>
-                <div class="flex flex-row items-end mb-1">
+                <div class="flex flex-row items-center">
                     <div class="">
-                        <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Small" Color="Color.Default"/>
+                        <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Medium" Color="Color.Default"/>
                     </div>
-                    <div class="ml-1">
+                    <div class="ml-1 text-gray-700 text-lg">
                         @Player.PointAvg
                     </div>
                 </div>
             </div>
-            <div class="col-span-2 grid items-center">
+            <div class="grid items-center">
                 <DartStats Darts="@Player.Darts" IsBust="@Player.IsBust"/>
                 @if(@CurrentPlayerId == Player.PlayerId && Player.Checkout != null){
                     <div class="grid justify-items-center">
