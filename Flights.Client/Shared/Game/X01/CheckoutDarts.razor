@@ -2,7 +2,7 @@
 @using Flights.Domain.Entities
 
 <div class="flex flex-row">
-    @foreach(var dart in Checkout.GetDartsList()){
+    @foreach(var dart in Checkout?.GetDartsList() ?? new List<DartState>()){
         <div class="rounded-full bg-blue-800 text-white font-semibold text-2xl py-1 px-4 mr-2">
             @GetDartString(dart)
         </div>
