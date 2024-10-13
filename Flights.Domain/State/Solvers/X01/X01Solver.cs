@@ -1,12 +1,16 @@
 using Flights.Domain.Entities;
+using Flights.Domain.State.Checkout;
 
 namespace Flights.Domain.State.Solvers.X01;
 public class X01Solver : IGameSolver
 {
     public X01Solver(GameEntity entity){
         _game = entity;
+        _checkoutRepo = new CheckoutRepository();
     }
     private readonly GameEntity _game;
+    private readonly CheckoutRepository _checkoutRepo;
+
     public GameState Solve(){
         var isGameStart = IsGameStart();
 
@@ -33,7 +37,11 @@ public class X01Solver : IGameSolver
             rounds++;
             playerStates = playerStates.Select(x => {
                 if(x.PlayerId == nextPlayerId)
-                    return x with { Darts = new DartsState(null, null, null)};
+                    return x with { Darts = new DartsState(null, null, null), 
+                                    Checkout = _game.OutModifier == InOutModifier.Double 
+                                        ? _checkoutRepo.GetCheckout(x.Points, 3)
+                                        : null};
+                                        
                 return x;
                 })
                 .ToList();
@@ -188,8 +196,6 @@ public class X01Solver : IGameSolver
                     var statIndex = lastRound.RoundStats.IndexOf(playerStats);
                     refStat = roundBefore.RoundStats[statIndex];
                 }
-
-            DartsState? dartState = null;
          
             var first = refStat.FirstDart != null
                 ? DartState.FromEntity(refStat.FirstDart)
@@ -201,7 +207,13 @@ public class X01Solver : IGameSolver
                 ? DartState.FromEntity(refStat.ThirdDart)
                 : null;
 
-            dartState = new DartsState(first, second, third);            
+            var dartState = new DartsState(first, second, third);
+
+            var remainingDarts = dartState.RemainingDarts();
+            DartsState? checkout = null;
+
+            if(_game.OutModifier == InOutModifier.Double)
+                checkout = _checkoutRepo.GetCheckout(refStat.EndPoints, remainingDarts);            
             
             stateResult.Add(new PlayerState(
                 refStat.Player.Id,
@@ -211,7 +223,8 @@ public class X01Solver : IGameSolver
                 refStat.Rank,
                 refStat.EndPoints,
                 CountPlayerAverage(playerStats.Player.Id),
-                dartState));
+                dartState,
+                checkout));
         }
 
         return stateResult;

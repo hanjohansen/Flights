@@ -90,6 +90,7 @@ public class CricketSolver : IGameSolver
                 Points: state.Points,
                 PointAvg: 0m,
                 Darts: state.Darts,
+                Checkout: null,
                 CricketState: state.GetCricketState()
             );
             result.Add(playerState);

@@ -1,0 +1,33 @@
+@using Flights.Domain.State
+@using Flights.Domain.Entities
+
+<div class="flex flex-row">
+    @foreach(var dart in Checkout.GetDartsList()){
+        <div class="rounded-full bg-blue-600 text-white font-semibold text-2xl py-1 px-2 mr-2">
+            @GetDartString(dart)
+        </div>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public DartsState? Checkout {get;set;}
+
+    public string GetDartString(DartState dart){
+        var result = "";
+
+        switch(dart.Modifier){
+            case DartModifier.None:
+                break;
+            case DartModifier.Double:
+                result += "D/";
+                break;
+            case DartModifier.Triple:
+                result += "T/";
+                break;
+        }
+
+        result += dart.Value;
+        return result;
+    }
+}
