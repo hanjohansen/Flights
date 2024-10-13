@@ -19,6 +19,12 @@ public class CricketSolver : IGameSolver
         var finished = playerStates.All(x => x.Rank != null);
         var currentPlayerId = GetNextPlayer(playerStates);
 
+        if(!finished && currentPlayerId ==  null){
+            rounds++;
+            var remaining = playerStates.Where(x => x.Rank == null).ToList();
+            currentPlayerId = remaining.FirstOrDefault()?.PlayerId;
+        }
+
         if(finished && _game.Finished == null)
             _game.Finished = DateTimeOffset.UtcNow;
 
@@ -328,8 +334,8 @@ public class CricketSolver : IGameSolver
             x.Darts?.D2 == null ||
             x.Darts?.D1 == null)?.PlayerId;
 
-        if(firstWithMissingDarts == null)
-            return remaining.First().PlayerId;
+        // if(firstWithMissingDarts == null)
+        //     return remaining.First().PlayerId;
 
         return firstWithMissingDarts;
     }
