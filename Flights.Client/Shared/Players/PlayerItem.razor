@@ -1,6 +1,8 @@
 ﻿@using Flights.Domain.Entities
 
-<div class="border border-gray-100 rounded mb-2 px-4 py-2 mud-elevation-4 bg-white">
+@inject NavigationManager NavigationManager
+
+<div class="border border-gray-100 rounded mb-2 px-4 py-2 mud-elevation-4 bg-white prevent-select"  @onclick="() => GoToPlayer()">
     <div class="flex flex-row">
          <div class="text-4xl w-[300px]">
              @Player.Name
@@ -16,4 +18,8 @@
     [Parameter]
     public PlayerEntity Player { get; set; } = null!;
 
+    private void GoToPlayer()
+    {
+        NavigationManager.NavigateTo("/player/" + Player.Id);
+    }
 }

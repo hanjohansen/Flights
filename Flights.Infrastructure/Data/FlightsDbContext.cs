@@ -20,8 +20,6 @@ public class FlightsDbContext : DbContext
             entity.HasKey(x => x.Id);
             entity.HasMany(x => x.Games)
                 .WithOne(x => x.Player);
-
-            entity.HasIndex(x => new{x.Name}).IsUnique();
         });
 
         builder.Entity<GameEntity>(entity => {

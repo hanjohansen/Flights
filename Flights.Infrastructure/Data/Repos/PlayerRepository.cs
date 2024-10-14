@@ -19,7 +19,7 @@ public class PlayerRepository : IPlayerRepository
         if(string.IsNullOrEmpty(name))
             throw new FlightsGameException("Name must not be empty!");
 
-        var players = await GetPlayersInternal(db);
+        var players = await GetPlayersReadOnlyInternal(db);
 
         if(players.Any(x => x.Name == name))
             throw new FlightsGameException("A player with that name already exists!");
@@ -32,19 +32,73 @@ public class PlayerRepository : IPlayerRepository
         return player;
     }
 
+    public async Task<PlayerEntity> GetPlayer(Guid playerId){
+        using var db = await _dbFactory.CreateDbContextAsync();
+
+        var player = await GetPlayerInternal(db, playerId, readOnly:true);
+
+        if(player == null)
+            throw new FlightsGameException("Player not found!");
+
+        return player;
+    }
+
+    public async Task<PlayerEntity> UpdatePlayer(Guid playerId, string newName)
+    {
+        using var db = await _dbFactory.CreateDbContextAsync();
+
+        var player = await GetPlayerInternal(db, playerId, readOnly:false);
+        var allPlayers = await GetPlayersReadOnlyInternal(db);
+
+        var existing = allPlayers.FirstOrDefault(x => x.Name == newName && x.Id != playerId);
+
+        if(existing != null)
+            throw new FlightsGameException("A player with that name already exists!");
+
+        player.Name = newName;
+        await db.SaveChangesAsync();
+
+        return player;
+    }
+
     public async Task<List<PlayerEntity>> GetPlayers()
     {
         using var db = await _dbFactory.CreateDbContextAsync();
 
-        return await GetPlayersInternal(db);
+        return await GetPlayersReadOnlyInternal(db);
     }
 
-    private async Task<List<PlayerEntity>> GetPlayersInternal(FlightsDbContext db){
+    private async Task<PlayerEntity> GetPlayerInternal(FlightsDbContext db, Guid playerId, bool readOnly){
+        var query = db.Players.AsQueryable();
+
+        if(readOnly)
+            query = query.AsNoTracking();
+
+        var player = await query.FirstOrDefaultAsync(x => x.Id == playerId);
+
+        if(player == null)
+            throw new FlightsGameException("Player not found!");
+
+        return player;
+    }
+
+    private async Task<List<PlayerEntity>> GetPlayersReadOnlyInternal(FlightsDbContext db){
         var players = await db.Players
         .AsNoTracking()
+        .Where(x => x.Deleted == false)
         .OrderBy(x => x.Name)
         .ToListAsync();
 
         return players;
+    }
+
+    public async Task DeletePlayer(Guid playerId)
+    {
+        using var db = await _dbFactory.CreateDbContextAsync();
+
+        var player = await GetPlayerInternal(db, playerId, readOnly: false);
+
+        player.Deleted = true;
+        await db.SaveChangesAsync();
     }
 }
