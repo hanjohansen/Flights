@@ -26,11 +26,11 @@
             Selected="@SelectedModifier"
             ModifierChanged="@ModifierChanged"/>
     </div>
-    <div class="grid grid-cols-5 gap-3 m-2 mt-24  h-[80px]">
+    <div class="grid grid-cols-5 gap-3 m-2 mt-[95px]  h-[80px]">
         <div class="col-span-3">
             <RevertButton RequestRevertDart="@RequestRevertDart"/>
         </div>      
-        <div class="col-span-2 rounded border bg-red-500 text-center py-2 cursor-pointer pt-5"
+        <div class="col-span-2 rounded bg-red-500 mud-elevation-5 text-center py-2 cursor-pointer pt-5"
             @onclick="GoToGames">
             <MudIcon Icon="@Icons.Material.Outlined.Close" Size="Size.Large" Color="Color.Default"/>
         </div>      

@@ -3,7 +3,7 @@
 
 @inject IJSRuntime JSRuntime
 
-<div class="flex flex-row mx-1 h-[750px] overflow-hidden">
+<div class="flex flex-row mx-1 h-[755px] overflow-hidden pb-1">
     <div class="flex w-[985px] overflow-x-auto">
         @if(CurrentGame != null){
             foreach(var player in CurrentGame.PlayerStates){
@@ -12,8 +12,8 @@
         }
     </div>
     <div class="flex w-[380px]">
-        <div class="flex flex-row border border-gray-300 rounded-lg mud-elevation-3 bg-white">
-            <div class="grid grid-rows-8 gap-8 p-2 mr-6 mt-[25px] ">
+        <div class="flex flex-row border border-gray-300 rounded-lg mud-elevation-3 bg-white mb-1">
+            <div class="grid grid-rows-8 gap-8 p-2 mr-6 mb-[2px] mt-[18px] ">
                 <div class="flex flex-row ml-8">
                     <div class="mt-1 mr-1">
                         <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" Color="Color.Default"/>  
