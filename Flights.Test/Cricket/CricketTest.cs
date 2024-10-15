@@ -25,6 +25,8 @@ public class CricketTest
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.None);
 
+        Assert.True(state.CurrentPlayerId == state.PlayerStates.First().PlayerId);
+
         foreach(var player in state.PlayerStates){
             Assert.True(player.IsIn);
             Assert.False(player.IsBust);

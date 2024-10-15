@@ -3,6 +3,7 @@ using Flights.Domain.Exceptions;
 using Flights.Domain.State.Solvers;
 using Flights.Domain.State.Solvers.X01;
 using Flights.Domain.State.Solvers.Cricket;
+using Flights.Domain.State.Solvers.Shanghai;
 
 namespace Flights.Domain.State;
 public class GameSolverFactory
@@ -14,6 +15,8 @@ public class GameSolverFactory
             case GameType.Cricket:
             case GameType.CtCricket:
                 return new CricketSolver(entity);
+            case GameType.Shanghai:
+                return new ShanghaiSolver(entity);
         }
 
         throw new FlightsGameException("Game type not supported yet");      

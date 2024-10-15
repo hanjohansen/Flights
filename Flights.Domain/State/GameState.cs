@@ -11,7 +11,8 @@ public record GameState(
     bool Finished,
     Guid? CurrentPlayerId,
     List<PlayerState> PlayerStates,
-    CricketState? CricketState = null
+    CricketState? CricketState = null,
+    ShanghaiGameState? ShanghaiState = null
 );
 
 public record PlayerState(
@@ -23,8 +24,9 @@ public record PlayerState(
     int Points,
     decimal PointAvg,
     DartsState? Darts,
-    DartsState? Checkout,
-    CricketState? CricketState = null);
+    DartsState? Checkout = null,
+    CricketState? CricketState = null,
+    ShanghaiState? ShanghaiState = null);
 
 public record DartsState(DartState? D1, DartState? D2, DartState? D3){
     public int RemainingDarts(){
@@ -71,3 +73,28 @@ public record CricketState(
     CricketValue V20 = CricketValue.None,
     CricketValue Bulls = CricketValue.None
 );
+
+public record ShanghaiGameState(int CurrentTarget);
+
+public record ShanghaiState(
+    int V1,
+    int V2,
+    int V3,
+    int V4,
+    int V5,
+    int V6,
+    int V7,
+    int V8,
+    int V9,
+    int V10,
+    int V11,
+    int V12,
+    int V13,
+    int V14,
+    int V15,
+    int V16,
+    int V17,
+    int V18,
+    int V19,
+    int V20,
+    int Bulls);

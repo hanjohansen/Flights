@@ -23,6 +23,8 @@ public class X01GameTest{
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.None);
 
+        Assert.True(state.CurrentPlayerId == state.PlayerStates.First().PlayerId);
+
         foreach(var player in state.PlayerStates){
             Assert.False(player.IsIn);
             Assert.False(player.IsBust);
