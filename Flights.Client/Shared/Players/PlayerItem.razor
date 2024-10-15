@@ -2,13 +2,13 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="border border-gray-100 rounded mb-2 px-4 py-2 mud-elevation-4 bg-white prevent-select"  @onclick="() => GoToPlayer()">
+<div class="border border-gray-100 rounded mb-3 px-4 py-2 mud-elevation-4 bg-white prevent-select"  @onclick="() => GoToPlayer()">
     <div class="flex flex-row">
          <div class="text-4xl w-[300px]">
              @Player.Name
          </div>   
-         <div>
-             
+         <div class="flex-auto">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Size="Size.Large" Color="Color.Default"/>
          </div>
     </div>
 </div>
