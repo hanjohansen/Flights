@@ -1,0 +1,32 @@
+@using Flights.Domain.State
+
+<div class="grid mt-3 pr-2">
+    <div class="grid grid-cols-7">
+        <ShanghaiPoint PointTarget="1" PointValue="@Points.V1"/>
+        <ShanghaiPoint PointTarget="2" PointValue="@Points.V2"/>
+        <ShanghaiPoint PointTarget="3" PointValue="@Points.V3"/>
+        <ShanghaiPoint PointTarget="4" PointValue="@Points.V4"/>
+        <ShanghaiPoint PointTarget="5" PointValue="@Points.V5"/>
+        <ShanghaiPoint PointTarget="6" PointValue="@Points.V6"/>
+        <ShanghaiPoint PointTarget="7" PointValue="@Points.V7"/>
+        <ShanghaiPoint PointTarget="8" PointValue="@Points.V8"/>
+        <ShanghaiPoint PointTarget="9" PointValue="@Points.V9"/>
+        <ShanghaiPoint PointTarget="10" PointValue="@Points.V10"/>
+        <ShanghaiPoint PointTarget="11" PointValue="@Points.V11"/>
+        <ShanghaiPoint PointTarget="12" PointValue="@Points.V12"/>
+        <ShanghaiPoint PointTarget="13" PointValue="@Points.V13"/>
+        <ShanghaiPoint PointTarget="14" PointValue="@Points.V14"/>
+        <ShanghaiPoint PointTarget="15" PointValue="@Points.V15"/>
+        <ShanghaiPoint PointTarget="16" PointValue="@Points.V16"/>
+        <ShanghaiPoint PointTarget="17" PointValue="@Points.V17"/>
+        <ShanghaiPoint PointTarget="18" PointValue="@Points.V18"/>
+        <ShanghaiPoint PointTarget="19" PointValue="@Points.V19"/>
+        <ShanghaiPoint PointTarget="20" PointValue="@Points.V20"/>
+        <ShanghaiPoint PointTarget="25" PointValue="@Points.Bulls"/>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public ShanghaiState Points {get;set;}
+}    

@@ -30,9 +30,10 @@ public class ShanghaiSolver : IGameSolver
         }
 
         Guid? currentPlayerId = null;
-        var currentTarget = (_game.Rounds.Count - 1) * 3;
+        var currentTarget = 0;
 
         if(!finished){
+            currentTarget = (_game.Rounds.Count - 1) * 3;
             var currentPlayer = _game.Rounds.Last()
                 .RoundStats.FirstOrDefault(x => x.GetDartsList().Count < 3);
 
@@ -42,6 +43,9 @@ public class ShanghaiSolver : IGameSolver
             }else{
                 currentTarget += currentPlayer.GetDartsList().Count + 1;
             }
+
+            if(currentTarget == 21)
+                currentTarget = 25;
 
             currentPlayerId = currentPlayer.Player.Id;
         }
@@ -122,13 +126,13 @@ public class ShanghaiSolver : IGameSolver
         foreach(var dart in darts){
             if(intTargetNumber > 25)
                 return;
+            var setProp = typeof(ShanghaiStateDto).GetProperties().First(x => x.Name == "V" + intTargetNumber); 
+            setProp.SetValue(playerState, 0);
 
             if(dart.Value == intTargetNumber){
-                var points = dart.GetCalculatedValue();
-            
-                var setProp = typeof(ShanghaiStateDto).GetProperties().First(x => x.Name == "V" + intTargetNumber);
+                var points = dart.GetCalculatedValue();           
+                
                 setProp.SetValue(playerState, points);
-
                 playerState.Points += points;
             }
 

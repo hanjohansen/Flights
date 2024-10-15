@@ -1,0 +1,50 @@
+@using Flights.Domain.State
+
+<div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3 bg-white mr-2">
+    <div class="@GetBorderClasses()">
+        <div class="grid grid-cols-5 text-gray-600 py-2">
+            <div class="grid grid-cols-4">
+                <div class="col-span-3 pl-2">
+                    <MudStack Spacing="0">
+                        <div class="text-4xl">
+                            @Player.PlayerName
+                        </div>
+                        <div class="text-8xl font-bold">
+                            @if(Player.Rank == null){
+                                @Player.Points   
+                            }else{
+                                <div class="flex flex-row">
+                                    <div class="">
+                                        <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
+                                    </div>
+                                    <div class="ml-1 text-6xl font-bold text-gray-500 mt-5">
+                                        @Player.Rank
+                                    </div>
+                                </div>
+                            }                                                     
+                        </div>
+                    </MudStack>
+                </div>
+            </div>
+            <div class="col-span-4">
+                <PlayerPoints Points="@Player.ShanghaiState"/>
+            </div>
+        </div>        
+    </div>                
+</div>
+
+@code{
+    [Parameter]
+    public PlayerState Player {get;set;} = null!;
+
+    [Parameter]
+    public Guid? CurrentPlayerId {get;set;}
+
+    private string GetBorderClasses(){
+        var baseClasses = "rounded-lg border-l-[15px] ";
+
+        return Player.PlayerId == CurrentPlayerId
+            ? baseClasses + "border-green-600"
+            : baseClasses + "border-gray-400";
+    }
+}

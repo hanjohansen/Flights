@@ -1,0 +1,62 @@
+@using Flights.Domain.Entities
+@using Flights.Domain.Models
+
+<div class="@GetButtonClasses()" @onclick="OnClick">
+    <div class="text-2xl text-white prevent-select">
+        @if(Caption is not null){
+            @Caption
+        }else{
+            @Number
+        }
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public string? Caption {get;set;}
+
+    [Parameter]
+    public int Number {get;set;}
+
+    [Parameter]
+    public DartModifier Modifier {get;set;}
+
+    [Parameter]
+    public EventCallback<StatModel> ReportScore {get;set;}
+
+    [Parameter]
+    public bool Disabled {get;set;}
+
+    private bool IsPressed {get;set;}
+
+    private async Task OnClick(){
+        if(Disabled)
+            return;
+
+        IsPressed = true;
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);
+
+        await ReportScore.InvokeAsync(StatModel.Init(Modifier, Number));
+
+        await Task.Delay(200);
+        timer.Dispose();
+    }  
+
+    private void EndPressed(object? _)
+    {
+        IsPressed = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetButtonClasses(){
+        var baseClasses = "h-[80px] rounded cursor-pointer mud-elevation-5 grid items-center justify-items-center ";
+
+        if(Disabled)
+            return baseClasses + "bg-gray-300"; 
+
+        if(IsPressed)      
+            return baseClasses + "bg-green-400"; 
+
+        return baseClasses + "bg-gray-500";
+    }
+}

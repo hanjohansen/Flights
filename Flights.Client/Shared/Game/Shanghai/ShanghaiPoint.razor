@@ -1,0 +1,40 @@
+<div class="flex flex-row border border-gray-200 pl-7">
+    <div class="text-gray-400 mt-3 min-w-[15px] text-end">
+        @GetPointString()
+    </div>
+    <div class="text-3xl ml-2">
+        @if(PointValue == null){
+            <div class="text-gray-400">
+                @GetValueString()
+            </div>    
+        }else{
+            @GetValueString()
+        }
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public int PointTarget {get;set;}
+
+    [Parameter]
+    public int? PointValue {get;set;}
+
+    private string GetPointString(){
+        if(PointTarget == 25){
+            return "Bulls";
+        }
+
+        return string.Empty + PointTarget;
+    }
+
+    private string GetValueString(){
+        if(PointValue == null || PointValue == 0)
+            return "-";
+
+        if(PointValue == 0)
+            return "/";
+
+        return PointValue?.ToString() ?? string.Empty;
+    }
+}

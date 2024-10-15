@@ -2,6 +2,7 @@
 
 @using Flights.Client.Shared.Game
 @using Flights.Client.Shared.Game.Cricket
+@using Flights.Client.Shared.Game.Shanghai
 @using Flights.Client.Shared.Game.X01
 @using Flights.Domain.Entities
 @using Flights.Domain.Exceptions
@@ -23,6 +24,12 @@
         case GameType.Cricket:
         case GameType.CtCricket:
             <CricketGame CurrentGame="@CurrentGame" 
+                ReportScore="@ReportScore"
+                ReportMiss="@ReportNullDart"
+                RevertDart="@RequestRevertDart"/>
+            break;
+        case GameType.Shanghai:
+            <ShanghaiGame CurrentGame="@CurrentGame" 
                 ReportScore="@ReportScore"
                 ReportMiss="@ReportNullDart"
                 RevertDart="@RequestRevertDart"/>

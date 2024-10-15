@@ -1,0 +1,31 @@
+@using Flights.Domain.Models
+@using Flights.Domain.State
+
+<div class="flex flex-row mx-1 h-[752px] overflow-hidden">
+    
+    <div class="flex flex-column flex-auto mr-1 overflow-hidden">   
+        <div class="overflow-auto">
+            @foreach(var stat in CurrentGame.PlayerStates){
+                <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
+            }
+        </div>
+    </div>
+    <div class="flex-shrink">
+        <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss"  RequestRevertDart="@RevertDart" CurrentTarget="@CurrentGame.ShanghaiState!.CurrentTarget"/>
+        @* <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart"/> *@
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public GameState CurrentGame {get;set;} = null!;
+
+    [Parameter]
+    public EventCallback<StatModel> ReportScore {get;set;}
+
+    [Parameter]
+    public EventCallback ReportMiss {get;set;}
+
+    [Parameter]
+    public EventCallback RevertDart {get;set;}
+}
