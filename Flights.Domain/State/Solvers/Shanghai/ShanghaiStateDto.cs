@@ -28,7 +28,7 @@ public class ShanghaiStateDto
     public int V18 {get;set;}
     public int V19 {get;set;}
     public int V20 {get;set;}
-    public int Bulls {get;set;}
+    public int V25 {get;set;}
 
     public ShanghaiState ToState(){
         return new ShanghaiState(
@@ -52,7 +52,7 @@ public class ShanghaiStateDto
             V18,
             V19,
             V20,
-            Bulls
+            V25
         );
     }
 
@@ -60,6 +60,6 @@ public class ShanghaiStateDto
         return V1 +  V2 + 
             V3 + V4 + V5 + V6 + V7 + V8 + V9 + V10 + 
             V11 + V12 + V13 + V14 + V15 + V16 + V17 + V18 + V19 + V20 + 
-            Bulls;
+            V25;
     }
 }

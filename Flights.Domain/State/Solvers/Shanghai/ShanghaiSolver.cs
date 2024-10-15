@@ -19,10 +19,14 @@ public class ShanghaiSolver : IGameSolver
             && _game.Rounds.Last()
                 .RoundStats.All(x => x.GetDartsList().Count == 3);
 
-
         if(finished){
             _game.Finished = DateTimeOffset.UtcNow;
-            //CalcRanks
+            playerStates = CalculateRanks(playerStates);
+            var roundStats = _game.Rounds.Last().RoundStats;
+            foreach(var roundStat in roundStats){
+                var playerState = playerStates.First(x => x.PlayerId == roundStat.Player.Id);
+                roundStat.Rank = playerState.Rank;
+            }
         }
 
         Guid? currentPlayerId = null;
@@ -132,5 +136,20 @@ public class ShanghaiSolver : IGameSolver
                 ? intTargetNumber + 5
                 : intTargetNumber + 1;
         }
+    }
+
+    private List<PlayerState> CalculateRanks(List<PlayerState> playerStates){
+        var result = new List<PlayerState>();
+        var playerPoints = playerStates.Select(x => x.Points)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToList();
+        
+        foreach(var player in playerStates){
+            var rank = playerPoints.IndexOf(player.Points) + 1;
+            result.Add(player with {Rank = rank});
+        }
+
+        return result;
     }
 }
