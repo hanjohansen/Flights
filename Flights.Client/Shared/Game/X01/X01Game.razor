@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="flex-shrink">
-        <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart"/>
+        <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss" RequestRevertDart="@RevertDart"/>
     </div>
 </div>
 
@@ -28,6 +28,9 @@
 
     [Parameter]
     public EventCallback<StatModel> ReportScore {get;set;}
+
+    [Parameter]
+    public EventCallback ReportMiss {get;set;}
 
     [Parameter]
     public EventCallback RevertDart {get;set;}
