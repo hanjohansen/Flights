@@ -21,6 +21,11 @@
                 <MudIcon Icon="@Icons.Material.Filled.Group" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
             </BigRoundButton>
         </div>
+        <div class="pt-4">
+            <BigRoundButton OnClick="@GoToStats">
+                <MudIcon Icon="@Icons.Material.Filled.InsertChartOutlined" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
     </div>
     <div class="h-[710px] overflow-y-auto pr-4">
         @if (Games.Any())
@@ -64,6 +69,11 @@
     private void GoToCreateGame()
     {
         NavigationManager.NavigateTo("/creategame");
+    }
+
+    private void GoToStats()
+    {
+        NavigationManager.NavigateTo("/stats");
     }
     
     private void HandleClick(){

@@ -1,0 +1,59 @@
+@page "/stats"
+
+@using Flights.Client.Shared.Toolkit
+@using Flights.Domain.State
+@using Flights.Infrastructure.Port
+@using Flights.Client.Shared.Statistics
+
+
+@inject NavigationManager NavigationManager
+@inject IStatRepository StatRepo;
+
+<PageTitle>Statistics</PageTitle>
+
+<div class="flex flex-row justify-center mt-2 p-2 overflow-hidden">
+    <div class="flex flex-col mr-8">        
+        <BigRoundButton OnClick="@GoToIndex" Type="BigRoundButton.ButtonType.Secondary">
+            <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+        </BigRoundButton>
+    </div>
+    <div class="grid">
+        @if(IsLoading){
+            <div>
+                Loading..
+            </div>
+        }
+        <div class=" ">
+            @if(GameCount != null){
+                <div class="@GetChartCardClass()">
+                    <GameCount Games="@GameCount"/>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code{
+
+    private bool IsLoading {get;set;} = true;
+
+    private GameCountState? GameCount {get;set;}
+
+    private void GoToIndex()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override async Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        GameCount = await StatRepo.GetTotalGameCount();
+
+        IsLoading = false;
+    }
+
+    private string GetChartCardClass(){
+        return "rounded-lg bg-white mud-elevation-5 p-2";
+    }
+}

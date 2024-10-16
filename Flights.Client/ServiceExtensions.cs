@@ -17,6 +17,7 @@ public static class ServiceExtensions
 
         builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
         builder.Services.AddScoped<IGameRepository, GameRepository>();
+        builder.Services.AddScoped<IStatRepository, StatRepository>();
         
         return builder;
     }
