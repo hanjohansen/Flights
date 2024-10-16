@@ -19,7 +19,7 @@ public class PlayerRepository : IPlayerRepository
         if(string.IsNullOrEmpty(name))
             throw new FlightsGameException("Name must not be empty!");
 
-        var players = await GetPlayersReadOnlyInternal(db);
+        var players = await GetPlayersReadOnlyInternal(db, true);
 
         if(players.Any(x => x.Name == name))
             throw new FlightsGameException("A player with that name already exists!");
@@ -48,7 +48,7 @@ public class PlayerRepository : IPlayerRepository
         using var db = await _dbFactory.CreateDbContextAsync();
 
         var player = await GetPlayerInternal(db, playerId, readOnly:false);
-        var allPlayers = await GetPlayersReadOnlyInternal(db);
+        var allPlayers = await GetPlayersReadOnlyInternal(db, true);
 
         var existing = allPlayers.FirstOrDefault(x => x.Name == newName && x.Id != playerId);
 
@@ -65,7 +65,7 @@ public class PlayerRepository : IPlayerRepository
     {
         using var db = await _dbFactory.CreateDbContextAsync();
 
-        return await GetPlayersReadOnlyInternal(db);
+        return await GetPlayersReadOnlyInternal(db, false);
     }
 
     private async Task<PlayerEntity> GetPlayerInternal(FlightsDbContext db, Guid playerId, bool readOnly){
@@ -82,12 +82,16 @@ public class PlayerRepository : IPlayerRepository
         return player;
     }
 
-    private async Task<List<PlayerEntity>> GetPlayersReadOnlyInternal(FlightsDbContext db){
-        var players = await db.Players
-        .AsNoTracking()
-        .Where(x => x.Deleted == false)
-        .OrderBy(x => x.Name)
-        .ToListAsync();
+    private async Task<List<PlayerEntity>> GetPlayersReadOnlyInternal(FlightsDbContext db, bool includeDeleted){
+        var query = db.Players
+            .AsNoTracking();
+
+        if(!includeDeleted)
+            query = query.Where(x => x.Deleted == false);
+        
+        var players = await query
+            .OrderBy(x => x.Name)
+            .ToListAsync();
 
         return players;
     }
