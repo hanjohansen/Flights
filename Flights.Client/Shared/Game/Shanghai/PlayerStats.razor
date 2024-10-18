@@ -26,7 +26,7 @@
                     </MudStack>
                 </div>
             </div>
-            <div class="col-span-4">
+            <div class="col-span-4 mr-2">
                 <PlayerPoints Points="@Player.ShanghaiState"/>
             </div>
         </div>        
@@ -41,7 +41,7 @@
     public Guid? CurrentPlayerId {get;set;}
 
     private string GetBorderClasses(){
-        var baseClasses = "rounded-lg border-l-[15px] ";
+        var baseClasses = "rounded-lg border-l-[15px] border-t-2 border-b-2 border-r-2 ";
 
         return Player.PlayerId == CurrentPlayerId
             ? baseClasses + "border-green-600"
