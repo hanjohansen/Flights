@@ -319,6 +319,18 @@ namespace Flights.Test.Shanghai
                 foreach(var player in state.PlayerStates){
                     Assert.True(player.Rank != null);
                 }
+
+                var orderedPlayers = state.PlayerStates.OrderByDescending(x => x.Points).ToList();
+
+                int rank = 1;
+                var lastPoints = orderedPlayers[0].Points;
+                foreach(var player in orderedPlayers){
+                    if(player.Points < lastPoints)
+                        rank++;
+
+                    Assert.True(player.Rank == rank);
+                    lastPoints = player.Points;
+                }
             }
 
             private int GetRandomPoint(int target, Random rand){

@@ -146,7 +146,7 @@ public class ShanghaiSolver : IGameSolver
         var result = new List<PlayerState>();
         var playerPoints = playerStates.Select(x => x.Points)
             .Distinct()
-            .OrderBy(x => x)
+            .OrderByDescending(x => x)
             .ToList();
         
         foreach(var player in playerStates){
