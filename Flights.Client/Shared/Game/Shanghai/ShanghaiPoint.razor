@@ -1,10 +1,16 @@
-<div class="flex flex-row border border-gray-200 pl-7">
+<div class="@GetBorderClasses()">
     <div class="text-gray-400 mt-3 min-w-[15px] text-end">
-        @GetPointString()
+        @if(PointValue == null){
+            <div class="text-gray-200">
+                @GetPointString()
+            </div>    
+        }else{
+            @GetPointString()
+        }
     </div>
     <div class="text-3xl ml-2">
         @if(PointValue == null){
-            <div class="text-gray-400">
+            <div class="text-gray-200">
                 @GetValueString()
             </div>    
         }else{
@@ -19,6 +25,9 @@
 
     [Parameter]
     public int? PointValue {get;set;}
+
+    [Parameter]
+    public int LastTarget {get;set;}
 
     private string GetPointString(){
         if(PointTarget == 25){
@@ -36,5 +45,14 @@
             return "/";
 
         return PointValue?.ToString() ?? string.Empty;
+    }
+
+    private string GetBorderClasses(){
+        var baseClass = "flex flex-row border pl-7 "; //border-gray-200
+
+        if(PointTarget == LastTarget)
+            return baseClass + "border-green-500 border-2";
+
+        return baseClass + "border-gray-200";
     }
 }

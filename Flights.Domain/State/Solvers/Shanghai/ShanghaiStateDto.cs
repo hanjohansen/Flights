@@ -8,6 +8,8 @@ public class ShanghaiStateDto
 
     public int Points {get;set;}
 
+    public int CurrentTarget {get;set;}
+
     public int? V1 {get;set;}
     public int? V2 {get;set;}
     public int? V3 {get;set;}
@@ -32,6 +34,7 @@ public class ShanghaiStateDto
 
     public ShanghaiState ToState(){
         return new ShanghaiState(
+            CurrentTarget,
             V1,
             V2,
             V3,

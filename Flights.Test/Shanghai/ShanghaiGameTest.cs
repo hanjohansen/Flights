@@ -76,6 +76,7 @@ namespace Flights.Test.Shanghai
             Assert.True(playerState.ShanghaiState!.V2 == 4);
             Assert.True(playerState.ShanghaiState!.V3 == 9);
 
+            Assert.True(playerState.ShanghaiState!.CurrentTarget == 3);
             Assert.True(state.CurrentPlayerId == state.PlayerStates[1].PlayerId);
             Assert.True(state.ShanghaiState!.CurrentTarget == 1);
 
@@ -102,6 +103,7 @@ namespace Flights.Test.Shanghai
             Assert.True(playerState.ShanghaiState!.V2 == 6);
             Assert.True(playerState.ShanghaiState!.V3 == 3);
 
+            Assert.True(playerState.ShanghaiState!.CurrentTarget == 3);
             Assert.True(state.CurrentPlayerId == state.PlayerStates[2].PlayerId);
             Assert.True(state.ShanghaiState!.CurrentTarget == 1);
 
@@ -157,6 +159,7 @@ namespace Flights.Test.Shanghai
             Assert.True(playerState.ShanghaiState!.V5 == 10);
             Assert.True(playerState.ShanghaiState!.V6 == 0);
 
+            Assert.True(playerState.ShanghaiState!.CurrentTarget == 6);
             Assert.True(state.CurrentPlayerId == state.PlayerStates[1].PlayerId);
             Assert.True(state.ShanghaiState!.CurrentTarget == 4);
 

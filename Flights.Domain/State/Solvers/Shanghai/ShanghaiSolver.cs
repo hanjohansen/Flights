@@ -48,6 +48,16 @@ public class ShanghaiSolver : IGameSolver
                 currentTarget = 25;
 
             currentPlayerId = currentPlayer.Player.Id;
+
+            playerStates = playerStates.Select(x => {
+                if(x.PlayerId == currentPlayerId){
+                    var newTarget = x.ShanghaiState!.CurrentTarget == 20
+                        ? x.ShanghaiState!.CurrentTarget + 5
+                        : x.ShanghaiState!.CurrentTarget +1;
+                    return x with {ShanghaiState = x.ShanghaiState! with {CurrentTarget = newTarget}};
+                }
+                return x;
+            }).ToList();
         }
 
         return new GameState(
@@ -66,7 +76,7 @@ public class ShanghaiSolver : IGameSolver
 
     private List<PlayerState> GetPlayerStates(){
         var playerDtos = _game.Players
-            .Select(x => new ShanghaiStateDto(){PlayerId = x.Player.Id})
+            .Select(x => new ShanghaiStateDto(){PlayerId = x.Player.Id, CurrentTarget = 1})
             .ToList();
 
         foreach(var round in _game.Rounds){
@@ -135,6 +145,8 @@ public class ShanghaiSolver : IGameSolver
                 setProp.SetValue(playerState, points);
                 playerState.Points += points;
             }
+
+            playerState.CurrentTarget = intTargetNumber;
 
             intTargetNumber = intTargetNumber == 20
                 ? intTargetNumber + 5

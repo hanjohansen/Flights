@@ -77,6 +77,7 @@ public record CricketState(
 public record ShanghaiGameState(int CurrentTarget);
 
 public record ShanghaiState(
+    int CurrentTarget,
     int? V1,
     int? V2,
     int? V3,
