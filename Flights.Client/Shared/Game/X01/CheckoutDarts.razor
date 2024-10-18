@@ -3,7 +3,7 @@
 
 <div class="flex flex-row">
     @foreach(var dart in Checkout?.GetDartsList() ?? new List<DartState>()){
-        <div class="rounded-full bg-blue-800 text-white font-semibold text-2xl py-1 px-4 mr-2">
+        <div class="@GetPillClasses()">
             @GetDartString(dart)
         </div>
     }
@@ -12,6 +12,9 @@
 @code{
     [Parameter]
     public DartsState? Checkout {get;set;}
+
+    [Parameter]
+    public bool IsCurrentPlayer {get;set;}
 
     public string GetDartString(DartState dart){
         var result = "";
@@ -29,5 +32,14 @@
 
         result += dart.Value;
         return result;
+    }
+
+    private string GetPillClasses(){
+        var baseClass = "rounded-full font-semibold text-2xl py-1 px-4 mr-2 ";
+
+        if(IsCurrentPlayer)
+            return baseClass + "bg-blue-800 text-white ";
+
+        return baseClass + "bg-gray-400 text-white ";
     }
 }

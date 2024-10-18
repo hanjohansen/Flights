@@ -36,9 +36,9 @@
             </div>
             <div class="grid items-center">
                 <DartStats Darts="@Player.Darts" IsBust="@Player.IsBust"/>
-                @if(@CurrentPlayerId == Player.PlayerId && Player.Checkout != null){
+                @if(Player.Checkout != null){
                     <div class="grid justify-items-center">
-                        <CheckoutDarts Checkout="@Player.Checkout"/>
+                        <CheckoutDarts Checkout="@Player.Checkout" IsCurrentPlayer="@(CurrentPlayerId == Player.PlayerId)"/>
                     </div>
                 }
             </div>

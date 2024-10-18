@@ -37,10 +37,10 @@ public class X01Solver : IGameSolver
             rounds++;
             playerStates = playerStates.Select(x => {
                 if(x.PlayerId == nextPlayerId)
-                    return x with { Darts = new DartsState(null, null, null), 
+                    return x with { Darts = new DartsState(null, null, null),
                                     Checkout = _game.OutModifier == InOutModifier.Double 
-                                        ? _checkoutRepo.GetCheckout(x.Points, 3)
-                                        : null};
+                                                        ? _checkoutRepo.GetCheckout(x.Points, 3)
+                                                        : null};
                                         
                 return x;
                 })
@@ -210,6 +210,7 @@ public class X01Solver : IGameSolver
             var dartState = new DartsState(first, second, third);
 
             var remainingDarts = dartState.RemainingDarts();
+            remainingDarts = remainingDarts == 0 ? 3 : remainingDarts;
             DartsState? checkout = null;
 
             if(_game.OutModifier == InOutModifier.Double)
