@@ -49,11 +49,13 @@ public class ShanghaiSolver : IGameSolver
 
             currentPlayerId = currentPlayer.Player.Id;
 
-            playerStates = playerStates.Select(x => {
+            playerStates = currentTarget == 1
+                ? playerStates
+                : playerStates.Select(x => {
                 if(x.PlayerId == currentPlayerId){
                     var newTarget = x.ShanghaiState!.CurrentTarget == 20
                         ? x.ShanghaiState!.CurrentTarget + 5
-                        : x.ShanghaiState!.CurrentTarget +1;
+                        : x.ShanghaiState!.CurrentTarget + 1;
                     return x with {ShanghaiState = x.ShanghaiState! with {CurrentTarget = newTarget}};
                 }
                 return x;

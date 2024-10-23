@@ -31,6 +31,7 @@ namespace Flights.Test.Shanghai
                 Assert.False(player.IsBust);
                 Assert.True(player.Points == 0);
                 Assert.Null(player.Rank);
+                Assert.True(player.ShanghaiState!.CurrentTarget == 1);
             }
         }
         
