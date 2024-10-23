@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Infrastructure.Data;
 
-public class TestingDbContextFactory : IDbContextFactory<FlightsDbContext>{
+public class DbContextFactory : IDbContextFactory<FlightsDbContext>{
 
-    public TestingDbContextFactory(string connStr){
+    public DbContextFactory(string connStr){
         _connStr = connStr;
     }
 

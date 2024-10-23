@@ -8,7 +8,7 @@ public class RepoTest
 {
     private IGameRepository GetGameRepo(){
         var conn = "DataSource=/home/hanjo/Documents/Code/Flights/Flights.Client/app.db;Cache=Shared;foreign keys=true";
-        var factory = new TestingDbContextFactory(conn);
+        var factory = new DbContextFactory(conn);
 
         return new GameRepository(factory);
     }

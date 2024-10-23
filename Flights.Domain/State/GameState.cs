@@ -72,7 +72,17 @@ public record CricketState(
     CricketValue V19 = CricketValue.None,
     CricketValue V20 = CricketValue.None,
     CricketValue Bulls = CricketValue.None
-);
+){
+    public bool AllClosed(){
+        return V15 == CricketValue.Closed
+            && V16 == CricketValue.Closed
+            && V17 == CricketValue.Closed
+            && V18 == CricketValue.Closed
+            && V19 == CricketValue.Closed
+            && V20 == CricketValue.Closed
+            && Bulls == CricketValue.Closed;
+    }
+};
 
 public record ShanghaiGameState(int CurrentTarget);
 

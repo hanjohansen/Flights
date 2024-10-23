@@ -5,6 +5,8 @@ public class TestHelpers
 {
     private List<PlayerEntity> _players = new();
 
+    private Random _random = new Random(); 
+
     public TestHelpers(){
         SetupPlayers();
     }
@@ -19,5 +21,11 @@ public class TestHelpers
 
     public List<PlayerEntity> GetPlayers(int count){
         return _players.Take(count).ToList();
+    }
+
+    public int GetRandom(List<int> from){
+        var randIndex = _random.Next(0, from.Count);
+
+        return from[randIndex];
     }
 }
