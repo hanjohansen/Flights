@@ -180,10 +180,7 @@ public class CricketSolver : IGameSolver
         }
     }
 
-    private void ProcessReflectedValue(PropertyInfo vProp, int value, CricketStateDto player, List<CricketStateDto> otherPlayers){
-        var allPlayers = otherPlayers.Where(x => x.Rank == null).ToList();
-        allPlayers.Add(player);
-        
+    private void ProcessReflectedValue(PropertyInfo vProp, int value, CricketStateDto player, List<CricketStateDto> otherPlayers){        
         var vValue = (CricketValue)vProp.GetValue(player)!;
 
         if(vValue == CricketValue.Closed){
@@ -199,6 +196,10 @@ public class CricketSolver : IGameSolver
             if(newValue < CricketValue.Open)
                 return;
         }
+
+        var allPlayers = otherPlayers.ToList();
+        allPlayers.Add(player);
+        
         if(allPlayers.All(x => (CricketValue)vProp.GetValue(x)! == CricketValue.Open)){
             allPlayers.ForEach(x => vProp.SetValue(x, CricketValue.Closed));
             return;
