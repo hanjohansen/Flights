@@ -2,27 +2,22 @@ using Flights.Domain.Entities;
 
 namespace Flights.Domain.State.Solvers.Shanghai;
 
-public class ShanghaiSolver : IGameSolver
+public class ShanghaiSolver : SolverBase, IGameSolver
 {
-    private readonly GameEntity _game;
-
-    public ShanghaiSolver(GameEntity game)
-    {
-        _game = game;
-    }
+    public ShanghaiSolver(GameEntity game):base(game){}
 
     public GameState Solve()
     {
         var playerStates = GetPlayerStates();
-        var rounds = _game.Rounds.Count;
-        var finished = _game.Rounds.Count == 7
-            && _game.Rounds.Last()
+        var rounds = Game.Rounds.Count;
+        var finished = Game.Rounds.Count == 7
+            && Game.Rounds.Last()
                 .RoundStats.All(x => x.GetDartsList().Count == 3);
 
         if(finished){
-            _game.Finished = DateTimeOffset.UtcNow;
+            Game.Finished = DateTimeOffset.UtcNow;
             playerStates = CalculateRanks(playerStates);
-            var roundStats = _game.Rounds.Last().RoundStats;
+            var roundStats = Game.Rounds.Last().RoundStats;
             foreach(var roundStat in roundStats){
                 var playerState = playerStates.First(x => x.PlayerId == roundStat.Player.Id);
                 roundStat.Rank = playerState.Rank;
@@ -33,12 +28,12 @@ public class ShanghaiSolver : IGameSolver
         var currentTarget = 0;
 
         if(!finished){
-            currentTarget = (_game.Rounds.Count - 1) * 3;
-            var currentPlayer = _game.Rounds.Last()
+            currentTarget = (Game.Rounds.Count - 1) * 3;
+            var currentPlayer = Game.Rounds.Last()
                 .RoundStats.FirstOrDefault(x => x.GetDartsList().Count < 3);
 
             if(currentPlayer == null){
-                currentPlayer = _game.Rounds.Last().RoundStats.First();
+                currentPlayer = Game.Rounds.Last().RoundStats.First();
                 currentTarget += 4;
             }else{
                 currentTarget += currentPlayer.GetDartsList().Count + 1;
@@ -63,11 +58,11 @@ public class ShanghaiSolver : IGameSolver
         }
 
         return new GameState(
-            Id: _game.Id,
-            Type: _game.Type,
+            Id: Game.Id,
+            Type: Game.Type,
             InModifier: InOutModifier.None,
             OutModifier: InOutModifier.None,
-            Started: _game.Started,
+            Started: Game.Started,
             Round: rounds,
             Finished: finished,
             CurrentPlayerId: currentPlayerId,
@@ -77,12 +72,12 @@ public class ShanghaiSolver : IGameSolver
     }
 
     private List<PlayerState> GetPlayerStates(){
-        var playerDtos = _game.Players
+        var playerDtos = Game.Players
             .Select(x => new ShanghaiStateDto(){PlayerId = x.Player.Id, CurrentTarget = 1})
             .ToList();
 
-        foreach(var round in _game.Rounds){
-            var intTargetNumber = (_game.Rounds.IndexOf(round) * 3) + 1;
+        foreach(var round in Game.Rounds){
+            var intTargetNumber = (Game.Rounds.IndexOf(round) * 3) + 1;
 
             foreach(var playerRound in round.RoundStats){
                 var playerDto = playerDtos.First(x => x.PlayerId == playerRound.Player.Id);
@@ -94,7 +89,7 @@ public class ShanghaiSolver : IGameSolver
 
         var states = new List<PlayerState>();
         foreach(var dto in playerDtos){
-            var player = _game.Players.First(x => x.Player.Id == dto.PlayerId);
+            var player = Game.Players.First(x => x.Player.Id == dto.PlayerId);
             var state = new PlayerState(
                 PlayerId: player.Player.Id,
                 PlayerName: player.Player.Name,

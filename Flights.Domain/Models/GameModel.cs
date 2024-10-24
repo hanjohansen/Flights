@@ -42,6 +42,10 @@ public class GameModel
         return _gameSolver.Solve();
     }
 
+    public GameState FinalizeGame(){
+        return _gameSolver.FinalizeGame();
+    }
+
     public GameState AddPlayerStats(Guid playerId, StatModel dart1, StatModel dart2, StatModel dart3){
         AddPlayerStats(playerId, dart1);
         AddPlayerStats(playerId, dart2);
