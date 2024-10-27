@@ -106,23 +106,4 @@ public class GameRepository : IGameRepository
         await db.SaveChangesAsync();
         return newState;
     }
-
-    public async Task<GameState> FinalizeGame(Guid gameId)
-    {
-        using var db = await _dbFactory.CreateDbContextAsync();
-
-        var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
-
-        if (game == null)
-            throw new FlightsGameException("Game not found!");
-
-        if (game.Finished != null)
-            throw new FlightsGameException("Game is finished!");
-
-        var model = GameModel.FromEntity(game);
-        var newState = model.FinalizeGame();
-
-        await db.SaveChangesAsync();
-        return newState;
-    }
 }

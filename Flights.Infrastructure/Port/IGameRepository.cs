@@ -16,6 +16,4 @@ public interface IGameRepository
     Task<List<GameEntity>> GetGames();
 
     Task<GameModel> GetGame(Guid id);
-
-    Task<GameState> FinalizeGame(Guid gameId);
 }

@@ -2,15 +2,20 @@ using System.Reflection;
 using Flights.Domain.Entities;
 
 namespace Flights.Domain.State.Solvers.Cricket;
-public class CricketSolver : SolverBase, IGameSolver
+public class CricketSolver : IGameSolver
 {
-    public CricketSolver(GameEntity game):base(game){}
+    private readonly GameEntity _game;
+
+    public CricketSolver(GameEntity game)
+    {
+        _game = game;
+    }
 
     public GameState Solve()
     {
         var playerStates = GetPlayerStates();
         var gameState = SummarizeStates(playerStates.Select(x => x.CricketState!).ToList());
-        var rounds = Game.Rounds.Count;
+        var rounds = _game.Rounds.Count;
         var finished = playerStates.All(x => x.Rank != null);
         var currentPlayerId = GetNextPlayer(playerStates);
 
@@ -21,15 +26,15 @@ public class CricketSolver : SolverBase, IGameSolver
             playerStates = playerStates.Select(x => x with {Darts = null}).ToList();        
             }
 
-        if(finished && Game.Finished == null)
-            Game.Finished = DateTimeOffset.UtcNow;
+        if(finished && _game.Finished == null)
+            _game.Finished = DateTimeOffset.UtcNow;
 
         return new GameState(
-            Id: Game.Id,
-            Type: Game.Type,
+            Id: _game.Id,
+            Type: _game.Type,
             InModifier: InOutModifier.None,
             OutModifier: InOutModifier.None,
-            Started: Game.Started,
+            Started: _game.Started,
             Round: rounds,
             Finished: finished,
             CurrentPlayerId: currentPlayerId,
@@ -39,13 +44,13 @@ public class CricketSolver : SolverBase, IGameSolver
     }
 
     private List<PlayerState> GetPlayerStates(){
-        var playerStateDtos = Game.Players
+        var playerStateDtos = _game.Players
             .Select(x => new CricketStateDto(){
                 PlayerId = x.Player.Id,
             })
             .ToList();
 
-        foreach(var round in Game.Rounds){
+        foreach(var round in _game.Rounds){
             playerStateDtos.ForEach(x => x.Darts = null);
 
             foreach(var player in round.RoundStats){
@@ -78,7 +83,7 @@ public class CricketSolver : SolverBase, IGameSolver
 
         var result = new List<PlayerState>();
         foreach(var state in playerStateDtos){
-            var playerEntity = Game.Players.First(x => x.Player.Id == state.PlayerId);
+            var playerEntity = _game.Players.First(x => x.Player.Id == state.PlayerId);
             var playerState = new PlayerState(
                 PlayerId: playerEntity.Player.Id,
                 PlayerName: playerEntity.Player.Name,
@@ -203,11 +208,11 @@ public class CricketSolver : SolverBase, IGameSolver
         if(justReachedOpen)
             return;
 
-        if(Game.Type == GameType.Cricket){
+        if(_game.Type == GameType.Cricket){
             if(otherPlayers.Any(x => (CricketValue)vProp.GetValue(x)! < CricketValue.Open))
                 player.Points += value;
         }
-        if(Game.Type == GameType.CtCricket){
+        if(_game.Type == GameType.CtCricket){
             otherPlayers.ForEach(x => {
                 if((CricketValue)vProp.GetValue(x)! < CricketValue.Open)
                     x.Points += value;
@@ -223,7 +228,7 @@ public class CricketSolver : SolverBase, IGameSolver
     }
 
     private void CheckRanks(List<CricketStateDto> players){
-        if(Game.Type == GameType.Cricket)
+        if(_game.Type == GameType.Cricket)
             CheckRanksCricket(players);
         else
             CheckRanksCtCricket(players);
@@ -352,6 +357,9 @@ public class CricketSolver : SolverBase, IGameSolver
             x.Darts?.D3 == null ||
             x.Darts?.D2 == null ||
             x.Darts?.D1 == null)?.PlayerId;
+
+        // if(firstWithMissingDarts == null)
+        //     return remaining.First().PlayerId;
 
         return firstWithMissingDarts;
     }
