@@ -264,7 +264,7 @@ public class CricketSolver : IGameSolver
                     rankingChanged = true;
                 }else if(playerPoints >= otherMaxPoints){
                     if(playerPoints == otherMaxPoints){
-                        others.Where(x => x.Points == playerPoints)
+                        others.Where(x => x.Points == playerPoints && x.AllOpen())
                         .ToList()
                         .ForEach(x => x.Rank = nextRank);
                     }
@@ -305,7 +305,7 @@ public class CricketSolver : IGameSolver
                     rankingChanged = true;
                 }else if(playerPoints <= otherMaxPoints){
                     if(playerPoints == otherMaxPoints){
-                        others.Where(x => x.Points == playerPoints)
+                        others.Where(x => x.Points == playerPoints && x.AllOpen())
                         .ToList()
                         .ForEach(x => x.Rank = nextRank);
                     }
