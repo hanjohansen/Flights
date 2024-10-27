@@ -7,11 +7,10 @@ public class FlightsDbContext : DbContext
 {
     public virtual DbSet<GameEntity> Games { get; set; } = null!;
     public virtual DbSet<PlayerEntity> Players { get; set; } = null!;
+    public virtual DbSet<PlayerFileEntity> PlayerFiles { get; set; } = null!;
 
     public FlightsDbContext(DbContextOptions<FlightsDbContext> options) 
-        : base(options){
-
-    }
+        : base(options){}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -62,6 +61,16 @@ public class FlightsDbContext : DbContext
             entity.OwnsOne(x => x.FirstDart);
             entity.OwnsOne(x => x.SecondDart);
             entity.OwnsOne(x => x.ThirdDart);
+
+            entity.HasOne(x => x.Player)
+                .WithMany()
+                .HasForeignKey(x => x.PlayerId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<PlayerFileEntity>(entity => {
+            entity.ToTable("player_files");
+            entity.HasKey(x => x.Id);
 
             entity.HasOne(x => x.Player)
                 .WithMany()

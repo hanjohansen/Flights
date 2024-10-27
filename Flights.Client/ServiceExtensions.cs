@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Flights.Infrastructure.Data;
 using Flights.Infrastructure.Data.Repos;
 using Flights.Infrastructure.Port;
+using Flights.Client.Service.Port.FileStorage;
+using Flights.Client.Service.FileStorage;
 
 namespace Flights.Client;
 
@@ -18,6 +20,14 @@ public static class ServiceExtensions
         builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
         builder.Services.AddScoped<IGameRepository, GameRepository>();
         builder.Services.AddScoped<IStatRepository, StatRepository>();
+        
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddFileStorage(this WebApplicationBuilder builder){
+
+        builder.Services.AddScoped<IFileStorage, BaseFileStorage>();
+        builder.Services.AddScoped<IJingleFileStorage, JingleFileStorage>();
         
         return builder;
     }
