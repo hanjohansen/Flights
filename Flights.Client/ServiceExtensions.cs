@@ -4,6 +4,8 @@ using Flights.Infrastructure.Data.Repos;
 using Flights.Infrastructure.Port;
 using Flights.Client.Service.Port.FileStorage;
 using Flights.Client.Service.FileStorage;
+using Flights.Client.Service.Port;
+using Flights.Client.Service;
 
 namespace Flights.Client;
 
@@ -18,6 +20,7 @@ public static class ServiceExtensions
         });
 
         builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+        builder.Services.AddScoped<IPlayerFileRepository, PlayerFileRepository>();
         builder.Services.AddScoped<IGameRepository, GameRepository>();
         builder.Services.AddScoped<IStatRepository, StatRepository>();
         
@@ -28,6 +31,7 @@ public static class ServiceExtensions
 
         builder.Services.AddScoped<IFileStorage, BaseFileStorage>();
         builder.Services.AddScoped<IJingleFileStorage, JingleFileStorage>();
+        builder.Services.AddScoped<IJingleFileUploadService, JingleFileUploadService>();
         
         return builder;
     }
