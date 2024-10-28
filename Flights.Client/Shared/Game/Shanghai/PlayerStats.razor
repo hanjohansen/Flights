@@ -43,6 +43,9 @@
     private string GetBorderClasses(){
         var baseClasses = "rounded-lg border-l-[15px] border-t-2 border-b-2 border-r-2 ";
 
+        if(Player.Rank != null)
+            return baseClasses + "border-yellow-400";
+
         return Player.PlayerId == CurrentPlayerId
             ? baseClasses + "border-green-600"
             : baseClasses + "border-gray-400";
