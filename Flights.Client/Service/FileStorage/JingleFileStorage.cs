@@ -22,6 +22,6 @@ public class JingleFileStorage : IJingleFileStorage
     }
 
     public void Delete(string storagePath){
-        
+        _fileStorage.DeleteFile(storagePath);
     }
 }

@@ -24,11 +24,25 @@ public class PlayerFileRepository : IPlayerFileRepository
 
         var playerFile = new PlayerFileEntity(){
             PlayerId = playerId,
+            FileType = PlayerFileType.Jingle,
             FileName = fileName,
-            SourcePath = storagePath
+            StoragePath = storagePath
         };
 
         await db.PlayerFiles.AddAsync(playerFile);
+        await db.SaveChangesAsync();
+    }
+
+    public async Task TryDeletePlayerJingle(Guid playerId){
+        using var db = await _dbFactory.CreateDbContextAsync();
+
+        var file = await db.PlayerFiles
+            .FirstOrDefaultAsync(x => x.PlayerId == playerId && x.FileType == PlayerFileType.Jingle);
+
+        if(file == null)
+            return;
+
+        db.PlayerFiles.Remove(file);
         await db.SaveChangesAsync();
     }
 
@@ -36,12 +50,24 @@ public class PlayerFileRepository : IPlayerFileRepository
         using var db = await _dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
-            .FirstOrDefaultAsync(x => x.Id == fileId);
+            .FirstOrDefaultAsync(x => x.Id == fileId && x.FileType == PlayerFileType.Jingle);
 
         if(file == null)
             throw new FlightsGameException("File not found!");
 
         db.PlayerFiles.Remove(file);
         await db.SaveChangesAsync();
+    }
+
+    public async Task<PlayerFileEntity?> GetPlayerJingle(Guid playerId)
+    {
+        using var db = await _dbFactory.CreateDbContextAsync();
+
+        var file = await db.PlayerFiles
+            .AsNoTracking()
+            .Include(x => x.Player)
+            .FirstOrDefaultAsync(x => x.PlayerId == playerId && x.FileType == PlayerFileType.Jingle);
+
+        return file;
     }
 }
