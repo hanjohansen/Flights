@@ -82,6 +82,16 @@ public record CricketState(
             && V20 == CricketValue.Closed
             && Bulls == CricketValue.Closed;
     }
+
+    public bool AllOpen(){
+        return V15 >= CricketValue.Open
+               && V16 >= CricketValue.Open
+               && V17 >= CricketValue.Open
+               && V18 >= CricketValue.Open
+               && V19 >= CricketValue.Open
+               && V20 >= CricketValue.Open
+               && Bulls >= CricketValue.Open;
+    }
 };
 
 public record ShanghaiGameState(int CurrentTarget);

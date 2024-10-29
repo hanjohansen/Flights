@@ -9,11 +9,10 @@ public class CricketSimTest : CricketSimBase
 {
     [Fact]
     public void RunSim(){
-        for(int i = 1; i <= 1000; i++){
+        for(int i = 1; i <= SimRounds; i++){
             Debug.WriteLine("running sim #" + i);
             SimulateGame();
         }
-            
     }
 
     private void SimulateGame(){
@@ -42,16 +41,7 @@ public class CricketSimTest : CricketSimBase
 
             darts++;            
         }
-
-        if(!state.Finished){
-            foreach(var stat in state.PlayerStates)
-                Debug.WriteLine(stat.PlayerName + " " + stat.Points);
-            throw new TestClassException("game did not finish!");
-        }
-
-        if(state.PlayerStates.Any(x => x.Rank == null))
-            throw new TestClassException("ranking issue");
-
-        Assert.True(true);
+        
+        DoFinishAsserts(state);
     }
 }

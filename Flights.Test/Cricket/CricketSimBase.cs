@@ -4,11 +4,12 @@ namespace Flights.Test.Cricket;
 
 public class CricketSimBase
 {
-    public TestHelpers _helpers = new TestHelpers();
+    protected TestHelpers _helpers = new TestHelpers();
 
-    public const int MaxGameDarts = 2000; 
+    protected const int MaxGameDarts = 2000; 
+    protected const int SimRounds = 500; 
 
-    public List<int> GetDartOptions(CricketState state){
+    protected List<int> GetDartOptions(CricketState state){
         var result = new List<int>();
         result.Add(0);
 
@@ -48,5 +49,19 @@ public class CricketSimBase
 
         return result;
     }
-    
+
+    protected void DoFinishAsserts(GameState state)
+    {
+        Assert.True(state.Finished);
+        Assert.DoesNotContain(state.PlayerStates, x => x.Rank == null);
+
+        var openPlayers = state.PlayerStates.Where(x => x.CricketState!.AllOpen() == false).ToList();
+        var openCount = openPlayers.Count;
+        Assert.True(openCount <= 1);
+
+        if (openCount == 0)
+            return;
+        
+        Assert.True(openPlayers.Single().Rank == state.PlayerStates.Count);
+    }
 }
