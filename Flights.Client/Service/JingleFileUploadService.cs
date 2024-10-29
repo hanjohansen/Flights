@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Flights.Client.Service;
 
-public class JingleFileUploadService : IJingleFileUploadService
+public class JingleFileUploadService : IJingleFileUploadService     
 {
     private readonly IJingleFileStorage _fileStorage;
     private readonly IPlayerFileRepository _playerFileRepo;
@@ -18,13 +18,13 @@ public class JingleFileUploadService : IJingleFileUploadService
 
     public async Task UploadJingleFile(Guid playerId, IBrowserFile file)
     {
-        FileData? fileData = null;
+        FileData? fileData;
 
         try{
             fileData = await _fileStorage.StoreJingleFile(file);
         }catch(FlightsGameException fex){
             throw new FlightsGameException("Error saving file: " + fex.Message);
-        }catch(Exception _){
+        }catch(Exception){
             throw new FlightsGameException("Error saving file");
         }        
 
@@ -34,7 +34,7 @@ public class JingleFileUploadService : IJingleFileUploadService
         }catch(FlightsGameException fex){
             _fileStorage.Delete(fileData.StoragePath);
             throw new FlightsGameException("Error saving file: " + fex.Message);
-        }catch(Exception _){
+        }catch(Exception){
             _fileStorage.Delete(fileData.StoragePath);
             throw new FlightsGameException("Error saving file");
         } 
@@ -43,7 +43,7 @@ public class JingleFileUploadService : IJingleFileUploadService
     public async Task ClearPlayerJingle(Guid playerId)
     {
         var jingle = await _playerFileRepo.GetPlayerJingle(playerId);
-
+        
         if(jingle == null)
             return;
 
@@ -52,7 +52,7 @@ public class JingleFileUploadService : IJingleFileUploadService
             await _playerFileRepo.DeletePlayerJingle(jingle.Id);
         }catch(FlightsGameException fex){
             throw new FlightsGameException("Error removing file: " + fex.Message);
-        }catch(Exception _){
+        }catch(Exception){
             throw new FlightsGameException("Error removing file");
         } 
     }
