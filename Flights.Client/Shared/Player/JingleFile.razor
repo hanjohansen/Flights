@@ -14,7 +14,7 @@
             <ActivatorContent>
                 <MudFab Color="Color.Primary"
                         StartIcon="@Icons.Material.Filled.MusicNote"
-                        Label="Load jingle" />
+                        Label="Upload jingle" />
             </ActivatorContent>
         </MudFileUpload>
     </div>
@@ -22,7 +22,22 @@
 else
 {
     <div>
-        @PlayerJingleFile.FileName
+        <div class="flex flex-row">
+            <div class="pt-2">
+                <MudIcon Icon="@Icons.Material.Filled.MusicNote" Size="Size.Small" Color="Color.Default"/>
+            </div>
+            <div class="ml-2 pt-2">
+                @PlayerJingleFile.FileName
+            </div>
+            <div class="ml-6 mr-4" @onclick="() => DeleteJingle()">
+                <MudIcon Icon="@Icons.Material.Filled.Cancel" Size="Size.Large" Color="Color.Error"/>
+            </div>     
+        </div>
+        <div class="flex flex-row mt-2">
+            <div>
+                <audio src="@PlayerJingleFile.StoragePath" controls/>
+            </div>      
+        </div>
     </div>
 }
 
@@ -52,6 +67,20 @@ else
         }catch(Exception){
             Snackbar.Add("Weird unexpected error occured", Severity.Error);
         }
+    }
+
+    private async Task DeleteJingle(){
+        if(PlayerJingleFile == null)
+            return;
+
+        try{
+            await JingleFileService.ClearPlayerJingle(PlayerId);
+            PlayerJingleFile = null;
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }catch(Exception){
+            Snackbar.Add("Weird unexpected error occured", Severity.Error);
+        }        
     }
 }    
 

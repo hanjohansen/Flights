@@ -8,6 +8,8 @@ public class BaseFileStorage : IFileStorage
 {
     private readonly IWebHostEnvironment _environment;
     public const int MaxFileSize = 5500000;
+
+    public const string BaseSubFolder = "Storage";
     
     public BaseFileStorage(IWebHostEnvironment environment){
         _environment = environment;
@@ -28,23 +30,26 @@ public class BaseFileStorage : IFileStorage
             Directory.CreateDirectory(uploadDirectory);
 
         var intFileName = $"{Guid.NewGuid()}{fileExtension}";
-        var intPath = Path.Combine(uploadDirectory, intFileName);
+        var intPathPhysical = Path.Combine(uploadDirectory, intFileName);
+        var intPathRelative = Path.Combine(BaseSubFolder, subFolder, intFileName);
 
-        await using var fs = new FileStream(intPath, FileMode.Create);
+        await using var fs = new FileStream(intPathPhysical, FileMode.Create);
         await file.OpenReadStream(MaxFileSize).CopyToAsync(fs);
 
-        return new FileData(file.Name, intPath);
+        return new FileData(file.Name, intPathRelative);
     }
 
     public void DeleteFile(string storagePath){
-        if(!File.Exists(storagePath))
+        var path = Path.Combine(_environment.WebRootPath, storagePath);
+
+        if(!File.Exists(path))
             throw new FlightsGameException("File not found in Storage");
 
-        File.Delete(storagePath);
+        File.Delete(path);
     }
 
     private string BuildBasePath(string subFolder){
-        var path = Path.Combine(_environment.WebRootPath, "Storage");
+        var path = Path.Combine(_environment.WebRootPath, BaseSubFolder);
 
         if(!string.IsNullOrEmpty(subFolder))
             path = Path.Combine(path, subFolder);
