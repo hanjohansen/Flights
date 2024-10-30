@@ -1,0 +1,58 @@
+@using Flights.Client.Service.Port
+@using Flights.Domain.Exceptions
+@using Flights.Infrastructure.Port
+@using Flights.Domain.Entities
+
+@inject ISnackbar Snackbar
+@inject IPlayerFileRepository PlayerFileRepo
+@inject IJingleFileUploadService JingleFileService
+
+@if (PlayerJingleFile == null)
+{
+    <div>
+        <MudFileUpload T="IBrowserFile" Accept=".mp3, .MP3" FilesChanged="UploadJingle">
+            <ActivatorContent>
+                <MudFab Color="Color.Primary"
+                        StartIcon="@Icons.Material.Filled.MusicNote"
+                        Label="Load jingle" />
+            </ActivatorContent>
+        </MudFileUpload>
+    </div>
+}
+else
+{
+    <div>
+        @PlayerJingleFile.FileName
+    </div>
+}
+
+@code{
+    [Parameter]
+    public Guid PlayerId { get; set; }
+
+    private PlayerFileEntity? PlayerJingleFile {get;set;}
+
+    protected override async Task OnInitializedAsync() {
+        await LoadPlayerFile();
+    }
+
+    private async Task LoadPlayerFile(){
+        PlayerJingleFile = await PlayerFileRepo.GetPlayerJingle(PlayerId);
+    }
+
+    private async Task UploadJingle(IBrowserFile? file){
+        if(file == null)
+            return;
+
+        try{
+            await JingleFileService.UploadJingleFile(PlayerId, file);
+            await LoadPlayerFile();
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }catch(Exception){
+            Snackbar.Add("Weird unexpected error occured", Severity.Error);
+        }
+    }
+}    
+
+

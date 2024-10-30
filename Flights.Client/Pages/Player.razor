@@ -2,12 +2,12 @@
 @using Flights.Client.Shared.Player
 @using Flights.Client.Shared.Toolkit
 @using Flights.Domain.Entities
+@using Flights.Domain.Exceptions
 @using Flights.Infrastructure.Port
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IPlayerRepository PlayerRepo
-@inject IPlayerFileRepository PlayerFileRepo
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
@@ -47,32 +47,9 @@
                 </div>
             </div>   
         }
-        
-        
-        @if (JingleFile == null)
-        {
-            <div>
-                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-                    <ActivatorContent>
-                        <MudFab Color="Color.Secondary"
-                                StartIcon="@Icons.Material.Filled.Image"
-                                Label="Load jingle" />
-                    </ActivatorContent>
-                </MudFileUpload>
-                @foreach (var file in _files)
-                {
-                    <div>
-                        @file.Name
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div>
-                @JingleFile.FileName
-            </div>
-        }
+        <div class="mt-8 pl-4 pb-4">
+            <JingleFile PlayerId="@PlayerId"/>
+        </div>
     </div>
 </div>
 
@@ -82,14 +59,12 @@
     public Guid PlayerId { get; set; }
 
     private PlayerEntity? PlayerEntity {get;set;}
-    private PlayerFileEntity? JingleFile {get;set;}
 
     private bool IsEditing {get;set;}
     private string EditName {get;set;} = string.Empty;
 
     protected override async Task OnInitializedAsync() {
         PlayerEntity = await PlayerRepo.GetPlayer(PlayerId);
-        JingleFile = await PlayerFileRepo.GetPlayerJingle(PlayerId);
     }
 
     private void GoToPlayers()
@@ -116,8 +91,10 @@
         try{
             PlayerEntity = await PlayerRepo.UpdatePlayer(PlayerEntity?.Id ?? Guid.NewGuid(), EditName);
             EndEditing();
-        }catch(Exception ex){
+        }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
+        }catch(Exception){
+            Snackbar.Add("Weird unexpected error occured", Severity.Error);
         }
     }
 
@@ -132,13 +109,6 @@
             Snackbar.Add("Player deleted", Severity.Success);
             GoToPlayers();
         }
-    }
-    
-    private IList<IBrowserFile> _files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile? file)
-    {
-        if(file != null)
-            _files.Add(file);
     }
 
     private async Task FocusNameInput()
