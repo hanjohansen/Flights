@@ -1,6 +1,5 @@
 ﻿@page "/game/{GameId:guid}"
 
-@using Flights.Client.Shared.Game
 @using Flights.Client.Shared.Game.Cricket
 @using Flights.Client.Shared.Game.Shanghai
 @using Flights.Client.Shared.Game.X01
@@ -9,11 +8,13 @@
 @using Flights.Domain.Models
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
+@using Flights.Client.Shared.Game
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
+<div>
 @if(CurrentGame != null){
     switch(CurrentGame.Type){
         case GameType.X01:
@@ -43,12 +44,17 @@
     }
 }
 
+    <JinglePlayer @ref="jinglePlayer" PlayerId="@CurrentGame!.CurrentPlayerId"/>
+</div>
+
 @code{
 
     [Parameter]
     public Guid GameId { get; set; }
 
-    private GameState? CurrentGame {get;set;} = null!;
+    private JinglePlayer? jinglePlayer;
+
+    private GameState? CurrentGame {get;set;}
     protected override async Task OnInitializedAsync() {
         var model = await GameRepo.GetGame(GameId);
         CurrentGame = model.SolveGameState();
@@ -58,8 +64,15 @@
         if(CurrentGame?.CurrentPlayerId == null)
             return;
 
-        try{
-            CurrentGame = await GameRepo.AddPlayerStat(GameId, CurrentGame.CurrentPlayerId!.Value, model);
+        try
+        {
+
+            var currPlayerId = CurrentGame.CurrentPlayerId!.Value;
+            
+            CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
+            
+            if (model.Value != 0 && jinglePlayer != null)
+                await jinglePlayer.PlayJingle(currPlayerId);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }              
@@ -70,9 +83,6 @@
             return;
 
         var currentPlayer = CurrentGame.PlayerStates.First(x => x.PlayerId == CurrentGame.CurrentPlayerId);
-
-        if(currentPlayer == null)
-            return;
 
         var remainingDarts = currentPlayer.Darts?.RemainingDarts() ?? 3;
 
@@ -97,6 +107,6 @@
         if(id == null)
             return;
 
-        await JSRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
+        await JsRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
     }
 }

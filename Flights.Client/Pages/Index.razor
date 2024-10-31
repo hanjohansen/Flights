@@ -52,8 +52,6 @@
 
     private List<GameEntity> Games { get; set; } = new();
     
-    public bool ShowCreate { get; set; }
-    
     protected override async Task OnInitializedAsync(){
         await base.OnInitializedAsync();
         
@@ -74,18 +72,6 @@
     private void GoToStats()
     {
         NavigationManager.NavigateTo("/stats");
-    }
-    
-    private void HandleClick(){
-        try{
-            throw new Exception("something went wrong");
-        }catch(Exception ex){
-            HandleException(ex);
-        }
-    }
-
-    private void HandleException(Exception ex){
-        Snackbar.Add(ex.Message, Severity.Error);
     }
 }
 
