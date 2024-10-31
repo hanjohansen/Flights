@@ -60,7 +60,7 @@
             </div>
 
             <div class="grid grid-cols-7 justify-items-end text-2xl mt-4">           
-                @foreach(var player in Games.PlayerGames){
+                @foreach(var player in Games?.PlayerGames ?? new()){
                     <div class="col-span-2">
                         @player.PlayerName
                     </div>
