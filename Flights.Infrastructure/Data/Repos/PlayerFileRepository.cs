@@ -70,4 +70,24 @@ public class PlayerFileRepository : IPlayerFileRepository
 
         return file;
     }
+
+    public async Task<List<PlayerFileEntity>> GetPlayerJinglesByGame(Guid gameId)
+    {
+        using var db = await _dbFactory.CreateDbContextAsync();
+
+        var game = await db.Games
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(x => x.Players)
+            .ThenInclude(x => x.Player)
+            .ThenInclude(x => x.Files)
+            .FirstOrDefaultAsync(x => x.Id == gameId);
+
+        if(game == null)
+            throw new FlightsGameException("Game not found");
+
+        var files = game.Players.SelectMany(x => x.Player.Files.Where(x => x.FileType == PlayerFileType.Jingle)).ToList();
+
+        return files;
+    }
 }

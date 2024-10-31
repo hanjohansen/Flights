@@ -73,7 +73,7 @@ public class FlightsDbContext : DbContext
             entity.HasKey(x => x.Id);
 
             entity.HasOne(x => x.Player)
-                .WithMany()
+                .WithMany(x => x.Files)
                 .HasForeignKey(x => x.PlayerId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
