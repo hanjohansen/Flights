@@ -1,0 +1,67 @@
+@using Flights.Domain.Entities
+@using Flights.Domain.Exceptions
+@using Flights.Infrastructure.Port
+
+@inject ISnackbar Snackbar;
+@inject IPlayerFileRepository PlayerFileRepo;
+@inject IJSRuntime JsRuntime;
+
+<div>
+    @foreach (var pair in _playerFiles)
+    {
+        if (pair.Value != null)
+        {
+            <audio id="audio-@pair.Key.ToString()" src="@pair.Value.StoragePath" preload="auto"></audio>
+        }
+    }
+    @_playerFiles.Count
+</div>  
+
+@code{
+
+    [Parameter]
+    public Guid? PlayerId { get; set; }
+
+    private Dictionary<Guid, PlayerFileEntity?> _playerFiles = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPlayerJingleFile();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await LoadPlayerJingleFile();
+    }
+
+    private async Task LoadPlayerJingleFile()
+    {
+        try
+        {
+            if (PlayerId == null)
+                return;
+
+            if (_playerFiles.ContainsKey(PlayerId.Value))
+                return;
+            
+            var jingleFile = await PlayerFileRepo.GetPlayerJingle(PlayerId.Value);
+            
+            _playerFiles.Add(PlayerId.Value, jingleFile);
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }catch(Exception e){
+            Snackbar.Add("Weird unexpected error occured: " + e.Message, Severity.Error);
+        }
+    }
+    
+    public async Task PlayJingle(Guid playerId)
+    {
+        if (!_playerFiles.TryGetValue(playerId, out var file))
+            return;
+
+        if (file == null)
+            return;
+        
+        await JsRuntime.InvokeVoidAsync("play", "audio-" + playerId);
+    }
+}
