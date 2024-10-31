@@ -7,12 +7,9 @@
 @inject IJSRuntime JsRuntime;
 
 <div>
-    @foreach (var pair in _playerFiles)
+    @foreach (var file in _playerFiles)
     {
-        if (pair.Value != null)
-        {
-            <audio id="audio-@pair.Key.ToString()" src="@pair.Value.StoragePath" preload="auto"></audio>
-        }
+        <audio id="audio-@file.PlayerId.ToString()" src="@file.StoragePath" preload="auto"></audio>
     }
     @_playerFiles.Count
 </div>  
@@ -20,33 +17,23 @@
 @code{
 
     [Parameter]
-    public Guid? PlayerId { get; set; }
+    public Guid GameId { get; set; }
 
-    private Dictionary<Guid, PlayerFileEntity?> _playerFiles = new();
+    private List<PlayerFileEntity> _playerFiles = new();
     
     protected override async Task OnInitializedAsync()
     {
-        await LoadPlayerJingleFile();
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await LoadPlayerJingleFile();
+        await LoadPlayerJingleFiles();
     }
 
-    private async Task LoadPlayerJingleFile()
+    private async Task LoadPlayerJingleFiles()
     {
         try
-        {
-            if (PlayerId == null)
-                return;
-
-            if (_playerFiles.ContainsKey(PlayerId.Value))
-                return;
+        {            
+            var jingleFiles = await PlayerFileRepo.GetPlayerJinglesByGame(GameId);
             
-            var jingleFile = await PlayerFileRepo.GetPlayerJingle(PlayerId.Value);
-            
-            _playerFiles.Add(PlayerId.Value, jingleFile);
+            _playerFiles.Clear();
+            _playerFiles.AddRange(jingleFiles);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }catch(Exception e){
@@ -56,12 +43,9 @@
     
     public async Task PlayJingle(Guid playerId)
     {
-        if (!_playerFiles.TryGetValue(playerId, out var file))
-            return;
-
-        if (file == null)
+        if(!_playerFiles.Any(x => x.PlayerId == playerId))
             return;
         
-        await JsRuntime.InvokeVoidAsync("play", "audio-" + playerId);
+        await JsRuntime.InvokeVoidAsync("restart", "audio-" + playerId);
     }
 }
