@@ -42,7 +42,7 @@
     
     public async Task PlayJingle(Guid playerId)
     {
-        if(!_playerFiles.Any(x => x.PlayerId == playerId))
+        if(_playerFiles.All(x => x.PlayerId != playerId))
             return;
         
         await JsRuntime.InvokeVoidAsync("restart", "audio-" + playerId);

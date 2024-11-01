@@ -20,7 +20,6 @@ public class X01Solver : IGameSolver
             InitLastFromPreviousRound();
 
         CalculateLastRound();
-
         
         var finished = _game.Rounds.Last().RoundStats.All(x => x.Rank != null);
         
@@ -90,10 +89,10 @@ public class X01Solver : IGameSolver
         var lastRound = _game.Rounds.Last();
 
         foreach(var stat in lastRound.RoundStats)
-            CaclulatePlayerPoints(stat);
+            CalculatePlayerPoints(stat);
     }
 
-    private void CaclulatePlayerPoints(RoundStatEntity stats){
+    private void CalculatePlayerPoints(RoundStatEntity stats){
         if(stats.Rank != null)
             return;
 
@@ -246,14 +245,12 @@ public class X01Solver : IGameSolver
         var nextPlayer = remainingPlayers.FirstOrDefault(x => 
             x.ThirdDart == null || x.SecondDart == null || x.FirstDart == null);
 
-        return nextPlayer != null
-            ? nextPlayer.Player.Id
-            : null;
+        return nextPlayer?.Player.Id;
     }
 
     private decimal CountPlayerAverage(Guid playerId){
         var allRounds = _game.Rounds.SelectMany(x => x.RoundStats)
-            .Where(x => x.Player.Id == playerId)
+            .Where(x => x.Player.Id == playerId && x.GetDartsList().Any())
             .ToList();
 
         var allPoints = allRounds.Select(x => x.StartPoints - x.EndPoints).Sum();
