@@ -78,7 +78,7 @@ public class ShanghaiSolver : IGameSolver
 
     private List<PlayerState> GetPlayerStates(){
         var playerDtos = _game.Players
-            .Select(x => new ShanghaiStateDto(){PlayerId = x.Player.Id, CurrentTarget = 1})
+            .Select(x => new ShanghaiStateDto {PlayerId = x.Player.Id, CurrentTarget = 1})
             .ToList();
 
         foreach(var round in _game.Rounds){

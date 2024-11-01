@@ -14,7 +14,7 @@ public class StatRepository : IStatRepository
     }
 
     public async Task<GameCountState> GetTotalGameCount(){
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var games = await db.Games
             .AsNoTracking()

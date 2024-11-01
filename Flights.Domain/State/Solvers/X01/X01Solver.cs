@@ -28,7 +28,7 @@ public class X01Solver : IGameSolver
             ? DateTimeOffset.UtcNow
             : null;
             
-        Guid? nextPlayerId = GetNextPlayerId();
+        var nextPlayerId = GetNextPlayerId();
         var playerStates = GetPlayerState(nextPlayerId ?? Guid.Empty);
         var rounds = _game.Rounds.Count;
 
@@ -76,7 +76,7 @@ public class X01Solver : IGameSolver
         var lastIndex = _game.Rounds.IndexOf(last);
         var previous = _game.Rounds[lastIndex - 1];
 
-        for(int i = 0; i < previous.RoundStats.Count; i++){
+        for(var i = 0; i < previous.RoundStats.Count; i++){
             var currentStat = last.RoundStats[i];
             var lastStat = previous.RoundStats[i];
             currentStat.IsIn = lastStat.IsIn;
@@ -134,7 +134,7 @@ public class X01Solver : IGameSolver
         stats.EndPoints = points;
     }
 
-    public bool DartQualifiesForInOut(InOutModifier modifier, DartStatEntity dart){
+    private bool DartQualifiesForInOut(InOutModifier modifier, DartStatEntity dart){
         switch(modifier){
             case InOutModifier.None:
                 return true;
@@ -146,10 +146,10 @@ public class X01Solver : IGameSolver
                 return dart.Value == 25 && dart.Modifier == DartModifier.Double;
             default:
                 return false;
-        };
+        }
     }
 
-    public int GetBustBorder(InOutModifier modifier){
+    private int GetBustBorder(InOutModifier modifier){
         switch(modifier){
             case InOutModifier.Double:
                 return 2;
@@ -160,7 +160,7 @@ public class X01Solver : IGameSolver
             case InOutModifier.None:
             default:
                 return 0;
-        };
+        }
     }
 
     private void SetRank(RoundStatEntity player){
@@ -261,7 +261,7 @@ public class X01Solver : IGameSolver
         if(allRounds.Count == 0)
             return 0;
 
-        decimal avg = allPoints / (allRounds.Count * 1.0m);
+        var avg = allPoints / (allRounds.Count * 1.0m);
         return Math.Round(avg, 1);
     }
 }

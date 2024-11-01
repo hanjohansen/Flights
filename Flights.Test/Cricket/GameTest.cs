@@ -5,7 +5,7 @@ namespace Flights.Test.Cricket;
 
 public class GameTest
 {
-    private TestHelpers _helper = new TestHelpers();
+    private readonly TestHelpers _helper = new();
     
     [Fact]
     public void GameStateReflectsRoundsCorrectly(){

@@ -5,7 +5,7 @@ using Flights.Domain.State;
 namespace Flights.Test.Cricket;
 public class CricketTest
 {
-    private TestHelpers _helper = new TestHelpers();
+    private readonly TestHelpers _helper = new();
 
     [Fact]
     public void Initializes_Game_Correctly(){
@@ -47,7 +47,7 @@ public class CricketTest
             InOutModifier.None, 
             InOutModifier.None);
 
-        var state = model.SolveGameState(); 
+        model.SolveGameState(); 
 
         model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.None, 15));
@@ -56,17 +56,17 @@ public class CricketTest
         model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.Triple, 17));
 
-        state = model.SolveGameState();
+        var state = model.SolveGameState();
 
-        Assert.True(state.CricketState!.V15 == Domain.State.CricketValue.Single);
-        Assert.True(state.CricketState!.V16 == Domain.State.CricketValue.Double);
-        Assert.True(state.CricketState!.V17 == Domain.State.CricketValue.Open);
+        Assert.True(state.CricketState!.V15 == CricketValue.Single);
+        Assert.True(state.CricketState!.V16 == CricketValue.Double);
+        Assert.True(state.CricketState!.V17 == CricketValue.Open);
 
         var playerState = state.PlayerStates.First(x => x.PlayerId == players[0].Id);
 
-        Assert.True(playerState.CricketState!.V15 == Domain.State.CricketValue.Single);
-        Assert.True(playerState.CricketState!.V16 == Domain.State.CricketValue.Double);
-        Assert.True(playerState.CricketState!.V17 == Domain.State.CricketValue.Open);
+        Assert.True(playerState.CricketState!.V15 == CricketValue.Single);
+        Assert.True(playerState.CricketState!.V16 == CricketValue.Double);
+        Assert.True(playerState.CricketState!.V17 == CricketValue.Open);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class CricketTest
             InOutModifier.None, 
             InOutModifier.None);
 
-        var state = model.SolveGameState(); 
+        model.SolveGameState(); 
 
         model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.None, 15));
@@ -103,14 +103,14 @@ public class CricketTest
         model.AddPlayerStats(players[2].Id, 
             StatModel.Init(DartModifier.Triple, 17));
 
-        state = model.SolveGameState();
+        var state = model.SolveGameState();
 
-        Assert.True(state.CricketState!.V15 == Domain.State.CricketValue.Single);
-        Assert.True(state.CricketState!.V16 == Domain.State.CricketValue.Double);
-        Assert.True(state.CricketState!.V17 == Domain.State.CricketValue.Closed);
+        Assert.True(state.CricketState!.V15 == CricketValue.Single);
+        Assert.True(state.CricketState!.V16 == CricketValue.Double);
+        Assert.True(state.CricketState!.V17 == CricketValue.Closed);
 
         foreach(var player in state.PlayerStates)
-            Assert.True(player.CricketState!.V17 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V17 == CricketValue.Closed);
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public class CricketTest
             InOutModifier.None, 
             InOutModifier.None);
 
-        var state = model.SolveGameState(); 
+        model.SolveGameState(); 
 
         model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.None, 0));
@@ -148,17 +148,17 @@ public class CricketTest
             StatModel.Init(DartModifier.None, 0));
 
         //p1 + p2 have 17 closed, p3 
-        state = model.SolveGameState();
+        var state = model.SolveGameState();
 
-        Assert.True(state.CricketState!.V17 == Domain.State.CricketValue.Open);
+        Assert.True(state.CricketState!.V17 == CricketValue.Open);
 
         foreach(var player in players){
             var playerState = state.PlayerStates.First(x => x.PlayerId == player.Id);
 
             if(players.IndexOf(player) <2)
-                Assert.True(playerState.CricketState!.V17 == Domain.State.CricketValue.Open);
+                Assert.True(playerState.CricketState!.V17 == CricketValue.Open);
             else
-                Assert.True(playerState.CricketState!.V17 == Domain.State.CricketValue.None);
+                Assert.True(playerState.CricketState!.V17 == CricketValue.None);
         }
 
         //points on 17 should yield points for p1 + p2
@@ -209,7 +209,7 @@ public class CricketTest
             InOutModifier.None, 
             InOutModifier.None);
 
-        var state = model.SolveGameState(); 
+        model.SolveGameState(); 
 
         //first round
         model.AddPlayerStats(players[0].Id, 
@@ -247,12 +247,10 @@ public class CricketTest
         model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.Double, 25));
 
-        state = model.AddPlayerStats(players[0].Id, 
+        var state = model.AddPlayerStats(players[0].Id, 
             StatModel.Init(DartModifier.None, 25));
 
         //p1 should have won the game now
-        var playerState = state.PlayerStates.First(x => x.PlayerId == players[0].Id);
-
         Assert.True(state.PlayerStates[0].Rank == 1);
         Assert.True(state.PlayerStates[1].Rank == null);
         Assert.True(state.PlayerStates[2].Rank == null);
@@ -292,7 +290,7 @@ public class CricketTest
             InOutModifier.None, 
             InOutModifier.None);
 
-        var state = model.SolveGameState(); 
+        model.SolveGameState(); 
 
         //first round
         model.AddPlayerStats(players[0].Id, 
@@ -331,7 +329,7 @@ public class CricketTest
             StatModel.Init(DartModifier.Triple, 19), 
             StatModel.Init(0));
 
-        state = model.AddPlayerStats(players[3].Id, 
+        var state = model.AddPlayerStats(players[3].Id, 
             StatModel.Init(DartModifier.Triple, 18), 
             StatModel.Init(DartModifier.Triple, 19), 
             StatModel.Init(0));
@@ -348,13 +346,13 @@ public class CricketTest
         // B    -   -   -   -
 
         foreach(var player in state.PlayerStates){
-            Assert.True(player.CricketState!.V15 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V16 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V17 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V18 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V19 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V20 == Domain.State.CricketValue.None);
-            Assert.True(player.CricketState!.Bulls == Domain.State.CricketValue.None);
+            Assert.True(player.CricketState!.V15 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V16 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V17 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V18 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V19 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V20 == CricketValue.None);
+            Assert.True(player.CricketState!.Bulls == CricketValue.None);
             Assert.True(player.Points == 0);
         }
 
@@ -393,13 +391,13 @@ public class CricketTest
         Assert.True(state.CricketState!.V20 == CricketValue.Open);
 
         foreach(var player in state.PlayerStates){
-            Assert.True(player.CricketState!.V15 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V16 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V17 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V18 == Domain.State.CricketValue.Closed);
-            Assert.True(player.CricketState!.V19 == Domain.State.CricketValue.Closed);
+            Assert.True(player.CricketState!.V15 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V16 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V17 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V18 == CricketValue.Closed);
+            Assert.True(player.CricketState!.V19 == CricketValue.Closed);
             //Assert.True(player.CricketState!.V20 == Domain.State.CricketValue.None);
-            Assert.True(player.CricketState!.Bulls == Domain.State.CricketValue.None);
+            Assert.True(player.CricketState!.Bulls == CricketValue.None);
             Assert.True(player.Points == 0);
         }
 
@@ -452,7 +450,7 @@ public class CricketTest
             StatModel.Init(25),  
             StatModel.Init(0));
 
-        state = model.AddPlayerStats(players[2].Id, 
+        model.AddPlayerStats(players[2].Id, 
             StatModel.Init(DartModifier.Double, 25),
             StatModel.Init(25),  
             StatModel.Init(0));

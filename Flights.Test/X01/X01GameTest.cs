@@ -5,7 +5,7 @@ namespace Flights.Test.X01;
 
 public class X01GameTest{
 
-    private TestHelpers _helper = new TestHelpers();
+    private readonly TestHelpers _helper = new();
 
     [Fact]
     public void Initializes_Game_Correctly(){
@@ -124,7 +124,7 @@ public class X01GameTest{
         Assert.True(state.OutModifier == InOutModifier.None);
 
         Assert.True(state.PlayerStates[0].IsIn == false);
-        Assert.True(state.PlayerStates[1].IsIn == true);
+        Assert.True(state.PlayerStates[1].IsIn);
 
         foreach(var player in state.PlayerStates){
             Assert.False(player.IsBust);
@@ -175,7 +175,7 @@ public class X01GameTest{
         Assert.True(state.InModifier == InOutModifier.Triple);
         Assert.True(state.OutModifier == InOutModifier.None);
 
-        Assert.True(state.PlayerStates[0].IsIn == true);
+        Assert.True(state.PlayerStates[0].IsIn);
         Assert.True(state.PlayerStates[1].IsIn == false);
 
         foreach(var player in state.PlayerStates){
@@ -228,7 +228,7 @@ public class X01GameTest{
         Assert.True(state.OutModifier == InOutModifier.None);
 
         Assert.True(state.PlayerStates[0].IsIn == false);
-        Assert.True(state.PlayerStates[1].IsIn == true);
+        Assert.True(state.PlayerStates[1].IsIn);
 
         foreach(var player in state.PlayerStates){
             Assert.False(player.IsBust);
@@ -284,9 +284,9 @@ public class X01GameTest{
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.None);
 
-        Assert.True(state.PlayerStates[0].IsIn == true);
-        Assert.True(state.PlayerStates[1].IsIn == true);
-        Assert.True(state.PlayerStates[2].IsIn == true);
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
 
         foreach(var player in state.PlayerStates){
             Assert.False(player.IsBust);
@@ -353,9 +353,9 @@ public class X01GameTest{
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.Double);
 
-        Assert.True(state.PlayerStates[0].IsIn == true);
-        Assert.True(state.PlayerStates[1].IsIn == true);
-        Assert.True(state.PlayerStates[2].IsIn == true);
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
 
         foreach(var player in state.PlayerStates){
             Assert.False(player.IsBust);
@@ -417,9 +417,9 @@ public class X01GameTest{
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.Triple);
 
-        Assert.True(state.PlayerStates[0].IsIn == true);
-        Assert.True(state.PlayerStates[1].IsIn == true);
-        Assert.True(state.PlayerStates[2].IsIn == true);
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
 
         foreach(var player in state.PlayerStates){
             if(state.PlayerStates.IndexOf(player) == 0){
@@ -481,9 +481,9 @@ public class X01GameTest{
         Assert.True(state.InModifier == InOutModifier.None);
         Assert.True(state.OutModifier == InOutModifier.FullBull);
 
-        Assert.True(state.PlayerStates[0].IsIn == true);
-        Assert.True(state.PlayerStates[1].IsIn == true);
-        Assert.True(state.PlayerStates[2].IsIn == true);
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
 
         foreach(var player in state.PlayerStates){
             Assert.False(player.IsBust);

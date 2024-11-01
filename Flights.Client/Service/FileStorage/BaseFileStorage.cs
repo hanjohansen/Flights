@@ -1,5 +1,5 @@
 using Flights.Client.Service.Port.FileStorage;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace Flights.Client.Service.FileStorage;

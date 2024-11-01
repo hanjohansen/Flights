@@ -9,7 +9,7 @@ public class JingleFileStorage : IJingleFileStorage
 
     private const string JingleFolder = "Jingles"; 
 
-    private readonly string[] AllowedFileTypes = new string[] {".mp3"};
+    private readonly string[] _allowedFileTypes = {".mp3"};
     
     public JingleFileStorage(IFileStorage fileStorage){
         _fileStorage = fileStorage;
@@ -17,7 +17,7 @@ public class JingleFileStorage : IJingleFileStorage
 
     public async Task<FileData> StoreJingleFile(IBrowserFile file){
 
-        var fileData = await _fileStorage.StoreFile(file, JingleFolder, AllowedFileTypes);
+        var fileData = await _fileStorage.StoreFile(file, JingleFolder, _allowedFileTypes);
         return fileData;
     }
 

@@ -1,5 +1,5 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Infrastructure.Port;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +14,7 @@ public class PlayerFileRepository : IPlayerFileRepository
     }
 
     public async Task SetPlayerJingle(Guid playerId, string fileName, string storagePath){
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var player = await db.Players
             .FirstOrDefaultAsync(p => p.Id == playerId && p.Deleted == false);
@@ -22,7 +22,8 @@ public class PlayerFileRepository : IPlayerFileRepository
         if(player == null)
             throw new FlightsGameException("Player not found!");
 
-        var playerFile = new PlayerFileEntity(){
+        var playerFile = new PlayerFileEntity
+        {
             PlayerId = playerId,
             FileType = PlayerFileType.Jingle,
             FileName = fileName,
@@ -34,7 +35,7 @@ public class PlayerFileRepository : IPlayerFileRepository
     }
 
     public async Task TryDeletePlayerJingle(Guid playerId){
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
             .FirstOrDefaultAsync(x => x.PlayerId == playerId && x.FileType == PlayerFileType.Jingle);
@@ -47,7 +48,7 @@ public class PlayerFileRepository : IPlayerFileRepository
     }
 
     public async Task DeletePlayerJingle(Guid fileId){
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
             .FirstOrDefaultAsync(x => x.Id == fileId && x.FileType == PlayerFileType.Jingle);
@@ -61,7 +62,7 @@ public class PlayerFileRepository : IPlayerFileRepository
 
     public async Task<PlayerFileEntity?> GetPlayerJingle(Guid playerId)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
             .AsNoTracking()
@@ -73,7 +74,7 @@ public class PlayerFileRepository : IPlayerFileRepository
 
     public async Task<List<PlayerFileEntity>> GetPlayerJinglesByGame(Guid gameId)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var game = await db.Games
             .AsNoTracking()
@@ -86,7 +87,7 @@ public class PlayerFileRepository : IPlayerFileRepository
         if(game == null)
             throw new FlightsGameException("Game not found");
 
-        var files = game.Players.SelectMany(x => x.Player.Files.Where(x => x.FileType == PlayerFileType.Jingle)).ToList();
+        var files = game.Players.SelectMany(x => x.Player.Files.Where(y => y.FileType == PlayerFileType.Jingle)).ToList();
 
         return files;
     }

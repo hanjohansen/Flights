@@ -2,14 +2,14 @@
 @using Flights.Client.Shared.Player
 @using Flights.Client.Shared.Toolkit
 @using Flights.Domain.Entities
-@using Flights.Domain.Exceptions
+@using Flights.Domain.Exception
 @using Flights.Infrastructure.Port
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IPlayerRepository PlayerRepo
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <PageTitle>@PlayerEntity?.Name</PageTitle>
 
@@ -113,6 +113,6 @@
 
     private async Task FocusNameInput()
     {
-        await JSRuntime.InvokeVoidAsync("focusElement", "name-input");
+        await JsRuntime.InvokeVoidAsync("focusElement", "name-input");
     }
 }

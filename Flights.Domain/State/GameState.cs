@@ -50,7 +50,7 @@ public record DartsState(DartState? D1, DartState? D2, DartState? D3){
 
         return result;
     }
-};
+}
 
 public record DartState(
     DartModifier Modifier,
@@ -60,7 +60,7 @@ public record DartState(
     public static DartState FromEntity(DartStatEntity entity){
         return new DartState(entity.Modifier, entity.Value, entity.GetCalculatedValue());
     }
-};
+}
 
 public enum CricketValue {None, Single, Double, Open, Closed}
 
@@ -92,7 +92,7 @@ public record CricketState(
                && V20 >= CricketValue.Open
                && Bulls >= CricketValue.Open;
     }
-};
+}
 
 public record ShanghaiGameState(int CurrentTarget);
 

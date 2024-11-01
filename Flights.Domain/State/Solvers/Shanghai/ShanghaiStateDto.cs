@@ -4,7 +4,7 @@ public class ShanghaiStateDto
 {
     public Guid PlayerId {get;set;}
 
-    public DartsState Darts {get;set;} = new DartsState(null, null, null);
+    public DartsState Darts {get;set;} = new(null, null, null);
 
     public int Points {get;set;}
 

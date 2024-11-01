@@ -4,7 +4,7 @@
 @using Flights.Client.Shared.Game.Shanghai
 @using Flights.Client.Shared.Game.X01
 @using Flights.Domain.Entities
-@using Flights.Domain.Exceptions
+@using Flights.Domain.Exception
 @using Flights.Domain.Models
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
@@ -43,7 +43,7 @@
                 break;
         }
     }
-    <JinglePlayer @ref="jinglePlayer" GameId="@GameId"/>
+    <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
 </div>
 
 @code{
@@ -51,7 +51,7 @@
     [Parameter]
     public Guid GameId { get; set; }
 
-    private JinglePlayer? jinglePlayer;
+    private JinglePlayer? _jinglePlayer;
 
     private GameState? CurrentGame {get;set;}
     protected override async Task OnInitializedAsync() {
@@ -70,8 +70,8 @@
             CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
             
             //todo: identify when to play jingle
-            if (model.Value != 0 && jinglePlayer != null)
-                await jinglePlayer.PlayJingle(currPlayerId);
+            if (model.Value != 0 && _jinglePlayer != null)
+                await _jinglePlayer.PlayJingle(currPlayerId);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }              
@@ -85,7 +85,7 @@
 
         var remainingDarts = currentPlayer.Darts?.RemainingDarts() ?? 3;
 
-        for(int i = remainingDarts; i > 0; i--)
+        for(var i = remainingDarts; i > 0; i--)
             await ReportScore(StatModel.Init(0));
     }
 

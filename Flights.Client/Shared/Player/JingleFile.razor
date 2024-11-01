@@ -1,5 +1,5 @@
 @using Flights.Client.Service.Port
-@using Flights.Domain.Exceptions
+@using Flights.Domain.Exception
 @using Flights.Infrastructure.Port
 @using Flights.Domain.Entities
 
@@ -35,7 +35,7 @@ else
         </div>
         <div class="flex flex-row mt-2">
             <div>
-                <audio src="@PlayerJingleFile.StoragePath" controls/>
+                <audio src="@PlayerJingleFile.StoragePath" controls></audio>
             </div>      
         </div>
     </div>

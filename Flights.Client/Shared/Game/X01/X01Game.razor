@@ -3,7 +3,7 @@
 @using Flights.Domain.Models
 @using Flights.Domain.State
 
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 
 <div class="flex flex-row mx-1 h-[752px] overflow-hidden">
@@ -41,6 +41,6 @@
         if(id == null)
             return;
 
-        await JSRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
+        await JsRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
     }
 }

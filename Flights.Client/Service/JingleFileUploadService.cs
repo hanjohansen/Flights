@@ -1,6 +1,6 @@
 using Flights.Client.Service.Port;
 using Flights.Client.Service.Port.FileStorage;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Infrastructure.Port;
 using Microsoft.AspNetCore.Components.Forms;
 

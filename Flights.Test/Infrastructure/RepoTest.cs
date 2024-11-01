@@ -20,7 +20,7 @@ public class RepoTest
         var games = await repo.GetGames();
 
         var model = await repo.GetGame(Guid.Parse("C9A63575-7F40-4990-B5E8-1A48820B398C"));
-        var state = model.SolveGameState();
+        model.SolveGameState();
 
         Assert.True(games.Count > 0);
     }    

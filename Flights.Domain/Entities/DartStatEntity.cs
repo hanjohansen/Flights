@@ -16,6 +16,6 @@ public class DartStatEntity
             case DartModifier.None:
             default:
                 return Value;
-        };
+        }
     }
 }

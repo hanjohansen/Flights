@@ -2,7 +2,7 @@
 
 <PageTitle>Flights</PageTitle>
 
-<MudThemeProvider Theme="@CustomTheme"/>
+<MudThemeProvider Theme="@_customTheme"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -17,9 +17,10 @@
 </MudLayout>
 
 @code{
-    MudTheme CustomTheme = new MudTheme()
+
+    private readonly MudTheme _customTheme = new()
     {
-        LayoutProperties = new LayoutProperties()
+        LayoutProperties = new LayoutProperties
         {
             AppbarHeight = "40px"
         }

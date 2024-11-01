@@ -45,7 +45,8 @@ public class CricketSolver : IGameSolver
 
     private List<PlayerState> GetPlayerStates(){
         var playerStateDtos = _game.Players
-            .Select(x => new CricketStateDto(){
+            .Select(x => new CricketStateDto
+            {
                 PlayerId = x.Player.Id,
             })
             .ToList();
@@ -140,13 +141,13 @@ public class CricketSolver : IGameSolver
         else if(dart.Modifier == DartModifier.Triple)
             mod = 3;
 
-        for(int i = mod; i > 0; i--){
+        for(var i = mod; i > 0; i--){
             ProcessDartPoints(dart.Value, player, otherPlayers);
         }
     }
 
     private void ProcessDartPoints(int value, CricketStateDto player, List<CricketStateDto> otherPlayers){
-        PropertyInfo? vProp = null;
+        PropertyInfo? vProp;
 
         switch(value){
             case 15:
@@ -235,7 +236,7 @@ public class CricketSolver : IGameSolver
     }
 
     private void CheckRanksCricket(List<CricketStateDto> players){
-        var rankingChanged = false;
+        bool rankingChanged;
 
         do{
             rankingChanged = false;
@@ -276,7 +277,7 @@ public class CricketSolver : IGameSolver
     }
 
     private void CheckRanksCtCricket(List<CricketStateDto> players){
-        var rankingChanged = false;
+        bool rankingChanged;
 
         do{
             rankingChanged = false;

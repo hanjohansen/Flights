@@ -4,7 +4,7 @@ namespace Flights.Test.Cricket;
 
 public class CricketSimBase
 {
-    protected TestHelpers _helpers = new TestHelpers();
+    protected TestHelpers Helpers = new();
 
     protected const int MaxGameDarts = 2000; 
     protected const int SimRounds = 500; 

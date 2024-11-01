@@ -1,5 +1,5 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Domain.Models;
 using Flights.Domain.State;
 using Flights.Infrastructure.Port;
@@ -15,18 +15,12 @@ public class GameRepository : IGameRepository
     }
     public async Task<GameState> CreateGame(List<Guid> players, GameType type, int x01Target, InOutModifier inMod, InOutModifier outMod )
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var allPlayers = await db.Players.ToListAsync();
 
-        var selectedPlayers = new List<PlayerEntity>();
+        var selectedPlayers = players.Select(id => allPlayers.First(x => x.Id == id)).ToList();
 
-        foreach (var id in players)
-        {
-            var player = allPlayers.First(x => x.Id == id);
-            selectedPlayers.Add(player);
-        }
-        
         var model = GameModel.Create(selectedPlayers, type, x01Target, inMod, outMod);
 
         await db.Games.AddAsync(model.Entity);
@@ -38,7 +32,7 @@ public class GameRepository : IGameRepository
 
     public async Task<GameState> AddPlayerStat(Guid gameId, Guid playerId, StatModel stat)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
 
@@ -54,7 +48,7 @@ public class GameRepository : IGameRepository
 
     public async Task<List<GameEntity>> GetGames()
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var games = await GetBaseQuery(db)
             .AsNoTrackingWithIdentityResolution()
@@ -65,7 +59,7 @@ public class GameRepository : IGameRepository
 
     public async Task<GameModel> GetGame(Guid id)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -80,17 +74,17 @@ public class GameRepository : IGameRepository
     {
         var query = db.Games
             .AsSplitQuery()
-            .Include(x => x.Players.OrderBy(x => x.OrderNumber))
+            .Include(x => x.Players.OrderBy(y => y.OrderNumber))
             .ThenInclude(x => x.Player)
-            .Include(x => x.Rounds.OrderBy(x => x.Number))
-            .ThenInclude(x => x.RoundStats.OrderBy(x => x.OrderNumber));
+            .Include(x => x.Rounds.OrderBy(y => y.Number))
+            .ThenInclude(x => x.RoundStats.OrderBy(y => y.OrderNumber));
 
         return query;
     }
 
     public async Task<GameState> RevertLastDart(Guid gameId)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
 

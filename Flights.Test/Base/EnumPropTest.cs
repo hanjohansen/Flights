@@ -12,7 +12,7 @@ public class EnumPropTests
     [Fact]
     public void EnumReflection(){
         var one = new TestClass();
-        var others = new List<TestClass> {new TestClass(), new TestClass()};
+        var others = new List<TestClass> {new(), new()};
 
         one.V15++;
 

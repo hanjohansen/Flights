@@ -2,7 +2,7 @@
 @using Flights.Client.Shared.Toolkit
 
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <MudAppBar Elevation="3" Style="@($"background:{Colors.Indigo.Darken4};")">
     <div class="flex flex-row cursor-pointer" @onclick="GoToIndex">
@@ -22,17 +22,17 @@
 
 @code{
 
-    public string GetVersion()
+    private string GetVersion()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        var version = assembly?.GetName()?.Version?.ToString(2) ?? string.Empty;
+        var version = assembly.GetName().Version?.ToString(2) ?? string.Empty;
 
         return "v " + version;
     }
 
     public async Task ToggleFullscreen()
     {
-        await JSRuntime.InvokeVoidAsync("toggleFullScreen");
+        await JsRuntime.InvokeVoidAsync("toggleFullScreen");
     }
 
     private void GoToIndex()

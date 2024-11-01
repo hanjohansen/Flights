@@ -1,5 +1,5 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Domain.State;
 using Flights.Domain.State.Solvers;
 
@@ -8,12 +8,14 @@ public class GameModel
 {
     public static GameModel Create(List<PlayerEntity> players, GameType type, int x01Target, InOutModifier inMod, InOutModifier outMod){
 
-        var gamePlayers = players.Select(p => new GamePlayerEntity(){
+        var gamePlayers = players.Select(p => new GamePlayerEntity
+        {
             Player = p,
             OrderNumber = players.IndexOf(p)
             }).ToList();
 
-        var model = new GameModel(new GameEntity(){
+        var model = new GameModel(new GameEntity
+        {
             Type = type,
             X01Target = x01Target,
             InModifier = inMod,
@@ -56,7 +58,7 @@ public class GameModel
         }
 
         dart.Validate();
-        var dartStat = new DartStatEntity(){Modifier=dart.Modifier, Value = dart.Value};
+        var dartStat = new DartStatEntity {Modifier=dart.Modifier, Value = dart.Value};
 
         if(playerStat.FirstDart == null){
             playerStat.FirstDart = dartStat;
@@ -92,7 +94,8 @@ public class GameModel
         var lastRound = _gameEntity.Rounds.LastOrDefault();
         if(lastRound == null){
             foreach(var player in _gameEntity.Players){
-                newRound.RoundStats.Add(new RoundStatEntity(){
+                newRound.RoundStats.Add(new RoundStatEntity
+                {
                     Player = player.Player,
                     OrderNumber = _gameEntity.Players.IndexOf(player),
                 });
@@ -103,7 +106,8 @@ public class GameModel
                 throw new FlightsGameException("Game is finished!");
 
             foreach(var stat in lastRound.RoundStats){
-                newRound.RoundStats.Add(new RoundStatEntity(){
+                newRound.RoundStats.Add(new RoundStatEntity
+                {
                     OrderNumber = stat.OrderNumber,
                     Player = stat.Player,
                     StartPoints = stat.EndPoints,
@@ -137,7 +141,7 @@ public class GameModel
 
         var removed = false;
 
-        for(int i = lastRound.RoundStats.Count - 1; i >= 0; i--){
+        for(var i = lastRound.RoundStats.Count - 1; i >= 0; i--){
             var stat = lastRound.RoundStats[i];
 
             var darts = stat.GetDartsList();

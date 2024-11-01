@@ -21,7 +21,8 @@ public class CheckoutRepository
     }
 
     private Dictionary<int, DartsState> CreateCheckouts(){
-        return new Dictionary<int, DartsState>(){
+        return new Dictionary<int, DartsState>
+        {
             {170, new DartsState(new DartState(DartModifier.Triple, 20, 0), new DartState(DartModifier.Triple, 20, 0), new DartState(DartModifier.Double, 25, 0))},
             {167, new DartsState(new DartState(DartModifier.Triple, 20, 0), new DartState(DartModifier.Triple, 19, 0), new DartState(DartModifier.Double, 25, 0))},
             {164, new DartsState(new DartState(DartModifier.Triple, 20, 0), new DartState(DartModifier.Triple, 18, 0), new DartState(DartModifier.Double, 25, 0))},

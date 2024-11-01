@@ -1,5 +1,5 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Domain.State.Solvers;
 using Flights.Domain.State.Solvers.X01;
 using Flights.Domain.State.Solvers.Cricket;

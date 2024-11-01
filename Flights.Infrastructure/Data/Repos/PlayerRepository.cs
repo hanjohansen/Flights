@@ -1,5 +1,5 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Infrastructure.Port;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +14,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<PlayerEntity> CreatePlayer(string name)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         if(string.IsNullOrEmpty(name))
             throw new FlightsGameException("Name must not be empty!");
@@ -24,7 +24,7 @@ public class PlayerRepository : IPlayerRepository
         if(players.Any(x => x.Name == name))
             throw new FlightsGameException("A player with that name already exists!");
 
-        var player = new PlayerEntity(){Name = name};
+        var player = new PlayerEntity {Name = name};
 
         await db.Players.AddAsync(player);
         await db.SaveChangesAsync();
@@ -33,7 +33,7 @@ public class PlayerRepository : IPlayerRepository
     }
 
     public async Task<PlayerEntity> GetPlayer(Guid playerId){
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var player = await GetPlayerInternal(db, playerId, readOnly:true);
 
@@ -45,7 +45,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<PlayerEntity> UpdatePlayer(Guid playerId, string newName)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var player = await GetPlayerInternal(db, playerId, readOnly:false);
         var allPlayers = await GetPlayersReadOnlyInternal(db, true);
@@ -63,7 +63,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task<List<PlayerEntity>> GetPlayers()
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         return await GetPlayersReadOnlyInternal(db, false);
     }
@@ -98,7 +98,7 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task DeletePlayer(Guid playerId)
     {
-        using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var player = await GetPlayerInternal(db, playerId, readOnly: false);
 

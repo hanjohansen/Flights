@@ -1,5 +1,5 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 using Flights.Domain.Models;
 
 namespace Flights.Test.Base;
@@ -74,7 +74,7 @@ public class BaseGameModelTest
         var players = GetTwoPlayers();
 
         var gameModel = GameModel.Create(players, GameType.X01, 301, InOutModifier.None, InOutModifier.None);
-        var gameState = gameModel.SolveGameState();
+        gameModel.SolveGameState();
 
         Assert.Throws<FlightsGameException>(() => {
             gameModel.AddPlayerStats(

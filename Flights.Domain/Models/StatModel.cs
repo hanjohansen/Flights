@@ -1,14 +1,14 @@
 using Flights.Domain.Entities;
-using Flights.Domain.Exceptions;
+using Flights.Domain.Exception;
 
 namespace Flights.Domain.Models;
 public record StatModel(DartModifier Modifier, int Value){
-    public static StatModel Init(int Value){
-        return new StatModel(DartModifier.None, Value);
+    public static StatModel Init(int value){
+        return new StatModel(DartModifier.None, value);
     }
 
-    public static StatModel Init(DartModifier modifier, int Value){
-        return new StatModel(modifier, Value);
+    public static StatModel Init(DartModifier modifier, int value){
+        return new StatModel(modifier, value);
     }
     
     public void Validate(){
@@ -22,4 +22,4 @@ public record StatModel(DartModifier Modifier, int Value){
         if(Value == 25 && Modifier == DartModifier.Triple)
             throw new FlightsGameException("Bulls can not be triple-modified");
     }
-};
+}
