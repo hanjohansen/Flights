@@ -66,12 +66,11 @@
         try
         {
             var currPlayerId = CurrentGame.CurrentPlayerId!.Value;
+            var oldState = CurrentGame;
             
             CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
-            
-            //todo: identify when to play jingle
-            if (model.Value != 0 && _jinglePlayer != null)
-                await _jinglePlayer.PlayJingle(currPlayerId);
+
+            await ValidatePlayJingle(oldState, CurrentGame, currPlayerId);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }              
@@ -82,11 +81,15 @@
             return;
 
         var currentPlayer = CurrentGame.PlayerStates.First(x => x.PlayerId == CurrentGame.CurrentPlayerId);
-
         var remainingDarts = currentPlayer.Darts?.RemainingDarts() ?? 3;
 
-        for(var i = remainingDarts; i > 0; i--)
-            await ReportScore(StatModel.Init(0));
+        try
+        {
+            for(var i = remainingDarts; i > 0; i--)
+                await GameRepo.AddPlayerStat(GameId, currentPlayer.PlayerId, StatModel.Init(0));
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
     }
 
     private async Task RequestRevertDart(){
@@ -107,5 +110,17 @@
             return;
 
         await JsRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
+    }
+
+    private async Task ValidatePlayJingle(GameState oldState, GameState newState, Guid? playerId)
+    {
+        if (playerId == null)
+            return;
+
+        var oldRank = oldState.PlayerStates.First(x => x.PlayerId == playerId).Rank;
+        var newRank = newState.PlayerStates.First(x => x.PlayerId == playerId).Rank;
+        
+        if(oldRank == null && newRank != null)
+            await _jinglePlayer!.PlayJingle(playerId.Value);
     }
 }
