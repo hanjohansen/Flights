@@ -1,18 +1,20 @@
+@using Flights.Client.Shared.Toolkit
 <div class="@GetClasses()" @onclick="@OnClick">
-    <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+    <MudIcon Icon="@Icons.Material.Outlined.Campaign" Size="Size.Large" Color="Color.Error"/>
+    <AudioPlayer @ref="@HornPlayer" Source="airhorn.mp3"/>
 </div>
 
 @code{
-    [Parameter]
-    public EventCallback RequestRevertDart {get;set;}
-
     private bool IsPressed {get;set;}
-
+    
+    private AudioPlayer? HornPlayer { get; set; }
+    
     private async Task OnClick(){
         IsPressed = true;
-        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);    
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);
 
-        await RequestRevertDart.InvokeAsync();
+        if(HornPlayer != null)
+            await HornPlayer.Restart();
 
         await Task.Delay(200);
         await timer.DisposeAsync();

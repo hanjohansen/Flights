@@ -20,21 +20,21 @@
     
     public async Task Play()
     {
-        await JsRuntime.InvokeVoidAsync(Id, "play");
+        await JsRuntime.InvokeVoidAsync("play", Id);
     }
 
     public async Task Pause()
     {
-        await JsRuntime.InvokeVoidAsync(Id, "pause");
+        await JsRuntime.InvokeVoidAsync("pause", Id);
     }
     
     public async Task Stop()
     {
-        await JsRuntime.InvokeVoidAsync(Id, "stop");
+        await JsRuntime.InvokeVoidAsync("stop", Id);
     }
 
     public async Task Restart()
     {
-        await JsRuntime.InvokeVoidAsync(Id, "restart");
+        await JsRuntime.InvokeVoidAsync("restart", Id);
     }
 }

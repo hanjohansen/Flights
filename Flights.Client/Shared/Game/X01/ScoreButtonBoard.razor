@@ -19,19 +19,25 @@
         <ScoreButton Number="0" ReportScore="@ReportScore"/>
         <ScoreButton Caption="Miss" Number="0" ReportScore="@ReportNullDart"/>
     </div>
-    <div class="grid grid-cols-2 gap-3 p-2 pt-7">
+    <div class="grid grid-cols-2 gap-3 px-2">
         <ModifierButton Target="DartModifier.Double"
-            Selected="@SelectedModifier"
-            ModifierChanged="@ModifierChanged"/>
+                        Selected="@SelectedModifier"
+                        ModifierChanged="@ModifierChanged"/>
         <ModifierButton Target="DartModifier.Triple"
-            Selected="@SelectedModifier"
-            ModifierChanged="@ModifierChanged"/>
+                        Selected="@SelectedModifier"
+                        ModifierChanged="@ModifierChanged"/>
     </div>
-    <div class="grid grid-cols-5 gap-3 m-2 mt-[95px]  h-[80px]">
+    <div class="grid grid-cols-5 gap-3 px-2 mt-6">
+        <div></div>
+        <div class="col-span-3">
+            <AirhornButton/>
+        </div>
+    </div>
+    <div class="grid grid-cols-5 gap-3 m-2 mt-[27px] h-[80px]">
         <div class="col-span-3">
             <RevertButton RequestRevertDart="@RequestRevertDart"/>
         </div>      
-        <div class="col-span-2 rounded bg-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px]"
+        <div class="col-span-2 rounded bg-red-500 mud-elevation-5 text-center cursor-pointer pt-[22px]"
             @onclick="GoToGames">
             <MudIcon Icon="@Icons.Material.Outlined.Close" Size="Size.Large" Color="Color.Default"/>
         </div>      
