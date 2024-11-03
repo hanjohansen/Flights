@@ -2,6 +2,7 @@
 @using Flights.Domain.Exception
 @using Flights.Infrastructure.Port
 @using Flights.Domain.Entities
+@using Flights.Client.Shared.Toolkit
 
 @inject ISnackbar Snackbar
 @inject IPlayerFileRepository PlayerFileRepo
@@ -35,7 +36,7 @@ else
         </div>
         <div class="flex flex-row mt-2">
             <div>
-                <audio src="@PlayerJingleFile.StoragePath" controls></audio>
+                <AudioPlayer Source="@PlayerJingleFile.StoragePath" ShowControls="true"/>
             </div>      
         </div>
     </div>

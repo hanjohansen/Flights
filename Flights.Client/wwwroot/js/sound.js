@@ -5,15 +5,23 @@ function preloadFile(audioId, sourceUrl) {
 }
 
 function play(audioId){
-    console.log(audioId);
     let audio = document.getElementById(audioId);
-    console.log(audio);
     audio.play();
+}
+
+function pause(audioId){
+    let audio = document.getElementById(audioId);
+    audio.pause();
+}
+
+function stop(audioId){
+    let audio = document.getElementById(audioId);
+    audio.pause();
+    audio.currentTime = 0;
 }
 
 function restart(audioId){
     let audio = document.getElementById(audioId);
-    console.log(audio);
     audio.pause();
     audio.currentTime = 0;
     audio.play()

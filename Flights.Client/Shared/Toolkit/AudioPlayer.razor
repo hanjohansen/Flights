@@ -1,0 +1,40 @@
+@inject IJSRuntime JsRuntime
+
+
+    @if (ShowControls)
+    {
+        <audio id="@Id" src="@Source" controls></audio>
+    }
+    else
+    {
+        <audio id="@Id" src="@Source"></audio>
+    }
+    
+
+@code{
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter] public string Source { get; set; } = string.Empty;
+    
+    [Parameter] public bool ShowControls {get;set;}
+    
+    public async Task Play()
+    {
+        await JsRuntime.InvokeVoidAsync(Id, "play");
+    }
+
+    public async Task Pause()
+    {
+        await JsRuntime.InvokeVoidAsync(Id, "pause");
+    }
+    
+    public async Task Stop()
+    {
+        await JsRuntime.InvokeVoidAsync(Id, "stop");
+    }
+
+    public async Task Restart()
+    {
+        await JsRuntime.InvokeVoidAsync(Id, "restart");
+    }
+}
