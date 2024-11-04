@@ -37,11 +37,13 @@ public class ShanghaiSolver : IGameSolver
             var currentPlayer = _game.Rounds.Last()
                 .RoundStats.FirstOrDefault(x => x.GetDartsList().Count < 3);
 
-            if(currentPlayer == null){
+            var newRound = currentPlayer == null;
+            
+            if(newRound){
                 currentPlayer = _game.Rounds.Last().RoundStats.First();
                 currentTarget += 4;
             }else{
-                currentTarget += currentPlayer.GetDartsList().Count + 1;
+                currentTarget += currentPlayer!.GetDartsList().Count + 1;
             }
 
             if(currentTarget == 21)
@@ -56,7 +58,7 @@ public class ShanghaiSolver : IGameSolver
                     var newTarget = x.ShanghaiState!.CurrentTarget == 20
                         ? x.ShanghaiState!.CurrentTarget + 5
                         : x.ShanghaiState!.CurrentTarget + 1;
-                    return x with {ShanghaiState = x.ShanghaiState! with {CurrentTarget = newTarget}};
+                    return x with {ShanghaiState = x.ShanghaiState! with {CurrentTarget = newTarget}, Darts = newRound ? new DartsState(null,null,null) : x.Darts};
                 }
                 return x;
             }).ToList();

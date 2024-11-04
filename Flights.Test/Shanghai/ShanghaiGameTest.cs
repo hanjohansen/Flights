@@ -280,4 +280,45 @@ public class ShanghaiGameTest
         Assert.True(state.CurrentPlayerId == state.PlayerStates[0].PlayerId);
         Assert.True(state.ShanghaiState!.CurrentTarget == 10);
     }
+
+    [Fact]
+    public void First_Player_Starts_Second_Round_With_Zero_Darts()
+    {
+        var players = _helper.GetPlayers(3);
+
+        var model = GameModel.Create(
+            players,
+            GameType.Shanghai,
+            0,
+            InOutModifier.None,
+            InOutModifier.None);
+
+        var state = model.SolveGameState();
+
+        foreach (var player in state.PlayerStates)
+            Assert.True(player.Darts?.GetDartsList().Count == 0);
+
+        //first round
+        model.AddPlayerStats(players[0].Id,
+            StatModel.Init(DartModifier.None, 1),
+            StatModel.Init(DartModifier.None, 2),
+            StatModel.Init(DartModifier.None, 3));
+
+        model.AddPlayerStats(players[1].Id,
+            StatModel.Init(DartModifier.None, 1),
+            StatModel.Init(DartModifier.None, 2),
+            StatModel.Init(DartModifier.None, 3));
+
+        state = model.AddPlayerStats(players[2].Id,
+            StatModel.Init(DartModifier.None, 1),
+            StatModel.Init(DartModifier.None, 2),
+            StatModel.Init(DartModifier.None, 3)); //second round starts
+
+        Assert.True(state.PlayerStates[0].Darts!.GetDartsList().Count == 0);
+
+        state = model.AddPlayerStats(players[0].Id,
+            StatModel.Init(DartModifier.None, 4));
+        
+        Assert.True(state.PlayerStates[0].Darts!.GetDartsList().Count == 1);
+    }
 }

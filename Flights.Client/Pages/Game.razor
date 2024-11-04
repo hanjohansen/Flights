@@ -86,7 +86,7 @@
         try
         {
             for(var i = remainingDarts; i > 0; i--)
-                await GameRepo.AddPlayerStat(GameId, currentPlayer.PlayerId, StatModel.Init(0));
+                CurrentGame = await GameRepo.AddPlayerStat(GameId, currentPlayer.PlayerId, StatModel.Init(0));
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }
