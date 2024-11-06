@@ -9,4 +9,6 @@ Storage
 *.db-shm
 *.db-wal
 
+*.DotSettings.user
+
 styles.css

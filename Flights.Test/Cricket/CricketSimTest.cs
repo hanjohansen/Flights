@@ -33,11 +33,13 @@ public class CricketSimTest : CricketSimBase
                 && state.CurrentPlayerId != null){
 
             var player = state.PlayerStates.First(x => x.PlayerId == state.CurrentPlayerId!.Value);
-            var opts = GetDartOptions(player.CricketState!);
+            var others = state.PlayerStates.Where(x => x.PlayerId != player.PlayerId)
+                .Select(x => x.CricketState!)
+                .ToList();
+            var opts = GetDartOptions(player.CricketState!, others);
             var randValue = Helpers.GetRandom(opts);
 
             state = game.AddPlayerStats(state.CurrentPlayerId!.Value, StatModel.Init(randValue));
-
             darts++;            
         }
         

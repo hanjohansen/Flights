@@ -24,7 +24,7 @@ public class CricketSolver : IGameSolver
             var remaining = playerStates.Where(x => x.Rank == null).ToList();
             currentPlayerId = remaining.FirstOrDefault()?.PlayerId;
             playerStates = playerStates.Select(x => x with {Darts = null}).ToList();        
-            }
+        }
 
         if(finished && _game.Finished == null)
             _game.Finished = DateTimeOffset.UtcNow;
@@ -42,7 +42,7 @@ public class CricketSolver : IGameSolver
             CricketState: gameState
         );
     }
-
+    
     private List<PlayerState> GetPlayerStates(){
         var playerStateDtos = _game.Players
             .Select(x => new CricketStateDto
@@ -52,14 +52,16 @@ public class CricketSolver : IGameSolver
             .ToList();
 
         foreach(var round in _game.Rounds){
-            playerStateDtos.ForEach(x => x.Darts = null);
+            playerStateDtos.ForEach(x =>
+            {
+                var roundPlayer = round.RoundStats.First(y => y.Player.Id == x.PlayerId);
+                x.Darts = null;
+                x.Rank = roundPlayer.Rank;
+            });
 
             foreach(var player in round.RoundStats){
                 
                 var playerState = playerStateDtos.First(x => x.PlayerId == player.Player.Id);
-
-                if(playerState.Rank == null)
-                    playerState.Rank = player.Rank;
 
                 var darts = player.GetDartsList();
 
@@ -228,94 +230,68 @@ public class CricketSolver : IGameSolver
         return false;
     }
 
-    private void CheckRanks(List<CricketStateDto> players){
-        if(_game.Type == GameType.Cricket)
-            CheckRanksCricket(players);
-        else
-            CheckRanksCtCricket(players);
-    }
+    private void CheckRanks(List<CricketStateDto> players)
+    {
+        var unranked = players.Where(x => x.Rank == null)
+            .ToList();
 
-    private void CheckRanksCricket(List<CricketStateDto> players){
-        bool rankingChanged;
+        if (unranked.Count == 0)
+            return;
 
-        do{
-            rankingChanged = false;
+        var unrankedGroups = _game.Type == GameType.Cricket
+            ? unranked.OrderByDescending(x => x.Points)
+                .GroupBy(x => x.Points)
+                .ToList()
+            : unranked.OrderBy(x => x.Points)
+                .GroupBy(x => x.Points)
+                .ToList();
+        
+        var firstGroup = unrankedGroups.First();
+        var nextRank = players.Max(x => x.Rank) ?? 0;
+        nextRank++;
 
-            foreach(var player in players){
-                if(player.Rank != null)
-                    continue;
+        //last player
+        if (unrankedGroups.Count == 1 && firstGroup.Count() == 1)
+        {
+            firstGroup.First().Rank = nextRank;
+            return;
+        }
 
-                var others = players.Where(x => x.PlayerId != player.PlayerId && x.Rank == null).ToList();
+        //multiple players with same points
+        if (firstGroup.Count() > 1)
+        {
+            var openPlayers = firstGroup.Where(x => x.AllOpen()).ToList();
 
-                if(!others.Any()){
-                    player.Rank = players.Count;
-                    continue;
-                }  
+            if (!openPlayers.Any())
+                return;
 
-                if(!player.AllOpen()){
-                    continue;
-                }     
-
-                var playerPoints = player.Points;
-                var otherMaxPoints = others.Max(x => x.Points);
-                var nextRank = (players.Max(x => x.Rank) ?? 0) + 1;
-
-                if(playerPoints == 0 && otherMaxPoints == 0){
-                    player.Rank = nextRank;
-                    rankingChanged = true;
-                }else if(playerPoints >= otherMaxPoints){
-                    if(playerPoints == otherMaxPoints){
-                        others.Where(x => x.Points == playerPoints && x.AllOpen())
-                        .ToList()
-                        .ForEach(x => x.Rank = nextRank);
-                    }
-                    player.Rank = nextRank;
-                    rankingChanged = true;                    
+            //multiple open
+            if (openPlayers.Count != 1)
+            {
+                //when all remaining players are AllOpen
+                if (unranked.All(x => x.AllOpen()))
+                {
+                    foreach (var ply in openPlayers)
+                        ply.Rank = nextRank;
+                    
+                    CheckRanks(players);
                 }
+                return;
             }
-        }while(rankingChanged);
-    }
 
-    private void CheckRanksCtCricket(List<CricketStateDto> players){
-        bool rankingChanged;
-
-        do{
-            rankingChanged = false;
-
-            foreach(var player in players){
-                if(player.Rank != null)
-                    continue;
-                
-                var others = players.Where(x => x.PlayerId != player.PlayerId && x.Rank == null).ToList();
-
-                if(!others.Any()){
-                    player.Rank = players.Count;
-                    continue;
-                }  
-
-                if(!player.AllOpen()){
-                    continue;
-                }   
-
-                var playerPoints = player.Points;
-                var otherMaxPoints = others.Max(x => x.Points);
-                var nextRank = (players.Max(x => x.Rank) ?? 0) + 1;
-
-                if(playerPoints == 0 && otherMaxPoints == 0){
-                    player.Rank = nextRank;
-                    rankingChanged = true;
-                }else if(playerPoints <= otherMaxPoints){
-                    if(playerPoints == otherMaxPoints){
-                        others.Where(x => x.Points == playerPoints && x.AllOpen())
-                        .ToList()
-                        .ForEach(x => x.Rank = nextRank);
-                    }
-                    player.Rank = nextRank;
-                    rankingChanged = true;
-                }
-            } 
-        }while(rankingChanged);
-   
+            var openPlayer = openPlayers.Single();
+            openPlayer.Rank = nextRank;
+            CheckRanks(players);
+            return;
+        }
+            
+        //single player
+        var player = firstGroup.Single();
+        if (player.AllOpen())
+        {
+            player.Rank = nextRank;
+            CheckRanks(players);
+        }
     }
 
     private CricketState SummarizeStates(List<CricketState> states){
@@ -358,9 +334,6 @@ public class CricketSolver : IGameSolver
             x.Darts?.D3 == null ||
             x.Darts?.D2 == null ||
             x.Darts?.D1 == null)?.PlayerId;
-
-        // if(firstWithMissingDarts == null)
-        //     return remaining.First().PlayerId;
 
         return firstWithMissingDarts;
     }

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Flights.Domain.Entities;
 using Flights.Domain.Models;
 
@@ -7,8 +8,11 @@ public class CtCricketSimTest : CricketSimBase
 {
     [Fact]
     public void RunSim(){
-        for(var i = 1; i <= SimRounds; i++)
+        for (var i = 1; i <= SimRounds; i++)
+        {
+            Debug.WriteLine("running sim #" + i);
             SimulateGame();
+        }
     }
 
     private void SimulateGame(){
@@ -30,13 +34,16 @@ public class CtCricketSimTest : CricketSimBase
                 && state.CurrentPlayerId != null){
 
             var player = state.PlayerStates.First(x => x.PlayerId == state.CurrentPlayerId!.Value);
-            var opts = GetDartOptions(player.CricketState!);
+            var others = state.PlayerStates.Where(x => x.PlayerId != player.PlayerId)
+                .Select(x => x.CricketState!)
+                .ToList();
+            var opts = GetDartOptions(player.CricketState!, others);
             var randValue = Helpers.GetRandom(opts);
+            
             state = game.AddPlayerStats(state.CurrentPlayerId!.Value, StatModel.Init(randValue));
-
             darts++;            
         }
-
+        
         DoFinishAsserts(state);
     }
 }

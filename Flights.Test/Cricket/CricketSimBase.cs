@@ -7,25 +7,23 @@ public class CricketSimBase
     protected TestHelpers Helpers = new();
 
     protected const int MaxGameDarts = 2000; 
-    protected const int SimRounds = 500; 
+    protected const int SimRounds = 1000;
 
-    protected List<int> GetDartOptions(CricketState state){
-        var result = new List<int>();
+    protected List<int> GetDartOptions(CricketState playerState, List<CricketState> otherPlayersState)
+    {
+        var result = playerState.AllOpen()
+            ? GetNonClosedDartsOptions(otherPlayersState)
+            : GetNonClosedDartsOptions(playerState);
+        
         result.Add(0);
 
-        if(state.AllClosed()){
-            result.Add(15);
-            result.Add(16);
-            result.Add(17);
-            result.Add(18);
-            result.Add(19);
-            result.Add(20);
-            result.Add(25);
+        return result;
+    }
 
-            return result;
-        }
-
-
+    private List<int> GetNonClosedDartsOptions(CricketState state)
+    {
+        var result = new List<int>();
+        
         if(state.V15 < CricketValue.Closed)
             result.Add(15);
 
@@ -49,11 +47,44 @@ public class CricketSimBase
 
         return result;
     }
+    
+    private List<int> GetNonClosedDartsOptions(List<CricketState> states)
+    {
+        var result = new List<int>();
+        
+        if(states.Any(x => x.V15 < CricketValue.Open))
+            result.Add(15);
+
+        if(states.Any(x => x.V16 < CricketValue.Open))
+            result.Add(16);        
+
+        if(states.Any(x => x.V17 < CricketValue.Open))
+            result.Add(17);
+        
+        if(states.Any(x => x.V18 < CricketValue.Open))
+            result.Add(18);
+        
+        if(states.Any(x => x.V19 < CricketValue.Open))
+            result.Add(19);
+        
+        if(states.Any(x => x.V20 < CricketValue.Open))
+            result.Add(20);
+        
+        if(states.Any(x => x.Bulls < CricketValue.Open))
+            result.Add(25);
+
+        return result;
+    }
+    
+    
 
     protected void DoFinishAsserts(GameState state)
     {
         Assert.True(state.Finished);
         Assert.DoesNotContain(state.PlayerStates, x => x.Rank == null);
+
+        var maxRank = state.PlayerStates.Max(x => x.Rank!.Value);
+        Assert.True(maxRank <= state.PlayerStates.Count);
 
         var openPlayers = state.PlayerStates.Where(x => x.CricketState!.AllOpen() == false).ToList();
         var openCount = openPlayers.Count;
