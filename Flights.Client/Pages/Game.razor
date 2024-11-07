@@ -1,7 +1,6 @@
 ﻿@page "/game/{GameId:guid}"
 
 @using Flights.Client.Shared.Game.Cricket
-@using Flights.Client.Shared.Game.Shanghai
 @using Flights.Client.Shared.Game.X01
 @using Flights.Domain.Entities
 @using Flights.Domain.Exception
@@ -9,6 +8,7 @@
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
 @using Flights.Client.Shared.Game
+@using Flights.Client.Shared.Game.AroundTheClock
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
@@ -30,8 +30,8 @@
                     ReportMiss="@ReportNullDart"
                     RevertDart="@RequestRevertDart"/>
                 break;
-            case GameType.Shanghai:
-                <ShanghaiGame CurrentGame="@CurrentGame" 
+            case GameType.AroundTheClock:
+                <AroundTheClockGame CurrentGame="@CurrentGame" 
                     ReportScore="@ReportScore"
                     ReportMiss="@ReportNullDart"
                     RevertDart="@RequestRevertDart"/>

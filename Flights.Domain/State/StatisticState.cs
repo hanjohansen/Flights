@@ -5,7 +5,7 @@ public record GameCountState(
     int? X01,
     int? Cricket,
     int? CtCricket,
-    int? Shanghai,
+    int? AroundTheClock,
     List<PlayerGameCount> PlayerGames);
 
 public record PlayerGameCount(

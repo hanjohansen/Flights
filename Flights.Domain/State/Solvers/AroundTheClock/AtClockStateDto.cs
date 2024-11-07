@@ -1,6 +1,6 @@
-namespace Flights.Domain.State.Solvers.Shanghai;
+namespace Flights.Domain.State.Solvers.AroundTheClock;
 
-public class ShanghaiStateDto
+public class AtClockStateDto
 {
     public Guid PlayerId {get;set;}
 
@@ -32,8 +32,8 @@ public class ShanghaiStateDto
     public int? V20 {get;set;}
     public int? V25 {get;set;}
 
-    public ShanghaiState ToState(){
-        return new ShanghaiState(
+    public AroundTheClockState ToState(){
+        return new AroundTheClockState(
             CurrentTarget,
             V1,
             V2,

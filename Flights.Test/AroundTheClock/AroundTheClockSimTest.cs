@@ -1,9 +1,9 @@
 using Flights.Domain.Entities;
 using Flights.Domain.Models;
 
-namespace Flights.Test.Shanghai;
+namespace Flights.Test.AroundTheClock;
 
-public class ShanghaiSimTest
+public class AroundTheClockSimTest
 {
     private readonly TestHelpers _helper = new();
 
@@ -20,7 +20,7 @@ public class ShanghaiSimTest
     
         var model = GameModel.Create(
             players, 
-            GameType.Shanghai, 
+            GameType.AroundTheClock, 
             0, 
             InOutModifier.None, 
             InOutModifier.None);

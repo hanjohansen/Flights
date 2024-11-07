@@ -1,12 +1,12 @@
 using Flights.Domain.Entities;
 
-namespace Flights.Domain.State.Solvers.Shanghai;
+namespace Flights.Domain.State.Solvers.AroundTheClock;
 
-public class ShanghaiSolver : IGameSolver
+public class AroundTheClockSolver : IGameSolver
 {
     private readonly GameEntity _game;
 
-    public ShanghaiSolver(GameEntity game)
+    public AroundTheClockSolver(GameEntity game)
     {
         _game = game;
     }
@@ -55,10 +55,10 @@ public class ShanghaiSolver : IGameSolver
                 ? playerStates
                 : playerStates.Select(x => {
                 if(x.PlayerId == currentPlayerId){
-                    var newTarget = x.ShanghaiState!.CurrentTarget == 20
-                        ? x.ShanghaiState!.CurrentTarget + 5
-                        : x.ShanghaiState!.CurrentTarget + 1;
-                    return x with {ShanghaiState = x.ShanghaiState! with {CurrentTarget = newTarget}, Darts = newRound ? new DartsState(null,null,null) : x.Darts};
+                    var newTarget = x.AroundTheClockState!.CurrentTarget == 20
+                        ? x.AroundTheClockState!.CurrentTarget + 5
+                        : x.AroundTheClockState!.CurrentTarget + 1;
+                    return x with {AroundTheClockState = x.AroundTheClockState! with {CurrentTarget = newTarget}, Darts = newRound ? new DartsState(null,null,null) : x.Darts};
                 }
                 return x;
             }).ToList();
@@ -75,12 +75,12 @@ public class ShanghaiSolver : IGameSolver
             CurrentPlayerId: currentPlayerId,
             PlayerStates: playerStates,
             CricketState: null,
-            ShanghaiState: new ShanghaiGameState(currentTarget));
+            AroundTheClockState: new AroundTheClockGameState(currentTarget));
     }
 
     private List<PlayerState> GetPlayerStates(){
         var playerDtos = _game.Players
-            .Select(x => new ShanghaiStateDto {PlayerId = x.Player.Id, CurrentTarget = 1})
+            .Select(x => new AtClockStateDto {PlayerId = x.Player.Id, CurrentTarget = 1})
             .ToList();
 
         foreach(var round in _game.Rounds){
@@ -115,7 +115,7 @@ public class ShanghaiSolver : IGameSolver
         return states;
     }
 
-    private void ProcessPlayerRound(ShanghaiStateDto playerState, RoundStatEntity playerRound, int targetNumber){
+    private void ProcessPlayerRound(AtClockStateDto playerState, RoundStatEntity playerRound, int targetNumber){
         if(targetNumber > 25)
             return;
 
@@ -140,7 +140,7 @@ public class ShanghaiSolver : IGameSolver
         foreach(var dart in darts){
             if(intTargetNumber > 25)
                 return;
-            var setProp = typeof(ShanghaiStateDto).GetProperties().First(x => x.Name == "V" + intTargetNumber); 
+            var setProp = typeof(AtClockStateDto).GetProperties().First(x => x.Name == "V" + intTargetNumber); 
             setProp.SetValue(playerState, 0);
 
             if(dart.Value == intTargetNumber){

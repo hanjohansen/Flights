@@ -12,7 +12,7 @@ public record GameState(
     Guid? CurrentPlayerId,
     List<PlayerState> PlayerStates,
     CricketState? CricketState = null,
-    ShanghaiGameState? ShanghaiState = null
+    AroundTheClockGameState? AroundTheClockState = null
 );
 
 public record PlayerState(
@@ -26,7 +26,7 @@ public record PlayerState(
     DartsState? Darts,
     DartsState? Checkout = null,
     CricketState? CricketState = null,
-    ShanghaiState? ShanghaiState = null);
+    AroundTheClockState? AroundTheClockState = null);
 
 public record DartsState(DartState? D1, DartState? D2, DartState? D3){
     public int RemainingDarts(){
@@ -94,9 +94,9 @@ public record CricketState(
     }
 }
 
-public record ShanghaiGameState(int CurrentTarget);
+public record AroundTheClockGameState(int CurrentTarget);
 
-public record ShanghaiState(
+public record AroundTheClockState(
     int CurrentTarget,
     int? V1,
     int? V2,

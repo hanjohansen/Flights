@@ -15,9 +15,9 @@
         </div>       
     </div>
     <div class="grid grid-cols-1 gap-3 pt-2">
-        <ShanghaiScoreButton Caption="Single" Modifier="DartModifier.None" ReportScore="@ReportDart" Number="@CurrentTarget"/>
-        <ShanghaiScoreButton Caption="Double" Modifier="DartModifier.Double" ReportScore="@ReportDart" Number="@CurrentTarget"/>
-        <ShanghaiScoreButton Caption="Triple" Modifier="DartModifier.Triple" ReportScore="@ReportDart" Number="@CurrentTarget" Disabled="@(CurrentTarget == 25)"/>
+        <AroundTheClockScoreButton Caption="Single" Modifier="DartModifier.None" ReportScore="@ReportDart" Number="@CurrentTarget"/>
+        <AroundTheClockScoreButton Caption="Double" Modifier="DartModifier.Double" ReportScore="@ReportDart" Number="@CurrentTarget"/>
+        <AroundTheClockScoreButton Caption="Triple" Modifier="DartModifier.Triple" ReportScore="@ReportDart" Number="@CurrentTarget" Disabled="@(CurrentTarget == 25)"/>
     </div>
     <div class="grid grid-cols-2 gap-3 mt-10 h-[80px]">
         <ScoreButton Number="0" ReportScore="@ReportScore"/>

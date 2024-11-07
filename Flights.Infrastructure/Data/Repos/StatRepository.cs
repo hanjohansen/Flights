@@ -25,7 +25,7 @@ public class StatRepository : IStatRepository
         int? x01 = null;
         int? cricket = null;
         int? ctCricket = null;
-        int? shanghai = null;
+        int? atClock = null;
         var playerGames = new Dictionary<string, GameCountState>();
 
         foreach(var game in games){
@@ -40,8 +40,8 @@ public class StatRepository : IStatRepository
                 case GameType.CtCricket:
                     ctCricket = ctCricket == null ? 1 : ctCricket +1; 
                     break;
-                case GameType.Shanghai:
-                    shanghai = shanghai == null ? 1 : shanghai + 1;
+                case GameType.AroundTheClock:
+                    atClock = atClock == null ? 1 : atClock + 1;
                     break;
             }
 
@@ -65,8 +65,8 @@ public class StatRepository : IStatRepository
                     case GameType.CtCricket:
                         playerGames[playerName] = playerGames[playerName] with {CtCricket = playerGames[playerName].CtCricket + 1};
                         break;
-                    case GameType.Shanghai:
-                        playerGames[playerName] = playerGames[playerName] with {Shanghai = playerGames[playerName].Shanghai + 1};
+                    case GameType.AroundTheClock:
+                        playerGames[playerName] = playerGames[playerName] with {AroundTheClock = playerGames[playerName].AroundTheClock + 1};
                         break;
                 }
             }
@@ -76,10 +76,10 @@ public class StatRepository : IStatRepository
 
         foreach(var player in playerGames.Keys){
             var count = playerGames[player];
-            var newCount = count with {Total = count.X01 + count.Cricket + count.CtCricket + count.Shanghai};
+            var newCount = count with {Total = count.X01 + count.Cricket + count.CtCricket + count.AroundTheClock};
             playerStats.Add(new PlayerGameCount(player, newCount));
         }
 
-        return new GameCountState(games.Count, x01, cricket, ctCricket, shanghai, playerStats.OrderByDescending(x => x.GameCount.Total).ToList());
+        return new GameCountState(games.Count, x01, cricket, ctCricket, atClock, playerStats.OrderByDescending(x => x.GameCount.Total).ToList());
     }
 }
