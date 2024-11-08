@@ -164,11 +164,16 @@ public class X01Solver : IGameSolver
 
     private void SetRank(RoundStatEntity player){
         var round = _game.Rounds.Last();
-        var rank = round.RoundStats
-            .Where(x => x.Player.Id != player.Player.Id)
-            .Max(x => x.Rank ?? 0);
-
-        player.Rank = rank + 1;
+        var rank = 1;
+        
+        if(round.RoundStats.Count > 1)
+        {
+            rank = round.RoundStats            
+                .Where(x => x.Player.Id != player.Player.Id)
+                .Max(x => x.Rank ?? 0) + 1;
+        }
+        
+        player.Rank = rank;
 
         var unranked = round.RoundStats.Where(x => x.Rank == null).ToList();
         if(unranked.Count==1){

@@ -251,7 +251,9 @@ public class CricketSolver : IGameSolver
         nextRank++;
 
         //last player
-        if (unrankedGroups.Count == 1 && firstGroup.Count() == 1)
+        if (unrankedGroups.Count == 1 
+            && firstGroup.Count() == 1
+            && players.Count > 1) //<== single player game
         {
             firstGroup.First().Rank = nextRank;
             return;
