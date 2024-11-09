@@ -5,25 +5,28 @@
 @inject NavigationManager NavigationManager
 
 <div>
-    <div class="grid grid-cols-2 gap-2 pt-2 px-2">
+    <div class="grid grid-cols-3 gap-2 pt-2 px-2">
         @for(var i = 15; i <= 20; i++){
             <div>
                 <ScoreButton Number="@i" ReportScore="@ReportScore"/>
             </div>
         }
+
         <BullsButton SelectedModifier="@SelectedModifier" ReportScore="@ReportScore"/>
-        <ScoreButton Number="0" ReportScore="@ReportScore"/>
         <ScoreButton Caption="Miss" Number="0" ReportScore="@ReportNullDart"/>
     </div>
-    <div class="px-2">        
+    <div class="px-2 pt-6">        
         <ModifierButton Target="DartModifier.Double"
-            Selected="@SelectedModifier"
-            ModifierChanged="@ModifierChanged"/>
+                        Selected="@SelectedModifier"
+                        ModifierChanged="@ModifierChanged"/>
         <ModifierButton Target="DartModifier.Triple"
-            Selected="@SelectedModifier"
-            ModifierChanged="@ModifierChanged"/>
+                        Selected="@SelectedModifier"
+                        ModifierChanged="@ModifierChanged"/>
     </div>
-    <div class="grid grid-cols-2 gap-3 m-2 mt-10 h-[80px]">
+    <div class="mx-2 pt-[70px]">
+        <AirhornButton/>
+    </div>
+    <div class="grid grid-cols-2 gap-2 m-2 mt-10 h-[80px]">
         <div class="">
             <RevertButton RequestRevertDart="@RequestRevertDart"/>
         </div>      

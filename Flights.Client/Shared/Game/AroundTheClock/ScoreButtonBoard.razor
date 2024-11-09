@@ -14,16 +14,19 @@
             </div>
         </div>       
     </div>
-    <div class="grid grid-cols-1 gap-3 pt-2">
+    <div class="grid grid-cols-1 gap-2">
         <AroundTheClockScoreButton Caption="Single" Modifier="DartModifier.None" ReportScore="@ReportDart" Number="@CurrentTarget"/>
         <AroundTheClockScoreButton Caption="Double" Modifier="DartModifier.Double" ReportScore="@ReportDart" Number="@CurrentTarget"/>
         <AroundTheClockScoreButton Caption="Triple" Modifier="DartModifier.Triple" ReportScore="@ReportDart" Number="@CurrentTarget" Disabled="@(CurrentTarget == 25)"/>
     </div>
-    <div class="grid grid-cols-2 gap-3 mt-10 h-[80px]">
+    <div class="grid grid-cols-2 gap-2 mt-6 h-[80px]">
         <ScoreButton Number="0" ReportScore="@ReportScore"/>
         <ScoreButton Caption="Miss" Number="0" ReportScore="@ReportNullDart"/>
     </div>
-    <div class="grid grid-cols-2 gap-3 mt-[100px] h-[80px]">
+    <div class="pt-6">
+        <AirhornButton/>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-[25px] h-[80px]">
         <div class="">
             <RevertButton RequestRevertDart="@RequestRevertDart"/>
         </div>      
