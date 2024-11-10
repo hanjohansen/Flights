@@ -30,6 +30,19 @@ public class GameRepository : IGameRepository
         return state;
     }
 
+    public async Task<GameState> ReplayGame(Guid gameId)
+    {
+        var sourceGame = await GetGame((gameId));
+
+        var players = sourceGame.Entity.Players.Select(x => x.Player.Id).ToList();
+        
+        return await CreateGame(players,
+            sourceGame.Entity.Type,
+            sourceGame.Entity.X01Target,
+            sourceGame.Entity.InModifier,
+            sourceGame.Entity.OutModifier);
+    }
+
     public async Task<GameState> AddPlayerStat(Guid gameId, Guid playerId, StatModel stat)
     {
         await using var db = await _dbFactory.CreateDbContextAsync();
@@ -70,7 +83,7 @@ public class GameRepository : IGameRepository
         return GameModel.FromEntity(game);
     }
 
-    public IQueryable<GameEntity> GetBaseQuery(FlightsDbContext db)
+    private IQueryable<GameEntity> GetBaseQuery(FlightsDbContext db)
     {
         var query = db.Games
             .AsSplitQuery()
@@ -99,5 +112,18 @@ public class GameRepository : IGameRepository
 
         await db.SaveChangesAsync();
         return newState;
+    }
+
+    public async Task DeleteGame(Guid gameId)
+    {
+        await using var db = await _dbFactory.CreateDbContextAsync();
+        
+        var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
+
+        if (game == null)
+            throw new FlightsGameException("Game not found!");
+
+        db.Games.Remove(game);
+        await db.SaveChangesAsync();
     }
 }

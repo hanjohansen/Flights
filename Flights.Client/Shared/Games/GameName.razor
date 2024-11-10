@@ -1,0 +1,38 @@
+@using Flights.Domain.Entities
+
+<div class="flex flex-row">
+    <div>
+        @GetGameNameString()
+    </div>
+    @if(Game.Type == GameType.X01)
+    {
+        <div class="text-gray-300 ml-8">
+            @Game.X01Target
+        </div>
+    }
+    @if(Game.Type == GameType.CtCricket)
+    {
+        <div class="text-gray-300 ml-4 text-2xl  mt-2">
+            Cut-Throat
+        </div>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public GameEntity Game { get; set; } = null!;
+
+    private string GetGameNameString(){
+        switch(Game.Type){
+            case GameType.X01:
+                return "X01";
+            case GameType.Cricket:
+            case GameType.CtCricket:
+                return "Cricket";
+                case GameType.AroundTheClock:
+                return "Around The Clock";
+            default:
+                return "unknown game";
+        }
+    }
+}

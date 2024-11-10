@@ -1,41 +1,42 @@
 ﻿@using Flights.Domain.Entities
+@using Flights.Domain.Exception
 @using Flights.Infrastructure.Port
 
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 @inject IGameRepository GamesRepo
 
-<div class="mb-2 cursor-pointer rounded border border-gray-100" @onclick="() => GoToGame()">
-    <MudPaper Elevation="4" Width="400px">
+<div class="mb-2 cursor-pointer rounded border border-gray-100">
+    <MudPaper Elevation="4" Width="500px">
         <div class="p-4">
             <div class="font-bold text-4xl">
                 <div class="flex flex-row">
                     @if(Game.Finished != null){
-                        <div class="w-[50px]">
+                        <div class="w-[50px]" @onclick="() => GoToGame()">
                             <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
                         </div>
                     }
-                    <div>
-                        @GetGameNameString()
+                    <div class="flex flex-grow pt-1" @onclick="() => GoToGame()">
+                        <GameName Game="@Game"/>
                     </div>
-                    @if(Game.Type == GameType.X01)
-                    {
-                        <div class="text-gray-300 ml-8">
-                            @Game.X01Target
-                        </div>
-                    }
-                    @if(Game.Type == GameType.CtCricket)
-                    {
-                        <div class="text-gray-300 ml-4 text-2xl  mt-2">
-                            Cut-Throat
-                        </div>
-                    }
+                    <div class="pt-1">
+                        <MudMenu>
+                            <ActivatorContent>
+                                <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
+                            </ActivatorContent>
+                            <ChildContent>
+                                <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" Icon="@Icons.Material.Filled.Refresh" OnClick="@ReplayGame">Play again</MudMenuItem>
+                                <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@DeleteGame">Delete game</MudMenuItem>
+                            </ChildContent>
+                        </MudMenu>
+                    </div>                 
                 </div>           
             </div>
-            <div class="mt-4">
+            <div class="mt-4" @onclick="() => GoToGame()">
                 <GameItemPlayerBar Players="@Game.Players"/>
             </div>
-            <div class="text-xs text-gray-400 mt-1">
+            <div class="text-xs text-gray-400 mt-1" @onclick="() => GoToGame()">
                 @Game.Started.ToLocalTime().ToString("dd.MM.yy  HH:mm")
             </div>
         </div>
@@ -46,10 +47,40 @@
 
     [Parameter]
     public GameEntity Game { get; set; } = null!;
+    
+    [Parameter]
+    public EventCallback ReportGameDeleted {get;set;}
 
     private void GoToGame()
     {
         NavigationManager.NavigateTo("/game/" + Game.Id);
+    }
+
+    private async Task ReplayGame()
+    {
+        try{
+            var newGame = await GamesRepo.ReplayGame(Game.Id);
+            NavigationManager.NavigateTo("/game/" + newGame.Id);
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }catch(Exception){
+            Snackbar.Add("Weird unexpected error occured", Severity.Error);
+        }
+    }
+
+    private async Task DeleteGame()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<DeleteGameDialog>("Delete game", options);
+        var result = await dialog.Result;
+        
+        if(!result?.Canceled ?? false){
+            await GamesRepo.DeleteGame(Game.Id);
+            await ReportGameDeleted.InvokeAsync();
+            
+            Snackbar.Add("Game deleted", Severity.Success);
+        }
     }
 
     private string GetGameNameString(){
