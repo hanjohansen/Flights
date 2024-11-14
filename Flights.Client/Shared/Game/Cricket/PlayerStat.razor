@@ -1,6 +1,6 @@
 @using Flights.Domain.State
 
-<div id="@Player.PlayerId" class="flex-shrink-0 rounded-lg mr-2 mb-1 shadow-lg mud-elevation-3 w-[180px] bg-white">
+<div id="@Player.PlayerId" class="flex flex-none rounded-lg mr-2 mb-1 shadow-lg mud-elevation-3 w-[175px] bg-white">
     <div class="@GetBorderClasses()">
         <div class="text-gray-600 p-1 text-center">
             <div class="text-3xl">
@@ -29,7 +29,7 @@
                 }                
             </div>
         </div>
-        <div class="flex-shrink grid grid-rows-7 gap-8 pt-[1px] justify-center mb-[15px]">
+        <div class="flex-shrink grid grid-rows-7 gap-7 pt-4 justify-center mb-[15px]">
             <CricketScore IconValue="@Player.CricketState?.V15" IsPlayer="@true"/>
             <CricketScore IconValue="@Player.CricketState?.V16" IsPlayer="@true"/>
             <CricketScore IconValue="@Player.CricketState?.V17" IsPlayer="@true"/>
@@ -49,7 +49,7 @@
     public Guid? CurrentPlayerId {get;set;}
 
     private string GetBorderClasses(){
-        var baseClasses = "flex flex-col rounded-lg border-t-[15px] my-[-1px] border-r-2 border-l-2 border-b-2 ";
+        var baseClasses = "flex flex-grow flex-col rounded-lg border-t-[15px] my-[-1px] border-r-2 border-l-2 border-b-2 ";
 
         if(Player.Rank != null)
             return baseClasses + "border-yellow-400";

@@ -3,32 +3,48 @@
 
 @inject IJSRuntime JsRuntime
 
-<div class="flex flex-row mx-1 h-[755px] overflow-hidden pb-1">
-    <div class="flex w-[855px] overflow-x-auto">
+<div class="flex flex-row h-[755px] pl-2 pt-1 pb-1 overflow-y-auto">
+    <div class="flex flex-auto overflow-y-auto">
         @if(CurrentGame != null){
             foreach(var player in CurrentGame.PlayerStates){
             <PlayerStat Player="@player" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
             }
         }
     </div>
-    <div class="flex w-[425px]">
-        <div class="flex flex-row border border-gray-300 rounded-lg mud-elevation-3 bg-white mb-1">
-            <div class="grid grid-rows-8 gap-8 p-2 mr-2 mb-[7px] mt-[18px]">
-                <div class="flex flex-row ml-8 mt-4">
-                    <div class="mt-1 mr-1">
+    <div class="flex flex-none pr-2 pt-[-1] pb-1">
+        <div class="flex flex-row pl-2 border border-gray-300 rounded-lg mud-elevation-3 bg-white">
+            <div class="mr-2 text-gray-600">
+                <div class="flex flex-row mt-15 justify-center">
+                    <div class="mt-1 mr-0">
                         <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" Color="Color.Default"/>  
                     </div>                                                       
-                    <div class="text-4xl font-bold text-slate-700">
+                    <div class="text-4xl font-bold">
                         @CurrentGame?.Round
                     </div> 
-                </div>   
-                <CricketScore Caption="15" IconValue="@CurrentGame?.CricketState?.V15"/>
-                <CricketScore Caption="16" IconValue="@CurrentGame?.CricketState?.V16"/>
-                <CricketScore Caption="17" IconValue="@CurrentGame?.CricketState?.V17"/>
-                <CricketScore Caption="18" IconValue="@CurrentGame?.CricketState?.V18"/>
-                <CricketScore Caption="19" IconValue="@CurrentGame?.CricketState?.V19"/>
-                <CricketScore Caption="20" IconValue="@CurrentGame?.CricketState?.V20"/>
-                <CricketScore Caption="B" IconValue="@CurrentGame?.CricketState?.Bulls"/>
+                </div>  
+                <div class="flex flex-row">
+                    @if(CurrentGame!.PlayerStates.Count > 5){
+                        <div class="grid grid-rows-7 gap-[28px] mt-8 mx-4">
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.V15"/>
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.V16"/>
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.V17"/>
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.V18"/>
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.V19"/>
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.V20"/>
+                            <CricketScore IconValue="@CurrentGame?.CricketState?.Bulls"/>
+                        </div>
+                    }
+                    <div class="flex flex-col justify-items-center pl-2 mt-10">
+                        @for(var i = 15; i <= 20; i++){
+                            <div class="flex text-center text-4xl font-bold mb-12">
+                                @i
+                            </div>
+                        }
+                        <div class="text-center text-4xl font-bold">
+                            B
+                        </div>
+                    </div>
+                </div> 
             </div>
             <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart" ReportMiss="@ReportMiss"/>
         </div>        
