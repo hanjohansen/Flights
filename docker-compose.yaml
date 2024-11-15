@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: dockerfile
     ports:
-      - 127.0.0.1:8080:80
+      - 127.0.0.1:8080:8080
     volumes:
       - ./apidata:/app/apidata:rw
       - ./storage:/app/wwwroot/Storage:rw
