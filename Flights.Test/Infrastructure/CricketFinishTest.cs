@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Flights.Test.Infrastructure;
 public class CricketFinishTest : DbTestBase
 {
-    const string TestDb = "DataSource=/home/hanjo/Documents/Code/Flights/Flights.Test/Infrastructure/TestDbs/flights-app-17-10-24.db;Cache=Shared;foreign keys=true";
+    const string TestDb = "DataSource=/home/hannes/Documents/Code/Flights/Flights.Test/Infrastructure/TestDbs/flights-app-17-10-24.db;Cache=Shared;foreign keys=true";
 
     [Fact]
     public async Task LoadRaw(){
