@@ -3,14 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Infrastructure.Data;
 
-public class FlightsDbContext : DbContext
+public class FlightsDbContext(DbContextOptions<FlightsDbContext> options) : DbContext(options)
 {
     public virtual DbSet<GameEntity> Games { get; set; } = null!;
     public virtual DbSet<PlayerEntity> Players { get; set; } = null!;
     public virtual DbSet<PlayerFileEntity> PlayerFiles { get; set; } = null!;
-
-    public FlightsDbContext(DbContextOptions<FlightsDbContext> options) 
-        : base(options){}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

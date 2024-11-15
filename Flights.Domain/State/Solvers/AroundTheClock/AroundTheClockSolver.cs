@@ -2,27 +2,20 @@ using Flights.Domain.Entities;
 
 namespace Flights.Domain.State.Solvers.AroundTheClock;
 
-public class AroundTheClockSolver : IGameSolver
+public class AroundTheClockSolver(GameEntity game) : IGameSolver
 {
-    private readonly GameEntity _game;
-
-    public AroundTheClockSolver(GameEntity game)
-    {
-        _game = game;
-    }
-
     public GameState Solve()
     {
         var playerStates = GetPlayerStates();
-        var rounds = _game.Rounds.Count;
-        var finished = _game.Rounds.Count == 7
-            && _game.Rounds.Last()
+        var rounds = game.Rounds.Count;
+        var finished = game.Rounds.Count == 7
+            && game.Rounds.Last()
                 .RoundStats.All(x => x.GetDartsList().Count == 3);
 
         if(finished){
-            _game.Finished = DateTimeOffset.UtcNow;
+            game.Finished = DateTimeOffset.UtcNow;
             playerStates = CalculateRanks(playerStates);
-            var roundStats = _game.Rounds.Last().RoundStats;
+            var roundStats = game.Rounds.Last().RoundStats;
             foreach(var roundStat in roundStats){
                 var playerState = playerStates.First(x => x.PlayerId == roundStat.Player.Id);
                 roundStat.Rank = playerState.Rank;
@@ -33,14 +26,14 @@ public class AroundTheClockSolver : IGameSolver
         var currentTarget = 0;
 
         if(!finished){
-            currentTarget = (_game.Rounds.Count - 1) * 3;
-            var currentPlayer = _game.Rounds.Last()
+            currentTarget = (game.Rounds.Count - 1) * 3;
+            var currentPlayer = game.Rounds.Last()
                 .RoundStats.FirstOrDefault(x => x.GetDartsList().Count < 3);
 
             var newRound = currentPlayer == null;
             
             if(newRound){
-                currentPlayer = _game.Rounds.Last().RoundStats.First();
+                currentPlayer = game.Rounds.Last().RoundStats.First();
                 currentTarget += 4;
             }else{
                 currentTarget += currentPlayer!.GetDartsList().Count + 1;
@@ -65,11 +58,11 @@ public class AroundTheClockSolver : IGameSolver
         }
 
         return new GameState(
-            Id: _game.Id,
-            Type: _game.Type,
+            Id: game.Id,
+            Type: game.Type,
             InModifier: InOutModifier.None,
             OutModifier: InOutModifier.None,
-            Started: _game.Started,
+            Started: game.Started,
             Round: rounds,
             Finished: finished,
             CurrentPlayerId: currentPlayerId,
@@ -79,12 +72,12 @@ public class AroundTheClockSolver : IGameSolver
     }
 
     private List<PlayerState> GetPlayerStates(){
-        var playerDtos = _game.Players
+        var playerDtos = game.Players
             .Select(x => new AtClockStateDto {PlayerId = x.Player.Id, CurrentTarget = 1})
             .ToList();
 
-        foreach(var round in _game.Rounds){
-            var intTargetNumber = (_game.Rounds.IndexOf(round) * 3) + 1;
+        foreach(var round in game.Rounds){
+            var intTargetNumber = (game.Rounds.IndexOf(round) * 3) + 1;
 
             foreach(var playerRound in round.RoundStats){
                 var playerDto = playerDtos.First(x => x.PlayerId == playerRound.Player.Id);
@@ -96,7 +89,7 @@ public class AroundTheClockSolver : IGameSolver
 
         var states = new List<PlayerState>();
         foreach(var dto in playerDtos){
-            var player = _game.Players.First(x => x.Player.Id == dto.PlayerId);
+            var player = game.Players.First(x => x.Player.Id == dto.PlayerId);
             var state = new PlayerState(
                 PlayerId: player.Player.Id,
                 PlayerName: player.Player.Name,

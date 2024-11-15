@@ -5,16 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Infrastructure.Data.Repos;
 
-public class PlayerFileRepository : IPlayerFileRepository
+public class PlayerFileRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IPlayerFileRepository
 {
-    private readonly IDbContextFactory<FlightsDbContext> _dbFactory;
-
-    public PlayerFileRepository(IDbContextFactory<FlightsDbContext> dbFactory){
-        _dbFactory = dbFactory;
-    }
-
     public async Task SetPlayerJingle(Guid playerId, string fileName, string storagePath){
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var player = await db.Players
             .FirstOrDefaultAsync(p => p.Id == playerId && p.Deleted == false);
@@ -35,7 +29,7 @@ public class PlayerFileRepository : IPlayerFileRepository
     }
 
     public async Task TryDeletePlayerJingle(Guid playerId){
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
             .FirstOrDefaultAsync(x => x.PlayerId == playerId && x.FileType == PlayerFileType.Jingle);
@@ -48,7 +42,7 @@ public class PlayerFileRepository : IPlayerFileRepository
     }
 
     public async Task DeletePlayerJingle(Guid fileId){
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
             .FirstOrDefaultAsync(x => x.Id == fileId && x.FileType == PlayerFileType.Jingle);
@@ -62,7 +56,7 @@ public class PlayerFileRepository : IPlayerFileRepository
 
     public async Task<PlayerFileEntity?> GetPlayerJingle(Guid playerId)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var file = await db.PlayerFiles
             .AsNoTracking()
@@ -74,7 +68,7 @@ public class PlayerFileRepository : IPlayerFileRepository
 
     public async Task<List<PlayerFileEntity>> GetPlayerJinglesByGame(Guid gameId)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var game = await db.Games
             .AsNoTracking()

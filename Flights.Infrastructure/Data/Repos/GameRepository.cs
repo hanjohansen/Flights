@@ -6,16 +6,11 @@ using Flights.Infrastructure.Port;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Infrastructure.Data.Repos;
-public class GameRepository : IGameRepository
+public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGameRepository
 {
-    private readonly IDbContextFactory<FlightsDbContext> _dbFactory;
-
-    public GameRepository(IDbContextFactory<FlightsDbContext> dbFactory){
-        _dbFactory = dbFactory;
-    }
     public async Task<GameState> CreateGame(List<Guid> players, GameType type, int x01Target, InOutModifier inMod, InOutModifier outMod )
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var allPlayers = await db.Players.ToListAsync();
 
@@ -45,7 +40,7 @@ public class GameRepository : IGameRepository
 
     public async Task<GameState> AddPlayerStat(Guid gameId, Guid playerId, StatModel stat)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
 
@@ -61,7 +56,7 @@ public class GameRepository : IGameRepository
 
     public async Task<List<GameEntity>> GetGames()
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var games = await GetBaseQuery(db)
             .AsNoTrackingWithIdentityResolution()
@@ -72,7 +67,7 @@ public class GameRepository : IGameRepository
 
     public async Task<GameModel> GetGame(Guid id)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -97,7 +92,7 @@ public class GameRepository : IGameRepository
 
     public async Task<GameState> RevertLastDart(Guid gameId)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
 
@@ -116,7 +111,7 @@ public class GameRepository : IGameRepository
 
     public async Task DeleteGame(Guid gameId)
     {
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
         
         var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
 

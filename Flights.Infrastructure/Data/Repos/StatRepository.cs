@@ -5,16 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Infrastructure.Data.Repos;
 
-public class StatRepository : IStatRepository
+public class StatRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IStatRepository
 {
-    private readonly IDbContextFactory<FlightsDbContext> _dbFactory;
-
-    public StatRepository(IDbContextFactory<FlightsDbContext> dbFactory){
-        _dbFactory = dbFactory;
-    }
-
     public async Task<GameCountState> GetTotalGameCount(){
-        await using var db = await _dbFactory.CreateDbContextAsync();
+        await using var db = await dbFactory.CreateDbContextAsync();
 
         var games = await db.Games
             .AsNoTracking()

@@ -4,16 +4,11 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace Flights.Client.Service.FileStorage;
 
-public class BaseFileStorage : IFileStorage
+public class BaseFileStorage(IWebHostEnvironment environment) : IFileStorage
 {
-    private readonly IWebHostEnvironment _environment;
     public const int MaxFileSize = 5500000;
 
     public const string BaseSubFolder = "Storage";
-    
-    public BaseFileStorage(IWebHostEnvironment environment){
-        _environment = environment;
-    }
 
     public async Task<FileData> StoreFile(IBrowserFile file, string subFolder, string[] allowedExt){
 
@@ -40,7 +35,7 @@ public class BaseFileStorage : IFileStorage
     }
 
     public void DeleteFile(string storagePath){
-        var path = Path.Combine(_environment.WebRootPath, storagePath);
+        var path = Path.Combine(environment.WebRootPath, storagePath);
 
         if(!File.Exists(path))
             throw new FlightsGameException("File not found in Storage");
@@ -49,7 +44,7 @@ public class BaseFileStorage : IFileStorage
     }
 
     private string BuildBasePath(string subFolder){
-        var path = Path.Combine(_environment.WebRootPath, BaseSubFolder);
+        var path = Path.Combine(environment.WebRootPath, BaseSubFolder);
 
         if(!string.IsNullOrEmpty(subFolder))
             path = Path.Combine(path, subFolder);

@@ -2,14 +2,9 @@ using Flights.Domain.Entities;
 using Flights.Domain.State.Checkout;
 
 namespace Flights.Domain.State.Solvers.X01;
-public class X01Solver : IGameSolver
+public class X01Solver(GameEntity entity) : IGameSolver
 {
-    public X01Solver(GameEntity entity){
-        _game = entity;
-        _checkoutRepo = new CheckoutRepository();
-    }
-    private readonly GameEntity _game;
-    private readonly CheckoutRepository _checkoutRepo;
+    private readonly CheckoutRepository _checkoutRepo = new();
 
     public GameState Solve(){
         var isGameStart = IsGameStart();
@@ -21,23 +16,23 @@ public class X01Solver : IGameSolver
 
         CalculateLastRound();
         
-        var finished = _game.Rounds.Last().RoundStats.All(x => x.Rank != null);
+        var finished = entity.Rounds.Last().RoundStats.All(x => x.Rank != null);
         
-        _game.Finished = finished
+        entity.Finished = finished
             ? DateTimeOffset.UtcNow
             : null;
             
         var nextPlayerId = GetNextPlayerId();
         var playerStates = GetPlayerState(nextPlayerId ?? Guid.Empty);
-        var rounds = _game.Rounds.Count;
+        var rounds = entity.Rounds.Count;
 
         if(!finished && nextPlayerId == null){
-            nextPlayerId = _game.Rounds.Last().RoundStats.FirstOrDefault(x => x.Rank == null)?.Player.Id;
+            nextPlayerId = entity.Rounds.Last().RoundStats.FirstOrDefault(x => x.Rank == null)?.Player.Id;
             rounds++;
             playerStates = playerStates.Select(x => {
                 if(x.PlayerId == nextPlayerId)
                     return x with { Darts = new DartsState(null, null, null),
-                                    Checkout = _game.OutModifier == InOutModifier.Double 
+                                    Checkout = entity.OutModifier == InOutModifier.Double 
                                                         ? _checkoutRepo.GetCheckout(x.Points, 3)
                                                         : null};
                                         
@@ -47,11 +42,11 @@ public class X01Solver : IGameSolver
         }
             
         return new GameState(
-            _game.Id,
-            _game.Type,
-            _game.InModifier,
-            _game.OutModifier,
-            _game.Started,
+            entity.Id,
+            entity.Type,
+            entity.InModifier,
+            entity.OutModifier,
+            entity.Started,
             rounds,
             finished,
             nextPlayerId,
@@ -59,21 +54,21 @@ public class X01Solver : IGameSolver
     }
 
     private bool IsGameStart(){
-        return _game.Rounds.Count == 1 ;
+        return entity.Rounds.Count == 1 ;
     }
 
     private void InitFirstRound(){
-        _game.Rounds
+        entity.Rounds
             .First()
             .RoundStats.ForEach(x => {
-                x.StartPoints = _game.X01Target;
+                x.StartPoints = entity.X01Target;
                 x.IsIn = false;});
     }
 
     private void InitLastFromPreviousRound(){
-        var last = _game.Rounds.Last();
-        var lastIndex = _game.Rounds.IndexOf(last);
-        var previous = _game.Rounds[lastIndex - 1];
+        var last = entity.Rounds.Last();
+        var lastIndex = entity.Rounds.IndexOf(last);
+        var previous = entity.Rounds[lastIndex - 1];
 
         for(var i = 0; i < previous.RoundStats.Count; i++){
             var currentStat = last.RoundStats[i];
@@ -86,7 +81,7 @@ public class X01Solver : IGameSolver
     }
 
     private void CalculateLastRound(){
-        var lastRound = _game.Rounds.Last();
+        var lastRound = entity.Rounds.Last();
 
         foreach(var stat in lastRound.RoundStats)
             CalculatePlayerPoints(stat);
@@ -103,7 +98,7 @@ public class X01Solver : IGameSolver
         foreach(var dart in darts){
             
             if(!stats.IsIn){
-                var qualifies = DartQualifiesForInOut(_game.InModifier, dart);
+                var qualifies = DartQualifiesForInOut(entity.InModifier, dart);
                 if(qualifies)
                     stats.IsIn = true;
                 else
@@ -113,7 +108,7 @@ public class X01Solver : IGameSolver
             var newPoints = points - dart.GetCalculatedValue();
 
             if(newPoints == 0)
-                if(DartQualifiesForInOut(_game.OutModifier, dart)){
+                if(DartQualifiesForInOut(entity.OutModifier, dart)){
                     points = newPoints;
                     SetRank(stats);
                     break;
@@ -122,7 +117,7 @@ public class X01Solver : IGameSolver
                     return;
                 }
 
-            if(newPoints < GetBustBorder(_game.OutModifier)){
+            if(newPoints < GetBustBorder(entity.OutModifier)){
                 stats.IsBust = true;
                 return;
             }
@@ -163,7 +158,7 @@ public class X01Solver : IGameSolver
     }
 
     private void SetRank(RoundStatEntity player){
-        var round = _game.Rounds.Last();
+        var round = entity.Rounds.Last();
         var rank = 1;
         
         if(round.RoundStats.Count > 1)
@@ -177,15 +172,15 @@ public class X01Solver : IGameSolver
 
         var unranked = round.RoundStats.Where(x => x.Rank == null).ToList();
         if(unranked.Count==1){
-            unranked.Single().Rank = _game.Players.Count;
+            unranked.Single().Rank = entity.Players.Count;
         }
     }
 
     private List<PlayerState> GetPlayerState(Guid currentPlayerId){
         var stateResult = new List<PlayerState>();
-        var lastRound = _game.Rounds.Last();
-        var roundBefore = _game.Rounds.Count > 1
-            ? _game.Rounds[_game.Rounds.Count - 2]
+        var lastRound = entity.Rounds.Last();
+        var roundBefore = entity.Rounds.Count > 1
+            ? entity.Rounds[entity.Rounds.Count - 2]
             : null;
         
         foreach(var playerStats in lastRound.RoundStats){
@@ -217,7 +212,7 @@ public class X01Solver : IGameSolver
             remainingDarts = remainingDarts == 0 ? 3 : remainingDarts;
             DartsState? checkout = null;
 
-            if(_game.OutModifier == InOutModifier.Double)
+            if(entity.OutModifier == InOutModifier.Double)
                 checkout = _checkoutRepo.GetCheckout(refStat.EndPoints, remainingDarts);            
             
             stateResult.Add(new PlayerState(
@@ -236,7 +231,7 @@ public class X01Solver : IGameSolver
     }
 
     private Guid? GetNextPlayerId(){
-        var lastRound = _game.Rounds.Last();
+        var lastRound = entity.Rounds.Last();
         var players = lastRound.RoundStats;
 
         if(players.All(x => x.Rank != null))
@@ -254,7 +249,7 @@ public class X01Solver : IGameSolver
     }
 
     private decimal CountPlayerAverage(Guid playerId){
-        var allRounds = _game.Rounds.SelectMany(x => x.RoundStats)
+        var allRounds = entity.Rounds.SelectMany(x => x.RoundStats)
             .Where(x => x.Player.Id == playerId && x.GetDartsList().Any())
             .ToList();
 
