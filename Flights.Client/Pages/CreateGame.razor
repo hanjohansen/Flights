@@ -3,6 +3,7 @@
 @using Flights.Domain.Entities
 @using Flights.Infrastructure.Port
 @using Flights.Client.Shared.Toolkit
+@using Flights.Util
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
@@ -58,8 +59,12 @@
                     }
                 </MudItem>
                 <MudItem>
+                    <div class="mb-1">
+                        <MudCheckBox @bind-Value="ShufflePlayers" Label="Shuffle players"></MudCheckBox>
+                    </div>
                     <div class="border rounded p-4" style="width: 20rem">
-                        @foreach(var player in Players){
+                        @foreach (var player in Players)
+                        {
                             <SelectablePlayer Player="@player" OnSelectionChange="@SelectionChanged"/>
                         }
                     </div>
@@ -81,7 +86,9 @@
 
     private List<PlayerEntity> Players { get; set; } = new();
 
-    private List<Guid> SelectedPlayers { get; set; } = new(); 
+    private List<Guid> SelectedPlayers { get; set; } = new();
+
+    private bool ShufflePlayers { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -104,7 +111,12 @@
 
         try
         {
-            var state = await GameRepo.CreateGame(SelectedPlayers, GameType, X01Value, InModifier, OutModifier);
+            var players = SelectedPlayers.ToList();
+            
+            if (ShufflePlayers)
+                players.Shuffle();
+            
+            var state = await GameRepo.CreateGame(players, GameType, X01Value, InModifier, OutModifier);
 
             NavigationManager.NavigateTo("/game/" + state.Id);
         }
