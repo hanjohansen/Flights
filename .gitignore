@@ -4,6 +4,8 @@ bin
 obj
 
 Storage
+storage
+apidata
 
 *.db
 *.db-shm
