@@ -59,13 +59,18 @@
                     }
                 </MudItem>
                 <MudItem>
-                    <div class="mb-1">
-                        <MudCheckBox @bind-Value="ShufflePlayers" Label="Shuffle players"></MudCheckBox>
+                    <div class="flex flex-row justify-between mb-1">
+                        <div>
+                            <MudCheckBox @bind-Value="ShufflePlayers" Label="Shuffle players"></MudCheckBox>
+                        </div>
+                        <div>
+                            <MudIconButton Icon="@Icons.Material.Filled.PlaylistAddCheck" Size="Size.Medium" Color="Color.Inherit" OnClick="SelectAll"/> 
+                        </div>
                     </div>
                     <div class="border rounded p-4" style="width: 20rem">
                         @foreach (var player in Players)
                         {
-                            <SelectablePlayer Player="@player" OnSelectionChange="@SelectionChanged"/>
+                            <SelectablePlayer Player="@player" SelectedPlayers="@SelectedPlayers" OnSelectionChange="@SelectionChanged"/>
                         }
                     </div>
                 </MudItem>
@@ -101,8 +106,16 @@
             SelectedPlayers.Remove(playerId);
         else
             SelectedPlayers.Add(playerId);
-    } 
+    }
 
+    private void SelectAll()
+    {
+        if (Players.Count == SelectedPlayers.Count)
+            SelectedPlayers = new List<Guid>();
+        else
+            SelectedPlayers = Players.Select(x => x.Id).ToList();
+    }
+    
     private async Task HandleNewGame(){
         if(!SelectedPlayers.Any()){
             Snackbar.Add("No players selected!", Severity.Error);

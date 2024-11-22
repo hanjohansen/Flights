@@ -10,11 +10,14 @@
 
     [Parameter]
     public PlayerEntity Player {get;set;} = null!;
+
+    [Parameter]
+    public List<Guid> SelectedPlayers { get; set; } = new();
           
     [Parameter]
     public EventCallback<Guid> OnSelectionChange {get;set;}
 
-    private bool IsSelected {get;set;}
+    private bool IsSelected => SelectedPlayers.Contains(Player.Id);
 
     public string GetClasses(){
         var baseClasses = "cursor-pointer mb-2 rounded p-2 ";
@@ -24,7 +27,6 @@
     }
 
     private async Task HandleSelectionChange(){
-        IsSelected = !IsSelected;
         await OnSelectionChange.InvokeAsync(Player.Id);
     }
 
