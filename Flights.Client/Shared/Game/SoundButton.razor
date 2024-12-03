@@ -1,0 +1,64 @@
+<div class="border rounded rounded-lg h-[80px] items-center justify-items-center mud-elevation-5 @GetClasses()" @onclick="@OnClicked">
+    <div class="text-2xl text-center prevent-select mt-[22px]">
+        @Caption
+    </div>                    
+</div>
+
+
+@code{
+    public enum SoundButtonStyle { Success, Bad }
+
+    private bool IsPressed {get;set;}
+
+    [Parameter]
+    public string Caption {get;set;} = string.Empty;
+
+    [Parameter]
+    public SoundButtonStyle Style {get;set;}
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private async Task OnClicked(){
+        IsPressed = true;
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);
+
+        await OnClick.InvokeAsync();
+
+        await Task.Delay(200);
+        await timer.DisposeAsync();
+    }
+
+    private void EndPressed(object? _)
+    {
+        IsPressed = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetClasses(){
+        string colors = string.Empty;
+
+        switch(Style){
+            case SoundButtonStyle.Success:
+                colors = "border-green-500 text-green-500";
+                break;
+            case SoundButtonStyle.Bad:
+                colors = "border-red-500 text-red-500";
+                break;
+        }
+
+        if(IsPressed)
+        {
+            switch(Style){
+                case SoundButtonStyle.Success:
+                    colors += " bg-green-500";
+                    break;
+                case SoundButtonStyle.Bad:
+                    colors += " bg-red-500";
+                    break;
+            }
+        }
+
+        return colors;
+    }
+}

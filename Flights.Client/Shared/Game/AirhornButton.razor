@@ -1,16 +1,56 @@
 @using Flights.Client.Shared.Toolkit
-<div class="@GetClasses()" @onclick="@OnClick">
-    <MudIcon Icon="@Icons.Material.Outlined.Campaign" Size="Size.Large" Color="Color.Error"/>
-    <AudioPlayer @ref="@HornPlayer" Source="airhorn.mp3"/>
+
+<div class="grid grid-cols-3 rounded-lg mud-elevation-5">
+    <div class="col-span-2 text-center border rounded-l-lg border-red-500 h-[80px] pt-4 @GetHornClickClasses()" @onclick="@OnHornClick">
+        <MudIcon Icon="@Icons.Material.Outlined.Campaign" Size="Size.Large" Color="Color.Error"/>
+        <AudioPlayer @ref="@HornPlayer" Source="airhorn.mp3"/>
+        <AudioPlayer @ref="@One80Player" Source="180Call.mp3"/>
+        <AudioPlayer @ref="@ApplausePlayer" Source="applause.mp3"/>
+        <AudioPlayer @ref="@MissPlayer" Source="miss.mp3"/>
+        <AudioPlayer @ref="@ZonkPlayer" Source="zonk.mp3"/>
+        <AudioPlayer @ref="@BooohPlayer" Source="boooh.mp3"/>
+    </div>
+    <div class="text-center border-t border-r border-b rounded-r-lg border-red-500 h-[80px] pt-5 @GetExpandClickClasses()" @onclick="@OnExpandClick">
+        <MudIcon Icon="@Icons.Material.Filled.ArrowDropDown" Size="Size.Large" Color="Color.Error"/>
+    </div>
+    <MudOverlay @bind-Visible="IsOptionsOpen" AutoClose="true"></MudOverlay>
+    <div style="position:absolute; left:@(MenuPosX)px; top:@(MenuPosY)px">
+        <MudPopover Open="@IsOptionsOpen">
+            <div class="grid grid-cols-1 gap-2 p-6 w-[300px]">
+                <SoundButton Caption="180" Style="SoundButton.SoundButtonStyle.Success" OnClick="@On180Click"/> 
+                <SoundButton Caption="Applause" Style="SoundButton.SoundButtonStyle.Success" OnClick="@OnApplauseClick"/> 
+                <SoundButton Caption="Miss" Style="SoundButton.SoundButtonStyle.Bad" OnClick="@OnMissClick"/>
+                <SoundButton Caption="Zonk" Style="SoundButton.SoundButtonStyle.Bad" OnClick="@OnZonkClick"/>
+                <SoundButton Caption="Boooh" Style="SoundButton.SoundButtonStyle.Bad" OnClick="@OnBooohClick"/>
+            </div>
+        </MudPopover>
+    </div>
+
 </div>
 
 @code{
-    private bool IsPressed {get;set;}
+    [Parameter]
+    public int MenuPosX {get;set;}
+
+    [Parameter]
+    public int MenuPosY {get;set;}
+
+    private bool IsHornPressed {get;set;}
+
+    private bool IsExpandPressed {get;set;}
+
+    private bool IsOptionsOpen {get;set;}
     
     private AudioPlayer? HornPlayer { get; set; }
+
+    private AudioPlayer? One80Player { get; set; }
+    private AudioPlayer? MissPlayer { get; set; }
+    private AudioPlayer? ZonkPlayer { get; set; }
+    private AudioPlayer? BooohPlayer { get; set; }
+    private AudioPlayer? ApplausePlayer { get; set; }
     
-    private async Task OnClick(){
-        IsPressed = true;
+    private async Task OnHornClick(){
+        IsHornPressed = true;
         var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);
 
         if(HornPlayer != null)
@@ -20,18 +60,74 @@
         await timer.DisposeAsync();
     }
 
+    private async Task On180Click(){
+        if(One80Player != null)
+            await One80Player.Restart();
+        
+        await CloseMenu();
+    }
+
+    private async Task OnMissClick(){
+        if(MissPlayer != null)
+            await MissPlayer.Restart();
+
+        await CloseMenu();
+    }
+
+    private async Task OnZonkClick(){
+        if(ZonkPlayer != null)
+            await ZonkPlayer.Restart();
+
+        await CloseMenu();
+    }
+
+    private async Task OnBooohClick(){
+        if(BooohPlayer != null)
+            await BooohPlayer.Restart();
+
+        await CloseMenu();
+    }
+
+    private async Task OnApplauseClick(){
+        if(ApplausePlayer != null)
+            await ApplausePlayer.Restart();
+
+        await CloseMenu();
+    }
+
+    private async Task CloseMenu(){
+        await Task.Delay(1500);
+        IsOptionsOpen = false;
+    }
+
+    private async Task OnExpandClick(){
+        IsExpandPressed = true;
+        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);
+
+        IsOptionsOpen = true;
+
+        await Task.Delay(200);
+        await timer.DisposeAsync();
+    }
+
     private void EndPressed(object? _)
     {
-        IsPressed = false;
+        IsHornPressed = false;
+        IsExpandPressed = false;
         InvokeAsync(StateHasChanged);
     }
 
-    private string GetClasses(){
-        var baseClass = "rounded border border-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] ";
+    private string GetHornClickClasses(){
+        if(IsHornPressed)
+            return " bg-red-500";
 
-        if(IsPressed)
-            return baseClass + " bg-red-500";
+        return string.Empty;
+    }
 
-        return baseClass;
+    private string GetExpandClickClasses(){
+        if(IsExpandPressed)
+            return " bg-red-500";
+
+        return string.Empty;
     }
 }
