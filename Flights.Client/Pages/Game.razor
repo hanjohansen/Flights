@@ -117,6 +117,15 @@
         if (playerId == null)
             return;
 
+        if (oldState is { Type: GameType.AroundTheClock, Finished: false } && newState.Finished)
+        {
+            var firstPlayer = newState.PlayerStates.FirstOrDefault(x => x.Rank == 1);
+            if(firstPlayer != null)
+                await _jinglePlayer!.PlayJingle(firstPlayer.PlayerId);
+
+            return;
+        }
+
         var oldRank = oldState.PlayerStates.First(x => x.PlayerId == playerId).Rank;
         var newRank = newState.PlayerStates.First(x => x.PlayerId == playerId).Rank;
         
