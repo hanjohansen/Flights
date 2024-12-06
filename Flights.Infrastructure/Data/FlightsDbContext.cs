@@ -1,4 +1,5 @@
 using Flights.Domain.Entities;
+using Flights.Domain.Entities.Game;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flights.Infrastructure.Data;

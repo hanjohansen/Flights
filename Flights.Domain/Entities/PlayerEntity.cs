@@ -1,3 +1,5 @@
+using Flights.Domain.Entities.Game;
+
 namespace Flights.Domain.Entities;
 public class PlayerEntity : BaseEntity
 {

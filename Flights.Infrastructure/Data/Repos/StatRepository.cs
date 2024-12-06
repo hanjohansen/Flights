@@ -1,4 +1,5 @@
 using Flights.Domain.Entities;
+using Flights.Domain.Entities.Game;
 using Flights.Domain.State;
 using Flights.Infrastructure.Port;
 using Microsoft.EntityFrameworkCore;

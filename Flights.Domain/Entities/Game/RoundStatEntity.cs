@@ -1,4 +1,4 @@
-namespace Flights.Domain.Entities;
+namespace Flights.Domain.Entities.Game;
 public class RoundStatEntity : BaseEntity
 {
     public Guid RoundId { get; set; }

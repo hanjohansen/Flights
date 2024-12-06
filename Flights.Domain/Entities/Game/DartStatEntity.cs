@@ -1,4 +1,4 @@
-namespace Flights.Domain.Entities;
+namespace Flights.Domain.Entities.Game;
 
 public enum DartModifier {None, Double, Triple}
 public class DartStatEntity

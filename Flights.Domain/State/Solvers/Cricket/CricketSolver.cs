@@ -1,5 +1,6 @@
 using System.Reflection;
 using Flights.Domain.Entities;
+using Flights.Domain.Entities.Game;
 
 namespace Flights.Domain.State.Solvers.Cricket;
 public class CricketSolver(GameEntity game) : IGameSolver

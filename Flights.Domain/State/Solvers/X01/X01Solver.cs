@@ -1,4 +1,5 @@
 using Flights.Domain.Entities;
+using Flights.Domain.Entities.Game;
 using Flights.Domain.State.Checkout;
 
 namespace Flights.Domain.State.Solvers.X01;

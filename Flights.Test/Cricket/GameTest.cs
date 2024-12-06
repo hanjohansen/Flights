@@ -1,4 +1,5 @@
 using Flights.Domain.Entities;
+using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
 
 namespace Flights.Test.Cricket;

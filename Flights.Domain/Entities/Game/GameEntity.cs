@@ -1,4 +1,4 @@
-namespace Flights.Domain.Entities;
+namespace Flights.Domain.Entities.Game;
 
 public enum GameType {X01, Cricket, CtCricket, AroundTheClock}
 public enum InOutModifier {None, Double, Triple, FullBull}

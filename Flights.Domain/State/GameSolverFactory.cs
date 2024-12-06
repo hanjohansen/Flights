@@ -1,4 +1,5 @@
 using Flights.Domain.Entities;
+using Flights.Domain.Entities.Game;
 using Flights.Domain.Exception;
 using Flights.Domain.State.Solvers;
 using Flights.Domain.State.Solvers.AroundTheClock;
