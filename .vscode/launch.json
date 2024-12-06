@@ -5,54 +5,55 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Blazor Client",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-client",
-            "program": "dotnet",
-            "args": [
-              "watch",
-              "--project",
-              "Flights.Client.csproj",
-              "--verbose"
-            ],
-            "cwd": "${workspaceFolder}/Flights.Client",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-              "action": "openExternally",
-              "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-              "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-              "/Views": "${workspaceFolder}/Views"
-            }
+          "name": "Flights Debug",
+          "type": "dotnet",
+          "request": "launch",
+          "preLaunchTask": "build-client",
+          "projectPath": "${workspaceFolder}/Flights.Client/Flights.Client.csproj"
+        },
+        {
+          "name": "Launch Blazor Client",
+          "type": "coreclr",
+          "request": "launch",
+          "preLaunchTask": "build-client",
+          "program": "dotnet",
+          "args": [
+            "watch",
+            "--project",
+            "./Flights.Client/Flights.Client.csproj",
+            "--verbose"
+          ],
+          "stopAtEntry": false,
+          "serverReadyAction": {
+            "action": "openExternally",
+            "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
           },
-          {
-            "name": "Launch Blazor Debug",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build-client",
-            "program": "${workspaceFolder}/Flights.Client/bin/Debug/net7.0/Flights.Client.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/Flights.Client",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-              "action": "openExternally",
-              "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-              "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-              "/Views": "${workspaceFolder}/Views"
-            }
+          "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+          },
+          "sourceFileMap": {
+            "/Views": "${workspaceFolder}/Views"
           }
-        // {
-        //     "name": ".NET Core Attach",
-        //     "type": "coreclr",
-        //     "request": "attach"
-        // }
+        },
+        {
+          "name": "Launch Blazor Debug",
+          "type": "coreclr",
+          "request": "launch",
+          "preLaunchTask": "build-client",
+          "program": "${workspaceFolder}/Flights.Client/bin/Debug/net7.0/Flights.Client.dll",
+          "args": [],
+          "cwd": "${workspaceFolder}/Flights.Client",
+          "stopAtEntry": false,
+          "serverReadyAction": {
+            "action": "openExternally",
+            "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+          },
+          "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+          },
+          "sourceFileMap": {
+            "/Views": "${workspaceFolder}/Views"
+          }
+        }
     ]
 }
