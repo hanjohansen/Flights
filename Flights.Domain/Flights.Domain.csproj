@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Flights.Util\Flights.Util.csproj" />
+  </ItemGroup>
+
 </Project>

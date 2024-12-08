@@ -1,3 +1,5 @@
+using Flights.Domain.Entities.Tournament;
+
 namespace Flights.Domain.Entities.Game;
 
 public enum GameType {X01, Cricket, CtCricket, AroundTheClock}
@@ -22,4 +24,7 @@ public class GameEntity : BaseEntity
     public List<GamePlayerEntity> Players { get; set;} = new();
 
     public List<GameRoundEntity> Rounds {get;set;} = new();
+    
+    public Guid? TournamentGameId {get;set;}
+    public TournamentGameEntity? TournamentGame {get;set;}
 }
