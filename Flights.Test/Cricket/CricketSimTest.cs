@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
 
@@ -21,6 +20,7 @@ public class CricketSimTest : CricketSimBase
         var game = GameModel.Create(
             players, 
             GameType.Cricket,
+            false,
             0,
             InOutModifier.None,
             InOutModifier.None);

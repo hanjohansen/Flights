@@ -1,5 +1,3 @@
-
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
 
@@ -15,7 +13,9 @@ public class GameTest
     
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.None, 
             InOutModifier.None);
 
@@ -54,7 +54,9 @@ public class GameTest
     
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.None, 
             InOutModifier.None);
 
@@ -91,7 +93,9 @@ public class GameTest
     
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.None, 
             InOutModifier.None);
 

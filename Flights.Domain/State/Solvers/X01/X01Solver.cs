@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.State.Checkout;
 
@@ -174,6 +173,20 @@ public class X01Solver(GameEntity entity) : IGameSolver
         var unranked = round.RoundStats.Where(x => x.Rank == null).ToList();
         if(unranked.Count==1){
             unranked.Single().Rank = entity.Players.Count;
+            return;
+        }
+
+        //quick finish
+        if (entity.FinishAfterFirstRank && unranked.Count != 0)
+        {
+            var pointGroups = unranked.OrderBy(x => x.EndPoints).GroupBy(x => x.EndPoints);
+
+            foreach (var group in pointGroups)
+            {
+                rank++;
+                foreach (var groupPlayer in group)
+                    groupPlayer.Rank = rank;
+            }
         }
     }
 

@@ -13,6 +13,8 @@ public class GameEntity : BaseEntity
     
     public InOutModifier OutModifier {get;set;}
 
+    public bool FinishAfterFirstRank {get;set;}
+
     public DateTimeOffset Started {get;set;}
 
     public DateTimeOffset? Finished {get;set;}

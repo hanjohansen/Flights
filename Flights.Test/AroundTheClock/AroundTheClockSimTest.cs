@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
 
@@ -22,6 +21,7 @@ public class AroundTheClockSimTest
         var model = GameModel.Create(
             players, 
             GameType.AroundTheClock, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);

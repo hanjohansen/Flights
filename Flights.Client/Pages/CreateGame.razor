@@ -130,7 +130,7 @@
             if (ShufflePlayers)
                 players.Shuffle();
             
-            var state = await GameRepo.CreateGame(players, GameType, X01Value, InModifier, OutModifier);
+            var state = await GameRepo.CreateGame(players, GameType, false, X01Value, InModifier, OutModifier);
 
             NavigationManager.NavigateTo("/game/" + state.Id);
         }

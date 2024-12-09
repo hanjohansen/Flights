@@ -15,6 +15,7 @@ public class CtCricketTest
         var model = GameModel.Create(
             players, 
             GameType.CtCricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -44,6 +45,7 @@ public class CtCricketTest
         var model = GameModel.Create(
             players, 
             GameType.CtCricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -77,6 +79,7 @@ public class CtCricketTest
         var model = GameModel.Create(
             players, 
             GameType.CtCricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -121,6 +124,7 @@ public class CtCricketTest
         var model = GameModel.Create(
             players, 
             GameType.CtCricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -204,6 +208,7 @@ public class CtCricketTest
         var model = GameModel.Create(
             players, 
             GameType.CtCricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -285,6 +290,7 @@ public class CtCricketTest
         var model = GameModel.Create(
             players, 
             GameType.CtCricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);

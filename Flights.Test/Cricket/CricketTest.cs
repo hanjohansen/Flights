@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
 using Flights.Domain.State;
@@ -15,6 +14,7 @@ public class CricketTest
         var model = GameModel.Create(
             players, 
             GameType.Cricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -44,6 +44,7 @@ public class CricketTest
         var model = GameModel.Create(
             players, 
             GameType.Cricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -77,6 +78,7 @@ public class CricketTest
         var model = GameModel.Create(
             players, 
             GameType.Cricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -121,6 +123,7 @@ public class CricketTest
         var model = GameModel.Create(
             players, 
             GameType.Cricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -206,6 +209,7 @@ public class CricketTest
         var model = GameModel.Create(
             players, 
             GameType.Cricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);
@@ -287,6 +291,7 @@ public class CricketTest
         var model = GameModel.Create(
             players, 
             GameType.Cricket, 
+            false,
             0, 
             InOutModifier.None, 
             InOutModifier.None);

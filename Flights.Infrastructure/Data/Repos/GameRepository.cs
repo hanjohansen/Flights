@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Exception;
 using Flights.Domain.Models;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Flights.Infrastructure.Data.Repos;
 public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGameRepository
 {
-    public async Task<GameState> CreateGame(List<Guid> players, GameType type, int x01Target, InOutModifier inMod, InOutModifier outMod )
+    public async Task<GameState> CreateGame(List<Guid> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod, InOutModifier outMod )
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
@@ -17,7 +16,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
 
         var selectedPlayers = players.Select(id => allPlayers.First(x => x.Id == id)).ToList();
 
-        var model = GameModel.Create(selectedPlayers, type, x01Target, inMod, outMod);
+        var model = GameModel.Create(selectedPlayers, type, finishAfterFirstRank, x01Target, inMod, outMod);
 
         await db.Games.AddAsync(model.Entity);
         await db.SaveChangesAsync();
@@ -34,6 +33,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         
         return await CreateGame(players,
             sourceGame.Entity.Type,
+            sourceGame.Entity.FinishAfterFirstRank,
             sourceGame.Entity.X01Target,
             sourceGame.Entity.InModifier,
             sourceGame.Entity.OutModifier);

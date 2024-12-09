@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
 
@@ -14,7 +13,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.None, 
             InOutModifier.None);
 
@@ -40,7 +41,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.None, 
             InOutModifier.None);
 
@@ -90,7 +93,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.Double, //!!!!! Double-in
             InOutModifier.None);
 
@@ -142,7 +147,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.Triple, //!!!!! Triple-in
             InOutModifier.None);
 
@@ -194,7 +201,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 301, 
+            GameType.X01, 
+            false,
+            301, 
             InOutModifier.FullBull, //!!!!! FullBull-in
             InOutModifier.None);
 
@@ -246,7 +255,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 20, 
+            GameType.X01, 
+            false,
+            20, 
             InOutModifier.None, 
             InOutModifier.None);
 
@@ -309,7 +320,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 20, 
+            GameType.X01, 
+            false,
+            20, 
             InOutModifier.None,
             InOutModifier.Double);  //!!!!! Double out
 
@@ -378,7 +391,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 20, 
+            GameType.X01, 
+            false,
+            20, 
             InOutModifier.None, //!!!!! FullBull-in
             InOutModifier.Triple);
 
@@ -446,7 +461,9 @@ public class X01GameTest{
         
         var model = GameModel.Create(
             players, 
-            GameType.X01, 60, 
+            GameType.X01, 
+            false,
+            60, 
             InOutModifier.None, //!!!!! FullBull-in
             InOutModifier.FullBull);
 
@@ -498,5 +515,195 @@ public class X01GameTest{
         Assert.True(state.PlayerStates[0].Rank == 1); 
         Assert.True(state.PlayerStates[1].Rank == 2);
         Assert.True(state.PlayerStates[2].Rank == 3);
-    } 
+    }
+
+    [Fact]
+    public void QuickFinishGame()
+    {
+        var players = _helper.GetPlayers(3);
+        
+        var model = GameModel.Create(
+            players, 
+            GameType.X01, 
+            true, //!!! quick finish
+            20, 
+            InOutModifier.None, 
+            InOutModifier.None);
+
+        //round 1
+        model.AddPlayerStats(
+            players[0].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(2));  // -10 => 10  =>  2nd
+        
+        model.AddPlayerStats(
+            players[1].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(0));  // -8 => 12  => 3rd
+
+        model.AddPlayerStats(players[2].Id, StatModel.Init(10));
+        var state = model.AddPlayerStats(players[2].Id, StatModel.Init(10)); // -20 => 0 !!!winner
+        
+        //test
+        Assert.True(state.Finished);
+        Assert.True(state.InModifier == InOutModifier.None);
+        Assert.True(state.OutModifier == InOutModifier.None);
+
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
+
+        foreach(var player in state.PlayerStates){
+            Assert.False(player.IsBust);
+            Assert.NotNull(player.Rank);
+        }
+
+        Assert.True(state.PlayerStates[0].Points == 10); 
+        Assert.True(state.PlayerStates[1].Points == 12);
+        Assert.True(state.PlayerStates[2].Points == 0);  
+
+        Assert.True(state.PlayerStates[0].Rank == 2); 
+        Assert.True(state.PlayerStates[1].Rank == 3);
+        Assert.True(state.PlayerStates[2].Rank == 1);
+    }
+    
+    [Fact]
+    public void QuickFinishGame_PlayerWithEqualPoints()
+    {
+        var players = _helper.GetPlayers(4);
+        
+        var model = GameModel.Create(
+            players, 
+            GameType.X01, 
+            true, //!!! quick finish
+            20, 
+            InOutModifier.None, 
+            InOutModifier.None);
+
+        //round 1
+        model.AddPlayerStats(
+            players[0].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(2));  // -10 => 10  =>  2nd
+        
+        model.AddPlayerStats(
+            players[1].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(0));  // -8 => 12  => 3rd
+        
+        model.AddPlayerStats(
+            players[2].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(2));  // -10 => 10  => 2nd
+
+        model.AddPlayerStats(players[3].Id, StatModel.Init(10));
+        var state = model.AddPlayerStats(players[3].Id, StatModel.Init(10)); // -20 => 0 !!!winner
+        
+        //test
+        Assert.True(state.Finished);
+        Assert.True(state.InModifier == InOutModifier.None);
+        Assert.True(state.OutModifier == InOutModifier.None);
+
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
+        Assert.True(state.PlayerStates[3].IsIn);
+
+        foreach(var player in state.PlayerStates){
+            Assert.False(player.IsBust);
+            Assert.NotNull(player.Rank);
+        }
+
+        Assert.True(state.PlayerStates[0].Points == 10); 
+        Assert.True(state.PlayerStates[1].Points == 12);
+        Assert.True(state.PlayerStates[2].Points == 10);  
+        Assert.True(state.PlayerStates[3].Points == 0);  
+
+        Assert.True(state.PlayerStates[0].Rank == 2); 
+        Assert.True(state.PlayerStates[1].Rank == 3);
+        Assert.True(state.PlayerStates[2].Rank == 2);
+        Assert.True(state.PlayerStates[3].Rank == 1);
+    }
+    
+        [Fact]
+    public void QuickFinishGame_Midround()
+    {
+        var players = _helper.GetPlayers(4);
+        
+        var model = GameModel.Create(
+            players, 
+            GameType.X01, 
+            true, //!!! quick finish
+            20, 
+            InOutModifier.None, 
+            InOutModifier.None);
+
+        //round 1
+        model.AddPlayerStats(
+            players[0].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(2));  // -10 => 10 
+        
+        model.AddPlayerStats(
+            players[1].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(0));  // -8 => 12 
+        
+        model.AddPlayerStats(
+            players[2].Id,
+            StatModel.Init(6),
+            StatModel.Init(2),
+            StatModel.Init(2));  // -10 => 10  
+        
+        model.AddPlayerStats(
+            players[3].Id,
+            StatModel.Init(0),
+            StatModel.Init(0),
+            StatModel.Init(2));  // -2 => 18
+        
+        //round 2
+        model.AddPlayerStats(
+            players[0].Id,
+            StatModel.Init(0),
+            StatModel.Init(5),
+            StatModel.Init(0));  // -5 => 5 
+        
+        var state = model.AddPlayerStats(
+            players[1].Id,
+            StatModel.Init(6),
+            StatModel.Init(0),
+            StatModel.Init(6));  // -12 => 00 !!! winner
+        
+        //test
+        Assert.True(state.Finished);
+        Assert.True(state.InModifier == InOutModifier.None);
+        Assert.True(state.OutModifier == InOutModifier.None);
+
+        Assert.True(state.PlayerStates[0].IsIn);
+        Assert.True(state.PlayerStates[1].IsIn);
+        Assert.True(state.PlayerStates[2].IsIn);
+        Assert.True(state.PlayerStates[3].IsIn);
+
+        foreach(var player in state.PlayerStates){
+            Assert.False(player.IsBust);
+            Assert.NotNull(player.Rank);
+        }
+
+        Assert.True(state.PlayerStates[0].Points == 5); 
+        Assert.True(state.PlayerStates[1].Points == 0);
+        Assert.True(state.PlayerStates[2].Points == 10);  
+        Assert.True(state.PlayerStates[3].Points == 18);  
+
+        Assert.True(state.PlayerStates[0].Rank == 2); 
+        Assert.True(state.PlayerStates[1].Rank == 1);
+        Assert.True(state.PlayerStates[2].Rank == 3);
+        Assert.True(state.PlayerStates[3].Rank == 4);
+    }
 }
