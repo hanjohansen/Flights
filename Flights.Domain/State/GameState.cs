@@ -5,6 +5,7 @@ namespace Flights.Domain.State;
 public record GameState(
     Guid Id,
     GameType Type,
+    bool FinishAfterFirstRank,
     InOutModifier InModifier,
     InOutModifier OutModifier,
     DateTimeOffset Started,

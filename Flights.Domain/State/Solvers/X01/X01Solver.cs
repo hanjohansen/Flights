@@ -44,6 +44,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
         return new GameState(
             entity.Id,
             entity.Type,
+            entity.FinishAfterFirstRank,
             entity.InModifier,
             entity.OutModifier,
             entity.Started,

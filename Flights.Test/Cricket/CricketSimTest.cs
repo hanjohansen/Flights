@@ -7,24 +7,82 @@ namespace Flights.Test.Cricket;
 public class CricketSimTest : CricketSimBase
 {
     [Fact]
-    public void RunSim(){
+    public void RunCricketSim(){
+        var players = Helpers.GetPlayers(4);
+        
         for(var i = 1; i <= SimRounds; i++){
             Debug.WriteLine("running sim #" + i);
-            SimulateGame();
+            
+            var game = GameModel.Create(
+                players, 
+                GameType.Cricket,
+                false,
+                0,
+                InOutModifier.None,
+                InOutModifier.None);
+            
+            SimulateGame(game);
+        }
+    }
+    
+    [Fact]
+    public void RunCricketSim_QuickFinish(){
+        var players = Helpers.GetPlayers(4);
+        
+        for(var i = 1; i <= SimRounds; i++){
+            Debug.WriteLine("running sim #" + i);
+            
+            var game = GameModel.Create(
+                players, 
+                GameType.Cricket,
+                true,
+                0,
+                InOutModifier.None,
+                InOutModifier.None);
+            
+            SimulateGame(game);
+        }
+    }
+    
+    [Fact]
+    public void RunCtCricketSim(){
+        var players = Helpers.GetPlayers(4);
+        
+        for(var i = 1; i <= SimRounds; i++){
+            Debug.WriteLine("running sim #" + i);
+            
+            var game = GameModel.Create(
+                players, 
+                GameType.CtCricket,
+                false,
+                0,
+                InOutModifier.None,
+                InOutModifier.None);
+            
+            SimulateGame(game);
+        }
+    }
+    
+    [Fact]
+    public void RunCtCricketSim_QuickFinish(){
+        var players = Helpers.GetPlayers(4);
+        
+        for(var i = 1; i <= SimRounds; i++){
+            Debug.WriteLine("running sim #" + i);
+            
+            var game = GameModel.Create(
+                players, 
+                GameType.CtCricket,
+                true,
+                0,
+                InOutModifier.None,
+                InOutModifier.None);
+            
+            SimulateGame(game);
         }
     }
 
-    private void SimulateGame(){
-        var players = Helpers.GetPlayers(4);
-
-        var game = GameModel.Create(
-            players, 
-            GameType.Cricket,
-            false,
-            0,
-            InOutModifier.None,
-            InOutModifier.None);
-
+    private void SimulateGame(GameModel game){
         var state = game.SolveGameState();
 
         var darts = 0;

@@ -58,6 +58,9 @@
                             <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
                         </MudSelect>
                     }
+                    @if(GameType != GameType.AroundTheClock){
+                        <MudCheckBox @bind-Value="QuickFinish" Label="Finish game after 1st rank"></MudCheckBox>
+                    }
                 </MudItem>
                 <MudItem>
                     <div class="flex flex-row justify-between mb-1">
@@ -83,6 +86,8 @@
 @code{
 
     private GameType GameType { get; set; }
+
+    private bool QuickFinish {get;set; }
     
     private int X01Value { get; set; } = 301;
     
@@ -130,7 +135,7 @@
             if (ShufflePlayers)
                 players.Shuffle();
             
-            var state = await GameRepo.CreateGame(players, GameType, false, X01Value, InModifier, OutModifier);
+            var state = await GameRepo.CreateGame(players, GameType, QuickFinish, X01Value, InModifier, OutModifier);
 
             NavigationManager.NavigateTo("/game/" + state.Id);
         }

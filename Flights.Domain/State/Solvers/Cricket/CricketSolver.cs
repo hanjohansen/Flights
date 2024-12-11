@@ -1,5 +1,4 @@
 using System.Reflection;
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 
 namespace Flights.Domain.State.Solvers.Cricket;
@@ -26,6 +25,7 @@ public class CricketSolver(GameEntity game) : IGameSolver
         return new GameState(
             Id: game.Id,
             Type: game.Type,
+            FinishAfterFirstRank: game.FinishAfterFirstRank,
             InModifier: InOutModifier.None,
             OutModifier: InOutModifier.None,
             Started: game.Started,
@@ -287,6 +287,31 @@ public class CricketSolver(GameEntity game) : IGameSolver
         {
             player.Rank = nextRank;
             CheckRanks(players);
+        }
+        
+        //quick finish
+        var ranked = players.Where(x => x.Rank != null)
+            .ToList();
+        unranked = players.Where(x => x.Rank == null)
+            .ToList();
+        if (game.FinishAfterFirstRank && ranked.Any() && unranked.Any())
+        {
+            nextRank = ranked.Max(x => x.Rank ?? 0) + 1;
+            unrankedGroups = game.Type == GameType.Cricket
+                ? unranked.OrderByDescending(x => x.Points)
+                    .GroupBy(x => x.Points)
+                    .ToList()
+                : unranked.OrderBy(x => x.Points)
+                    .GroupBy(x => x.Points)
+                    .ToList();
+
+            foreach (var group in unrankedGroups)
+            {
+                foreach(var p in group)
+                    p.Rank = nextRank;
+
+                nextRank++;
+            }
         }
     }
 

@@ -61,6 +61,7 @@ public class AroundTheClockSolver(GameEntity game) : IGameSolver
         return new GameState(
             Id: game.Id,
             Type: game.Type,
+            FinishAfterFirstRank: game.FinishAfterFirstRank,
             InModifier: InOutModifier.None,
             OutModifier: InOutModifier.None,
             Started: game.Started,

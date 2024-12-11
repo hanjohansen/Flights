@@ -76,8 +76,6 @@ public class CricketSimBase
         return result;
     }
     
-    
-
     protected void DoFinishAsserts(GameState state)
     {
         Assert.True(state.Finished);
@@ -88,11 +86,14 @@ public class CricketSimBase
 
         var openPlayers = state.PlayerStates.Where(x => x.CricketState!.AllOpen() == false).ToList();
         var openCount = openPlayers.Count;
-        Assert.True(openCount <= 1);
+        
+        if(state.FinishAfterFirstRank == false)
+            Assert.True(openCount <= 1);
 
         if (openCount == 0)
             return;
         
-        Assert.True(openPlayers.Single().Rank == state.PlayerStates.Count);
+        if(state.FinishAfterFirstRank == false)
+            Assert.True(openPlayers.Single().Rank == state.PlayerStates.Count);
     }
 }
