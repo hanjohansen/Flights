@@ -9,4 +9,6 @@ public class TournamentRoundEntity : BaseEntity
     
     public Guid? WildCardId { get; set; }
     public TournamentPlayerEntity? WildCard { get; set; }
+
+    public List<TournamentGameEntity> Games { get; set; } = new();
 }

@@ -1,57 +1,54 @@
 using Flights.Domain.Entities;
-using Flights.Util;
+using Flights.Domain.Entities.Game;
+using Flights.Domain.Entities.Tournament;
+using Flights.Domain.Exception;
+using Flights.Domain.State;
+using Flights.Domain.State.Solvers;
 
 namespace Flights.Domain.Models;
 
 public class TournamentModel
 {
-    private TournamentModel(List<PlayerEntity> players)
-    {
-        _players = players;
-        _tournament = new Tournament();
-    }
+    public readonly TournamentEntity Entity;
+    private readonly ITournamentSolver _solver;
     
-    private readonly List<PlayerEntity> _players;
-    private readonly Tournament _tournament;
-    
-    public static TournamentModel Create(List<PlayerEntity> players)
+    public static TournamentModel Create(List<PlayerEntity> players, GameType type, int x01Target, InOutModifier inMod, InOutModifier outMod)
     {
-        var model = new TournamentModel(players);
+        if (players.Count < 4)
+            throw new FlightsGameException("Minimum of four players required for tournament!");
+        
+        var tournament = new TournamentEntity()
+        {
+            Type = type,
+            X01Target = x01Target,
+            InModifier = inMod,
+            OutModifier = outMod,
+        };
+        
+        players.ForEach(x => tournament.Players.Add(new TournamentPlayerEntity()
+        {
+            OrderNumber = players.IndexOf(x) + 1,
+            Player = x,
+            PlayerId = x.Id,
+            Tournament = tournament
+        }));
+
+        var model = new TournamentModel(tournament);
+        model.ResolveTournamentState();
 
         return model;
     }
 
-    public void Init()
+    public static TournamentModel Init(TournamentEntity entity) => new(entity);
+
+    private TournamentModel(TournamentEntity entity)
     {
-        _players.Shuffle();
-        var playerModulo = _players.Count % 2;
+        Entity = entity;
+        _solver = GameSolverFactory.GetTournamentSolver(entity);
     }
-}
 
-public class Tournament
-{
-    public List<TournamentRound> Rounds { get; set; } = new();
-}
-
-public class TournamentRound
-{
-    public PlayerEntity? WildCard { get; set; } = new();
-    public List<TournamentGame> Games { get; set; } = new();
-}
-
-public class TournamentGame
-{
-    public List<TournamentGamePlayer> Players { get; set; } = new();
-}
-
-public class TournamentGamePlayer
-{
-    public TournamentGamePlayer(PlayerEntity player)
+    public TournamentState ResolveTournamentState()
     {
-        Player = player;
+        return _solver.Solve();
     }
-    
-    public PlayerEntity Player { get; }
-    
-    public bool IsWinner { get; set; }
 }

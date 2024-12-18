@@ -8,5 +8,5 @@ public class TournamentGameEntity : BaseEntity
     
     public bool IsLosersCup {get;set;}
     
-    public GameEntity Game { get; set; } = null!;
+    public GameEntity? Game { get; set; }
 }
