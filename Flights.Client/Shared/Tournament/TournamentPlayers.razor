@@ -1,0 +1,41 @@
+@using Flights.Domain.State
+
+<div>
+    <div class="mb-2">
+        Players
+    </div>
+    <div class="overflow-auto">
+        @foreach (var player in GetPlayers())
+        {
+            <CascadingValue Value="@player">
+                <TournamentPlayer/>
+            </CascadingValue>
+        }
+    </div>
+</div>
+
+@code{
+    [CascadingParameter]
+    public TournamentState? Tournament {get;set;}
+
+    private List<TournamentPlayerState> GetPlayers(){
+        if(Tournament == null)
+            return [];
+
+        if(Tournament.Finished == false)
+            return Tournament.Players;
+
+        var orderedWinners = Tournament.Players
+            .Where(x => x.Rank != 0 && x.Rank != null)
+            .OrderBy(x => x.Rank)
+            .ToList();
+
+        var losers = Tournament.Players
+            .Where(x => x.Rank == 0 || x.Rank == null)
+            .ToList();
+
+        orderedWinners.AddRange(losers);
+
+        return orderedWinners;
+    }
+}

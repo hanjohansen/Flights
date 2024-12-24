@@ -1,5 +1,6 @@
 @using Flights.Domain.Entities
 @using Flights.Domain.Entities.Game
+@using Flights.Domain.ReadModels
 
 <div class="flex flex-row">
     <div>
@@ -21,7 +22,7 @@
 
 @code{
     [Parameter]
-    public GameEntity Game { get; set; } = null!;
+    public GameListItemReadModel Game { get; set; } = null!;
 
     private string GetGameNameString(){
         switch(Game.Type){

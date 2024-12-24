@@ -23,6 +23,7 @@ public static class ServiceExtensions
         builder.Services.AddScoped<IPlayerFileRepository, PlayerFileRepository>();
         builder.Services.AddScoped<IGameRepository, GameRepository>();
         builder.Services.AddScoped<IStatRepository, StatRepository>();
+        builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
         
         return builder;
     }

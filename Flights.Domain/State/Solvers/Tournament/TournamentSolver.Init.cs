@@ -52,6 +52,7 @@ public partial class TournamentSolver
             round.Games.Add(new TournamentGameEntity()
             {
                 Game = game.Entity,
+                TournamentRound = round,
                 OrderNumber = gameOrderNumber
             });
 
@@ -59,12 +60,14 @@ public partial class TournamentSolver
         }
 
         //setup empty losers cup if necessary
+        var semiFinalWithLosersCup = round.Games.Count == 2 && entity.SemiFinalWithLosersCup;
         var nextRoundPlayers = round.Games.Count + (round.WildCard != null ? 1 : 0);
-        if (nextRoundPlayers != 1 && nextRoundPlayers % 2 != 0)
+        if (nextRoundPlayers != 1 && (nextRoundPlayers % 2 != 0 || semiFinalWithLosersCup))
         {
             round.Games.Add(new TournamentGameEntity()
             {
                 OrderNumber = gameOrderNumber,
+                TournamentRound = round,
                 IsLosersCup = true
             });
         }

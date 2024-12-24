@@ -1,5 +1,6 @@
 using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
+using Flights.Domain.Entities.Tournament;
 using Flights.Infrastructure.Data.EntityMaps;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,8 @@ public class FlightsDbContext(DbContextOptions<FlightsDbContext> options) : DbCo
     public virtual DbSet<GameEntity> Games { get; set; } = null!;
     public virtual DbSet<PlayerEntity> Players { get; set; } = null!;
     public virtual DbSet<PlayerFileEntity> PlayerFiles { get; set; } = null!;
+
+    public virtual DbSet<TournamentEntity> Tournaments { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

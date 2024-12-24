@@ -1,6 +1,7 @@
 using Flights.Domain.Entities.Game;
 using Flights.Domain.Exception;
 using Flights.Domain.Models;
+using Flights.Domain.ReadModels;
 using Flights.Domain.State;
 using Flights.Infrastructure.Port;
 using Microsoft.EntityFrameworkCore;
@@ -55,15 +56,38 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         return newState;
     }
 
-    public async Task<List<GameEntity>> GetGames()
+    public async Task<List<GameListItemReadModel>> GetGames()
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        var games = await GetBaseQuery(db)
-            .AsNoTrackingWithIdentityResolution()
+        var result = new List<GameListItemReadModel>();
+        
+        //load games
+        var games = await db.Games
+            .AsSplitQuery()
+            .AsNoTracking()
+            .Include(x => x.Players)
+            .ThenInclude(x => x.Player)
+            .Where(x => x.TournamentGameId == null)
             .ToListAsync();
+        
+        foreach (var gameEntity in games.OrderByDescending(x => x.Started).Take(20))
+            result.Add(GameListItemReadModel.FromGame(gameEntity));
+        
+        //load tournaments
+        var tournaments = await db.Tournaments
+            .AsSplitQuery()
+            .AsNoTracking()
+            .Include(x => x.Players)
+            .ThenInclude(x => x.Player)
+            .ToListAsync();
+        
+        foreach (var tournament in tournaments.OrderByDescending(x => x.Started).Take(20))
+            result.Add(GameListItemReadModel.FromTournament(tournament));
 
-        return games.OrderByDescending(x => x.Started).ToList();
+        result = result.OrderByDescending(x => x.Started).Take(20).ToList();
+
+        return result;
     }
 
     public async Task<GameModel> GetGame(Guid id)
@@ -71,6 +95,8 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         await using var db = await dbFactory.CreateDbContextAsync();
 
         var game = await GetBaseQuery(db)
+            .Include(x => x.TournamentGame)
+            .ThenInclude(x => x!.TournamentRound)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (game == null)

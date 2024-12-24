@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 
 namespace Flights.Domain.State.Checkout;

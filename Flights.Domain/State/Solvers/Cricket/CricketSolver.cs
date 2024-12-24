@@ -24,6 +24,7 @@ public class CricketSolver(GameEntity game) : IGameSolver
 
         return new GameState(
             Id: game.Id,
+            TournamentId: game.TournamentGame?.TournamentRound.TournamentId,
             Type: game.Type,
             FinishAfterFirstRank: game.FinishAfterFirstRank,
             InModifier: InOutModifier.None,

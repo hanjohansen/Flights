@@ -1,5 +1,6 @@
 @using Flights.Domain.Entities
 @using Flights.Domain.Entities.Game
+@using Flights.Domain.ReadModels
 
 <div class="flex flex-row">
     @for(var i = 0; i < 3; i++){
@@ -7,7 +8,7 @@
             var player = Players[i];
             <div class="rounded-xl bg-blue-500 px-2 mr-1">
                 <div class="text-white text-xs">
-                    @player.Player.Name
+                    @player.Name
                 </div>                
             </div>
         }
@@ -24,9 +25,9 @@
 
 @code{
     [Parameter]
-    public List<GamePlayerEntity> Players {get;set;} = null!;
+    public List<GameItemPlayerReadModel> Players {get;set;} = null!;
 
-    public int GetAdditionalPlayers(){
+    private int GetAdditionalPlayers(){
         if(Players.Count <= 3)
             return 0;
 

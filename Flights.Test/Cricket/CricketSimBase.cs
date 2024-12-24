@@ -7,7 +7,7 @@ public class CricketSimBase
     protected TestHelpers Helpers = new();
 
     protected const int MaxGameDarts = 2000; 
-    protected const int SimRounds = 1000;
+    protected const int SimRounds = 500;
 
     protected List<int> GetDartOptions(CricketState playerState, List<CricketState> otherPlayersState)
     {

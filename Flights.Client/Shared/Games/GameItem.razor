@@ -1,14 +1,16 @@
 ﻿@using Flights.Domain.Entities
 @using Flights.Domain.Entities.Game
 @using Flights.Domain.Exception
+@using Flights.Domain.ReadModels
 @using Flights.Infrastructure.Port
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 @inject IGameRepository GamesRepo
+@inject ITournamentRepository TournamentRepo
 
-<div class="mb-2 cursor-pointer rounded border border-gray-100">
+<div class="relative cursor-pointer rounded border border-gray-100 @GetBottomMargin()">
     <MudPaper Elevation="4" Width="500px">
         <div class="p-4">
             <div class="font-bold text-4xl">
@@ -41,27 +43,52 @@
                 @Game.Started.ToLocalTime().ToString("dd.MM.yy  HH:mm")
             </div>
         </div>
+        @if(Game.IsTournament){
+            <div class="absolute top-1 left-1 -z-10">
+                <MudPaper Elevation="4" Width="500px" Height="133px">
+                    Test
+                </MudPaper>
+            </div>
+            <div class="absolute top-2 left-2 -z-20">
+                <MudPaper Elevation="4" Width="500px" Height="133px">
+                    Test
+                </MudPaper>
+            </div>
+        }
     </MudPaper>
+
+    
 </div>
 
 @code{
 
     [Parameter]
-    public GameEntity Game { get; set; } = null!;
+    public GameListItemReadModel Game { get; set; } = null!;
     
     [Parameter]
     public EventCallback ReportGameDeleted {get;set;}
 
     private void GoToGame()
     {
-        NavigationManager.NavigateTo("/game/" + Game.Id);
+        if(Game.IsTournament)
+            NavigationManager.NavigateTo("/tournament/" + Game.Id);
+        else
+            NavigationManager.NavigateTo("/game/" + Game.Id);
     }
 
     private async Task ReplayGame()
     {
         try{
-            var newGame = await GamesRepo.ReplayGame(Game.Id);
-            NavigationManager.NavigateTo("/game/" + newGame.Id);
+            if (Game.IsTournament)
+            {
+                var newTournament = await TournamentRepo.ReplayTournament(Game.Id);
+                NavigationManager.NavigateTo("/tournament/" + newTournament.Id);
+            }
+            else
+            {
+                var newGame = await GamesRepo.ReplayGame(Game.Id);
+                NavigationManager.NavigateTo("/game/" + newGame.Id);
+            }
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }catch(Exception){
@@ -76,12 +103,29 @@
         var dialog = await DialogService.ShowAsync<DeleteGameDialog>("Delete game", options);
         var result = await dialog.Result;
         
-        if(!result?.Canceled ?? false){
-            await GamesRepo.DeleteGame(Game.Id);
-            await ReportGameDeleted.InvokeAsync();
-            
-            Snackbar.Add("Game deleted", Severity.Success);
+        if(!result?.Canceled ?? false)
+        {
+            if (Game.IsTournament)
+                await RemoveTournament(Game.Id);
+            else
+                await RemoveGame(Game.Id);
         }
+    }
+
+    private async Task RemoveGame(Guid id)
+    {
+        await GamesRepo.DeleteGame(Game.Id);
+        await ReportGameDeleted.InvokeAsync();
+            
+        Snackbar.Add("Game deleted", Severity.Success);
+    }
+
+    private async Task RemoveTournament(Guid id)
+    {
+        await TournamentRepo.DeleteTournament(id);
+        await ReportGameDeleted.InvokeAsync();
+        
+        Snackbar.Add("Tournament deleted", Severity.Success);
     }
 
     private string GetGameNameString(){
@@ -96,5 +140,11 @@
             default:
                 return "unknown game";
         }
+    }
+
+    private string GetBottomMargin(){
+        return Game.IsTournament
+            ? " mb-4"
+            : " mb-2";
     }
 }

@@ -1,0 +1,106 @@
+﻿@page "/tournament/{TournamentId:guid}"
+@using Flights.Client.Shared.Tournament
+@using Flights.Domain.Exception
+@using Flights.Infrastructure.Port
+@using Flights.Domain.State
+
+@inject ITournamentRepository TournamentRepo
+@inject ISnackbar Snackbar
+
+<div>
+    <CascadingValue Value="CurrentTournament">
+        <div class="flex flex-row mx-1 h-[752px] overflow-hidden">
+            <div class="flex flex-column flex-auto mr-1 overflow-auto">
+                <div class="flex justify-evenly">
+                    @if (CurrentTournament?.Rounds != null)
+                    {
+                        foreach (var round in CurrentTournament.Rounds)
+                        {
+                            <CascadingValue Value="round">
+                                <TournamentRound RequestDevFinishGame="@DevFinishGame"
+                                                 RequestSwitchPlayerOrder="@SwitchPlayerOrder"
+                                                 RequestSkipLosersCup="@SkipLosersCup"/>
+                            </CascadingValue>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="flex-shrink">
+                <TournamentInfo/>
+            </div>
+        </div>
+    </CascadingValue>
+</div>
+
+@code{
+
+    [Parameter] 
+    public Guid TournamentId { get; set; }
+
+    private TournamentState? CurrentTournament {get;set;}
+    
+    protected override async Task OnInitializedAsync() {
+        var model = await TournamentRepo.GetTournament(TournamentId);
+        CurrentTournament = model.ResolveTournamentState();
+    }
+
+    private async Task DevFinishGame(Guid gameId)
+    {
+        if (CurrentTournament == null)
+            return;
+        
+        try
+        {
+            var newState = await TournamentRepo.DevFinishGame(CurrentTournament.Id, gameId);
+            CurrentTournament = newState;
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("unknown error:" + e.Message, Severity.Error);
+        }
+    }
+    
+    private async Task SwitchPlayerOrder(Guid gameId)
+    {
+        if (CurrentTournament == null)
+            return;
+        
+        try
+        {
+            var newState = await TournamentRepo.SwitchPlayerOrder(CurrentTournament.Id, gameId);
+            CurrentTournament = newState;
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("unknown error:" + e.Message, Severity.Error);
+        }
+    }
+
+    public async Task SkipLosersCup()
+    {
+        if (CurrentTournament == null)
+            return;
+        
+        try
+        {
+            var newState = await TournamentRepo.SkipLosersCup(CurrentTournament.Id);
+            CurrentTournament = newState;
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("unknown error:" + e.Message, Severity.Error);
+        }
+    }
+}

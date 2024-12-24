@@ -1,0 +1,35 @@
+@using Flights.Domain.State
+
+<div class="flex flex-row mb-1 @GetPlayerFont()">
+    <div class="w-6 mr-2">
+        @if(Player?.Rank == 0){
+            <div class="pt-[5px]">
+                <MudIcon Icon="@Icons.Material.Outlined.Close" Size="Size.Medium" Color="Color.Default"/>
+            </div>
+        }
+        @if(Player?.Rank != null && Player?.Rank != 0){
+            <div class="text-2xl ml-1 text-orange-400">
+                @GetRankString()
+            </div>
+        }
+    </div>
+    <div class="text-2xl">
+        @Player?.Name
+    </div>
+</div>
+
+@code{
+    [CascadingParameter]
+    public TournamentPlayerState? Player {get;set;}
+
+    private string GetPlayerFont(){
+        return Player?.Rank == 0
+            ? "text-gray-400"
+            : String.Empty;
+    }
+
+    private string GetRankString(){
+        return Player?.Rank + ".";
+    }
+}    
+

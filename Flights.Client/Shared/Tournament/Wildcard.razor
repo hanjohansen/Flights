@@ -1,0 +1,15 @@
+@using Flights.Domain.State
+
+<div class="flex flex-row justify-center rounded border border-gray-300 bg-white mud-elevation-3 py-2">
+    <div class="mt-1 mr-2">
+        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Medium" Color="Color.Warning"/>
+    </div>
+    <div class="text-2xl text-center text-slate-700">
+        @Player.Name
+    </div>            
+</div>
+
+@code{
+    [Parameter]
+    public required TournamentPlayerState Player {get;set;}
+}    

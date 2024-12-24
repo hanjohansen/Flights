@@ -22,4 +22,11 @@ public class DbTestBase
 
         return new PlayerRepository(factory);
     }
+    
+    public ITournamentRepository CreateTournamentRepo(string connStr){
+        var factory = CreateFactory(connStr);
+
+        return new TournamentRepository(factory);
+    }
+    
 }

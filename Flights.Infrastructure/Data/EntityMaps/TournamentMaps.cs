@@ -28,7 +28,7 @@ public static  class TournamentMaps
             entity.HasKey(x => x.Id);
             entity.HasOne(x => x.Player)
                 .WithMany(x => x.Tournaments)
-                .HasForeignKey(x => x.TournamentId)
+                .HasForeignKey(x => x.PlayerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -46,9 +46,14 @@ public static  class TournamentMaps
         {
             entity.ToTable("tournament_games");
             entity.HasKey(x => x.Id);
+            entity.HasOne(x => x.TournamentRound)
+                .WithMany(x => x.Games)
+                .HasForeignKey(x => x.TournamentRoundId)
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(x => x.Game)
                 .WithOne(x => x.TournamentGame)
-                .HasForeignKey<GameEntity>(x => x.TournamentGameId);
+                .HasForeignKey<GameEntity>(x => x.TournamentGameId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
     }

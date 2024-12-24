@@ -1,0 +1,143 @@
+@using Flights.Domain.State
+
+@inject IWebHostEnvironment Environment
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<div class="flex flex-row justify-center rounded-lg border border-gray-300 bg-white mud-elevation-3 py-2">
+    <div class="flex flex-grow justify-center ml-4 mr-2 cursor-pointer" @onclick="GoToGame">
+    @if(Game.IsLosersCup == false){
+        <div class="text-center text-2xl text-slate-700">
+            <div class="flex flex-row justify-center">
+                @if(Game.Players.First().Rank == 1){
+                    <div class="flex mr-1 mt-1">
+                        <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+                    </div>
+                }
+                <div class="">
+                    @Game.Players.First().Name
+                </div>
+            </div>
+
+            <div class="text-lg text-slate-500 -my-2">
+                x
+            </div>
+
+            <div class="flex flex-row justify-center">
+                @if(Game.Players.Last().Rank == 1){
+                    <div class="flex mr-1 mt-1">
+                        <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+                    </div>
+                }
+                <div class="">
+                    @Game.Players.Last().Name
+                </div>
+            </div>
+        </div>
+    }
+    @if(Game.IsLosersCup){
+        <div class="flex flex-col">
+            @if(Game.IsSemiFinal){
+                <div class="text-center text-slate-500 mb-1">
+                    Losers Cup
+                </div>
+            }      
+            @if(!Game.IsSemiFinal){
+                <div class="text-center text-slate-500 mb-1">
+                    Second chance
+                </div>
+            }         
+            @foreach(var player in Game.Players){
+                <div class="flex flex-row justify-center">
+                    @if(player.Rank == 1){
+                        <div class="mr-1 mt-1">
+                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+                        </div>
+                    }
+                    <div class="text-center text-2xl text-slate-700">
+                        @player.Name
+                    </div>
+                </div>
+            }
+            @if(!Game.IsLosersCupReady){
+                <div class="mt-2 text-center">
+                    <MudIcon Icon="@Icons.Material.Outlined.HourglassTop" Size="Size.Medium" Color="Color.Default"/>
+                </div>
+            }
+        </div>
+    }
+    </div>
+    <div class="flex flex-shrink items-center">
+        <div class="self-center cursor-pointer">
+            <MudMenu Disabled="@Game.Finished">
+                <ActivatorContent>
+                    <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem IconSize="Size.Large" IconColor="Color.Primary" 
+                        Icon="@Icons.Material.Filled.PlayArrow" OnClick="@GoToGame">Play</MudMenuItem>
+                    <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
+                        Icon="@Icons.Material.Filled.Shuffle" Disabled="@Game.Started" OnClick="@SwitchPlayers">Switch players</MudMenuItem>
+                    @if(Game.IsLosersCup && Game.IsSemiFinal){
+                        <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" 
+                            Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@SkipLosersCup" Disabled="@Game.Finished" >Skip Losers Cup</MudMenuItem>
+                    }      
+                    @if(Environment.IsDevelopment()){              
+                        <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
+                            Icon="@Icons.Material.Filled.Construction" OnClick="@DevFinishGame" Disabled="@Game.Finished" >Finish game (DEV)</MudMenuItem>
+                    }               
+                </ChildContent>
+            </MudMenu>
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public required TournamentGameState Game {get;set;}
+    
+    [Parameter]
+    public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }
+    
+    [Parameter]
+    public EventCallback RequestSkipLosersCup { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> RequestDevFinishGame { get; set; }
+
+    private void GoToGame(){
+        if(Game.IsLosersCup && Game.Id == null){
+            Snackbar.Add("Losers cup is not ready!", Severity.Error);
+            return;
+        }
+
+        NavigationManager.NavigateTo("/game/" + Game.Id);
+    }
+
+    private async Task DevFinishGame()
+    {
+        if (Game.IsLosersCup && Game.Id == null)
+        {
+            Snackbar.Add("Losers cup is not ready for finish!", Severity.Error);
+            return;
+        }
+
+        await RequestDevFinishGame.InvokeAsync(Game.Id!.Value);
+    }
+    
+    private async Task SwitchPlayers()
+    {
+        if (Game.Started)
+        {
+            Snackbar.Add("Game already started!", Severity.Error);
+            return;
+        }
+
+        await RequestSwitchPlayerOrder.InvokeAsync(Game.Id!.Value);
+    }
+
+    private async Task SkipLosersCup()
+    {
+        await RequestSkipLosersCup.InvokeAsync();
+    }
+}

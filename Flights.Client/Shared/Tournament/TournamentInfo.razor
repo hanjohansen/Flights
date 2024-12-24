@@ -1,0 +1,28 @@
+@using Flights.Domain.State
+
+@inject NavigationManager NavigationManager
+
+<div class="flex flex-col rounded-md border border-gray-300 mud-elevation-3 bg-white mt-1 mx-1 w-[250px] h-[742px] overflow-hidden">
+    <div class="mt-4 ml-4">
+        <TournamentLabel/>
+    </div>
+    <div class="mt-8 ml-4 flex-grow">
+        <TournamentPlayers/>
+    </div>
+    <div class="rounded bg-red-500 mud-elevation-5 text-center cursor-pointer m-2 h-[80px] pt-5"
+        @onclick="GoToGames">
+        <div class="">
+            <MudIcon Icon="@Icons.Material.Outlined.Close" Size="Size.Large" Color="Color.Default"/>
+        </div>        
+    </div>  
+</div>
+
+@code{
+    [CascadingParameter]
+    public TournamentState? Tournament {get;set;}
+
+    private void GoToGames(){
+        NavigationManager.NavigateTo("/games");
+    }
+}    
+

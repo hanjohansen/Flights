@@ -11,4 +11,6 @@ public class TournamentPlayerEntity : BaseEntity
     public PlayerEntity Player {get;set;} = null!;
 
     public int OrderNumber {get;set;}
+    
+    public int? Rank { get; set; }
 }

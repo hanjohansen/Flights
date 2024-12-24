@@ -8,6 +8,7 @@
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
+@inject ITournamentRepository TournamentRepo
 @inject IPlayerRepository PlayerRepo
 @inject NavigationManager NavigationManager
 
@@ -28,41 +29,50 @@
         <MudPaper class="p-4">
             <MudGrid>
                 <MudItem>
-                    <MudSelect @bind-Value="GameType" HelperText="Game" Style="width: 20rem">
-                        <MudSelectItem Value="GameType.X01">X01</MudSelectItem>
-                        <MudSelectItem Value="GameType.Cricket">Cricket</MudSelectItem>
-                        <MudSelectItem Value="GameType.CtCricket">Cut-Throat Cricket</MudSelectItem>
-                        <MudSelectItem Value="GameType.AroundTheClock">Around The Clock</MudSelectItem>
-                    </MudSelect>
-                    @if(GameType == GameType.X01){
-                        <MudSelect @bind-Value="X01Value" HelperText="Points" Style="width: 20rem" class="mt-12">
-                            <MudSelectItem Value="301">301</MudSelectItem>
-                            <MudSelectItem Value="401" >401</MudSelectItem>
-                            <MudSelectItem Value="501" >501</MudSelectItem>
-                            <MudSelectItem Value="601" >601</MudSelectItem>
-                            <MudSelectItem Value="701" >701</MudSelectItem>
-                            <MudSelectItem Value="801" >801</MudSelectItem>
-                            <MudSelectItem Value="901" >901</MudSelectItem>
-                            <MudSelectItem Value="1001" >1001</MudSelectItem>
-                        </MudSelect>
-                        <MudSelect @bind-Value="InModifier" HelperText="IN" Style="width: 20rem" class="mt-4">
-                            <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
-                            <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
-                            <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
-                            <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
-                        </MudSelect>
-                        <MudSelect @bind-Value="OutModifier" HelperText="OUT" Style="width: 20rem"  class="mt-4">
-                            <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
-                            <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
-                            <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
-                            <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
-                        </MudSelect>
-                    }
+                    Tournament
+                    <div class="border rounded mt-1 mb-4">
+                        <MudCheckBox @bind-Value="IsTournament" Label="Tournament"></MudCheckBox>
+                        <MudCheckBox @bind-Value="LosersCupForThirdRank" Disabled="IsTournament == false" Label="Losers Cup for 3rd rank"></MudCheckBox>
+                    </div>
+                    Game
+                    <div class="border rounded p-4 mt-1">
+                        <MudSelect @bind-Value="GameType" HelperText="Game" Style="width: 14rem">
+                            <MudSelectItem Value="GameType.X01">X01</MudSelectItem>
+                            <MudSelectItem Value="GameType.Cricket">Cricket</MudSelectItem>
+                            <MudSelectItem Value="GameType.CtCricket">Cut-Throat Cricket</MudSelectItem>
+                            <MudSelectItem Value="GameType.AroundTheClock">Around The Clock</MudSelectItem>
+                        </MudSelect>                    
+                        @if(GameType == GameType.X01){
+                            <MudSelect @bind-Value="X01Value" HelperText="Points" Style="width: 12rem" class="mt-12">
+                                <MudSelectItem Value="301">301</MudSelectItem>
+                                <MudSelectItem Value="401" >401</MudSelectItem>
+                                <MudSelectItem Value="501" >501</MudSelectItem>
+                                <MudSelectItem Value="601" >601</MudSelectItem>
+                                <MudSelectItem Value="701" >701</MudSelectItem>
+                                <MudSelectItem Value="801" >801</MudSelectItem>
+                                <MudSelectItem Value="901" >901</MudSelectItem>
+                                <MudSelectItem Value="1001" >1001</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect @bind-Value="InModifier" HelperText="IN" Style="width: 12rem" class="mt-4">
+                                <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
+                                <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
+                                <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
+                                <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
+                            </MudSelect>
+                            <MudSelect @bind-Value="OutModifier" HelperText="OUT" Style="width: 12rem"  class="mt-4">
+                                <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
+                                <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
+                                <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
+                                <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
+                            </MudSelect>
+                        }
+                    </div>
                     @if(GameType != GameType.AroundTheClock){
-                        <MudCheckBox @bind-Value="QuickFinish" Label="Finish game after 1st rank"></MudCheckBox>
+                        <MudCheckBox @bind-Value="QuickFinish" Label="Finish game after 1st rank" Disabled="IsTournament    "></MudCheckBox>
                     }
                 </MudItem>
                 <MudItem>
+                    Players
                     <div class="flex flex-row justify-between mb-1">
                         <div>
                             <MudCheckBox @bind-Value="ShufflePlayers" Label="Shuffle players"></MudCheckBox>
@@ -86,6 +96,10 @@
 @code{
 
     private GameType GameType { get; set; }
+    
+    private bool IsTournament {get;set; }
+
+    private bool LosersCupForThirdRank {get;set;} = true;
 
     private bool QuickFinish {get;set; }
     
@@ -130,19 +144,44 @@
 
         try
         {
-            var players = SelectedPlayers.ToList();
-            
-            if (ShufflePlayers)
-                players.Shuffle();
-            
-            var state = await GameRepo.CreateGame(players, GameType, QuickFinish, X01Value, InModifier, OutModifier);
-
-            NavigationManager.NavigateTo("/game/" + state.Id);
+            if (IsTournament)
+                await CreateNewTournament();
+            else
+                await CreateNewGame();
         }
         catch (Exception ex)
         {
             Snackbar.Add(ex.Message, Severity.Error);
         }
+    }
+
+    private async Task CreateNewGame()
+    {
+        var players = SelectedPlayers.ToList();
+            
+        if (ShufflePlayers)
+            players.Shuffle();
+            
+        var state = await GameRepo.CreateGame(players, GameType, QuickFinish, X01Value, InModifier, OutModifier);
+
+        NavigationManager.NavigateTo("/game/" + state.Id);
+    }
+
+    private async Task CreateNewTournament()
+    {
+        if(SelectedPlayers.Count < 4){
+            Snackbar.Add("At least four players are required!", Severity.Error);
+            return;
+        }
+
+        var players = SelectedPlayers.ToList();
+        
+        if(ShufflePlayers)
+            players.Shuffle();
+
+        var state = await TournamentRepo.CreateTournament(players, GameType, LosersCupForThirdRank, X01Value, InModifier, OutModifier);
+        
+        NavigationManager.NavigateTo("/tournament/" + state.Id);
     }
 
     private void GoToGames()

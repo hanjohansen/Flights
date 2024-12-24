@@ -39,6 +39,9 @@
 </div>
 
 @code{
+    [CascadingParameter]
+    public Guid? TournamentId { get; set; }
+    
     [Parameter]
     public EventCallback<StatModel> ReportDart {get;set;}
 
@@ -74,6 +77,9 @@
     }
 
     private void GoToGames(){
-        NavigationManager.NavigateTo("/games");
+        if (TournamentId != null)
+            NavigationManager.NavigateTo("/tournament/" + TournamentId);
+        else
+            NavigationManager.NavigateTo("/games");
     }
 }

@@ -32,11 +32,12 @@ public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolv
         if (lastRound.Games.Count == 1 && 
             lastRound.Games.Single().Game!.Finished != null)
         {
+            SetFirstAndSecondRank();
             entity.Finished = lastRound.Games.Single().Game!.Finished;
             return;
         }
 
-        //if losers cup axists..
+        //if losers cup exists..
         if (lastRound.Games.Any(x => x.Game == null))
         {
             var allOtherFinished = lastRound.Games
@@ -50,13 +51,26 @@ public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolv
                 return;
             }
         }
+        
+        SetLosers();
 
-        var allGamesFinished = lastRound.Games.Select(x => x.Game).All(x => x?.Finished != null);
+        var roundGames = lastRound.Games.Select(x => x.Game).ToList();
+        var allGamesFinished = roundGames.All(x => x?.Finished != null);
+        
         if (allGamesFinished)
         {
+            var isSemiFinal = (entity.SemiFinalWithLosersCup && roundGames.Count == 3 && lastRound.WildCard == null)
+                              || (!entity.SemiFinalWithLosersCup && roundGames.Count == 2);
+                
+            if(isSemiFinal)
+                SetThirdRank();
+            
             var winners = new List<TournamentPlayerEntity>();
             foreach (var game in lastRound.Games)
             {
+                if (isSemiFinal && game.IsLosersCup)
+                    continue;
+                
                 var lastGameRound = game.Game!.Rounds.Last();
                 var winner = lastGameRound.RoundStats.First(x => x.Rank == 1);
                 var tournamentPlayer = entity.Players.First(x => x.PlayerId == winner.Player.Id);

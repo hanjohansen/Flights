@@ -1,9 +1,9 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 
 namespace Flights.Domain.State;
 public record GameState(
     Guid Id,
+    Guid? TournamentId,
     GameType Type,
     bool FinishAfterFirstRank,
     InOutModifier InModifier,

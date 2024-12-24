@@ -2,7 +2,6 @@
 
 @using Flights.Client.Shared.Game.Cricket
 @using Flights.Client.Shared.Game.X01
-@using Flights.Domain.Entities
 @using Flights.Domain.Exception
 @using Flights.Domain.Models
 @using Flights.Domain.State
@@ -16,26 +15,29 @@
 @inject IJSRuntime JsRuntime
 
 <div>
-    @if(CurrentGame != null){
-        switch(CurrentGame.Type){
+    <CascadingValue Value="@TournamentId">
+    @if (CurrentGame != null)
+    {
+        switch (CurrentGame.Type)
+        {
             case GameType.X01:
-                <X01Game CurrentGame="@CurrentGame" 
-                    ReportScore="@ReportScore"
-                    ReportMiss="@ReportNullDart"
-                    RevertDart="@RequestRevertDart"/>
+                <X01Game CurrentGame="@CurrentGame"
+                         ReportScore="@ReportScore"
+                         ReportMiss="@ReportNullDart"
+                         RevertDart="@RequestRevertDart"/>
                 break;
             case GameType.Cricket:
             case GameType.CtCricket:
-                <CricketGame CurrentGame="@CurrentGame" 
-                    ReportScore="@ReportScore"
-                    ReportMiss="@ReportNullDart"
-                    RevertDart="@RequestRevertDart"/>
+                <CricketGame CurrentGame="@CurrentGame"
+                             ReportScore="@ReportScore"
+                             ReportMiss="@ReportNullDart"
+                             RevertDart="@RequestRevertDart"/>
                 break;
             case GameType.AroundTheClock:
-                <AroundTheClockGame CurrentGame="@CurrentGame" 
-                    ReportScore="@ReportScore"
-                    ReportMiss="@ReportNullDart"
-                    RevertDart="@RequestRevertDart"/>
+                <AroundTheClockGame CurrentGame="@CurrentGame"
+                                    ReportScore="@ReportScore"
+                                    ReportMiss="@ReportNullDart"
+                                    RevertDart="@RequestRevertDart"/>
                 break;
             default:
                 <div>
@@ -45,12 +47,15 @@
         }
     }
     <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
+    </CascadingValue>
 </div>
 
 @code{
 
     [Parameter]
     public Guid GameId { get; set; }
+    
+    public Guid? TournamentId { get; set; }
 
     private JinglePlayer? _jinglePlayer;
 
@@ -58,6 +63,7 @@
     protected override async Task OnInitializedAsync() {
         var model = await GameRepo.GetGame(GameId);
         CurrentGame = model.SolveGameState();
+        TournamentId = CurrentGame.TournamentId;
     }
 
     private async Task ReportScore(StatModel model){

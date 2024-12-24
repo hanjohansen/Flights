@@ -1,6 +1,5 @@
 using System.Globalization;
 using CsvHelper;
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 
 namespace Flights.Test;

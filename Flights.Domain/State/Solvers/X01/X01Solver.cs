@@ -43,6 +43,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
             
         return new GameState(
             entity.Id,
+            entity.TournamentGame?.TournamentRound.TournamentId,
             entity.Type,
             entity.FinishAfterFirstRank,
             entity.InModifier,

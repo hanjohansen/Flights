@@ -1,5 +1,6 @@
 ﻿using Flights.Domain.Entities.Game;
 using Flights.Domain.Models;
+using Flights.Domain.ReadModels;
 using Flights.Domain.State;
 
 namespace Flights.Infrastructure.Port;
@@ -15,7 +16,7 @@ public interface IGameRepository
 
     Task<GameState> RevertLastDart(Guid gameId);
 
-    Task<List<GameEntity>> GetGames();
+    Task<List<GameListItemReadModel>> GetGames();
 
     Task<GameModel> GetGame(Guid id);
 

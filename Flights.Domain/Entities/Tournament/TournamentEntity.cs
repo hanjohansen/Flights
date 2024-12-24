@@ -5,6 +5,8 @@ namespace Flights.Domain.Entities.Tournament;
 public class TournamentEntity : BaseEntity
 {
     public GameType Type { get; set;}
+    
+    public bool SemiFinalWithLosersCup { get; set; }
 
     public int X01Target {get;set;} = 301;
 

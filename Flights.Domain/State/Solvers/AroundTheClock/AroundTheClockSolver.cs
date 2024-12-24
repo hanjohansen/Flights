@@ -1,4 +1,3 @@
-using Flights.Domain.Entities;
 using Flights.Domain.Entities.Game;
 
 namespace Flights.Domain.State.Solvers.AroundTheClock;
@@ -60,6 +59,7 @@ public class AroundTheClockSolver(GameEntity game) : IGameSolver
 
         return new GameState(
             Id: game.Id,
+            TournamentId: game.TournamentGame?.TournamentRound.TournamentId,
             Type: game.Type,
             FinishAfterFirstRank: game.FinishAfterFirstRank,
             InModifier: InOutModifier.None,
