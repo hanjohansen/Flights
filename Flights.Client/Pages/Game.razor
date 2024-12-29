@@ -9,10 +9,14 @@
 @using Flights.Client.Shared.Game
 @using Flights.Client.Shared.Game.AroundTheClock
 @using Flights.Domain.Entities.Game
+@using Flights.Client.Rtc
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
 @inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+@implements IAsyncDisposable
 
 <div>
     <CascadingValue Value="@TournamentId">
@@ -60,10 +64,27 @@
     private JinglePlayer? _jinglePlayer;
 
     private GameState? CurrentGame {get;set;}
-    protected override async Task OnInitializedAsync() {
+    
+    private readonly ViewerHubClient _viewerHubClient = new ();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var baseUrl = NavigationManager.BaseUri;
+        await _viewerHubClient.Connect(baseUrl);
+        
         var model = await GameRepo.GetGame(GameId);
         CurrentGame = model.SolveGameState();
         TournamentId = CurrentGame.TournamentId;
+
+        await Broadcast(ViewerHubMessageType.LoadedGame, CurrentGame.Id);
+    }
+    
+    private async Task Broadcast(ViewerHubMessageType messageType, Guid? id)
+    {
+        if (id != null)
+        {
+            await _viewerHubClient.PublishGameEvent(messageType, id.Value);
+        }
     }
 
     private async Task ReportScore(StatModel model){
@@ -76,6 +97,7 @@
             var oldState = CurrentGame;
             
             CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
+            await Broadcast(ViewerHubMessageType.UpdatedGame, CurrentGame?.Id);
 
             await ValidatePlayJingle(oldState, CurrentGame, currPlayerId);
         }catch(FlightsGameException ex){
@@ -94,6 +116,8 @@
         {
             for(var i = remainingDarts; i > 0; i--)
                 CurrentGame = await GameRepo.AddPlayerStat(GameId, currentPlayer.PlayerId, StatModel.Init(0));
+            
+            await Broadcast(ViewerHubMessageType.UpdatedGame, CurrentGame?.Id);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }
@@ -105,6 +129,7 @@
 
         try{
             CurrentGame = await GameRepo.RevertLastDart(GameId);
+            await Broadcast(ViewerHubMessageType.UpdatedGame, CurrentGame?.Id);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }            
@@ -139,4 +164,10 @@
         if(oldRank == null && newRank != null)
             await _jinglePlayer!.PlayJingle(playerId.Value);
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _viewerHubClient.DisposeAsync();
+    }
+
 }

@@ -1,0 +1,46 @@
+﻿@page "/viewer"
+
+@using Microsoft.AspNetCore.SignalR.Client
+@using Flights.Client.Rtc
+@inject NavigationManager NavigationManager
+
+@implements IAsyncDisposable
+
+<div>
+    Viewer
+    <div class="mt-4">
+        Messages
+        <div class="mt-1">
+            @foreach(var msg in Messages){
+                <p>
+                    @msg
+                </p>
+            }
+        </div>
+    </div>
+</div>
+
+@code{
+    private readonly ViewerHubClient _viewerHubClient = new ();
+
+    private List<string> Messages { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _viewerHubClient.GameEventReceived += message =>
+        {
+            var encodedMsg = $"{message.Type}: {message.Id}";
+            Messages.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        };
+        
+        var uri = NavigationManager.BaseUri;
+        await _viewerHubClient.Connect(uri);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _viewerHubClient.DisposeAsync();
+    }
+
+}
