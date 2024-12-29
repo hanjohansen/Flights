@@ -21,6 +21,11 @@
             </BigRoundButton>
         </div>
         <div class="pt-4">
+            <BigRoundButton OnClick="@GoToViewer">
+                <MudIcon Icon="@Icons.Material.Filled.Monitor" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+            </BigRoundButton>
+        </div>
+        <div class="pt-4">
             <BigRoundButton OnClick="@GoToStats">
                 <MudIcon Icon="@Icons.Material.Filled.InsertChartOutlined" Size="Size.Large" Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
             </BigRoundButton>
@@ -70,6 +75,11 @@
     private void GoToCreateGame()
     {
         NavigationManager.NavigateTo("/creategame");
+    }
+
+    private void GoToViewer()
+    {
+        NavigationManager.NavigateTo("/viewer");
     }
 
     private void GoToStats()
