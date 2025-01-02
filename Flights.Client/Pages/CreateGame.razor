@@ -81,7 +81,7 @@
                             <MudIconButton Icon="@Icons.Material.Filled.PlaylistAddCheck" Size="Size.Medium" Color="Color.Inherit" OnClick="SelectAll"/> 
                         </div>
                     </div>
-                    <div class="border rounded p-4" style="width: 20rem">
+                    <div class="border rounded p-4 h-[620px] overflow-auto" style="width: 20rem">
                         @foreach (var player in Players)
                         {
                             <SelectablePlayer Player="@player" SelectedPlayers="@SelectedPlayers" OnSelectionChange="@SelectionChanged"/>

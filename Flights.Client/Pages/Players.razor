@@ -10,7 +10,7 @@
 
 <PageTitle>Players</PageTitle>
 
-<div class="flex flex-row justify-center mt-4">
+<div class="flex flex-row justify-center mt-4 overflow-hidden">
     <div class="flex flex-col mr-8">      
         <div class="mb-4">
             <BigRoundButton OnClick="@GoToGames" Type="BigRoundButton.ButtonType.Secondary  ">
@@ -23,7 +23,7 @@
             </BigRoundButton>
         </div>
     </div>
-    <div>
+    <div class="h-[720px] overflow-auto">
         @if (!AvailablePlayers.Any())
         {
             <div>
