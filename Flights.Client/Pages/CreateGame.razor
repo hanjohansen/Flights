@@ -75,7 +75,7 @@
                     Players
                     <div class="flex flex-row justify-between mb-1">
                         <div>
-                            <MudCheckBox @bind-Value="ShufflePlayers" Label="Shuffle players"></MudCheckBox>
+                            <MudCheckBox @bind-Value="ShufflePlayers" Disabled="IsTournament" Label="Shuffle players"></MudCheckBox>
                         </div>
                         <div>
                             <MudIconButton Icon="@Icons.Material.Filled.PlaylistAddCheck" Size="Size.Medium" Color="Color.Inherit" OnClick="SelectAll"/> 
@@ -175,9 +175,7 @@
         }
 
         var players = SelectedPlayers.ToList();
-        
-        if(ShufflePlayers)
-            players.Shuffle();
+        players.Shuffle();
 
         var state = await TournamentRepo.CreateTournament(players, GameType, LosersCupForThirdRank, X01Value, InModifier, OutModifier);
         

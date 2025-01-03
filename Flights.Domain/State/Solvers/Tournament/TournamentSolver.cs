@@ -1,4 +1,5 @@
 ﻿using Flights.Domain.Entities.Tournament;
+using Flights.Util;
 
 namespace Flights.Domain.State.Solvers.Tournament;
 
@@ -76,6 +77,8 @@ public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolv
                 var tournamentPlayer = entity.Players.First(x => x.PlayerId == winner.Player.Id);
                 winners.Add(tournamentPlayer);
             }
+            
+            winners.Shuffle();
             
             if(lastRound.WildCard != null)
                 winners.Insert(0, lastRound.WildCard);
