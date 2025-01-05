@@ -1,0 +1,69 @@
+@using Flights.Client.Pages
+@using Flights.Domain.Entities.Game
+@using Flights.Domain.Models
+@using Flights.Domain.State
+@using Flights.Client.Shared.Game.X01
+@using Flights.Client.Shared.Game.Cricket
+@using Flights.Client.Shared.Game.AroundTheClock
+
+@inject IJSRuntime JsRuntime
+
+<div>
+    <CascadingValue Value="@DisplayType">
+    @switch (CurrentGame.Type)
+    {
+        case GameType.X01:
+            <X01Game CurrentGame="@CurrentGame"
+                     ReportScore="@ReportScore"
+                     ReportMiss="@ReportMiss"
+                     RevertDart="@RevertDart"/>
+            break;
+        case GameType.Cricket:
+        case GameType.CtCricket:
+            <CricketGame CurrentGame="@CurrentGame"
+                         ReportScore="@ReportScore"
+                         ReportMiss="@ReportMiss"
+                         RevertDart="@RevertDart"/>
+            break;
+        case GameType.AroundTheClock:
+            <AroundTheClockGame CurrentGame="@CurrentGame"
+                                ReportScore="@ReportScore"
+                                ReportMiss="@ReportMiss"
+                                RevertDart="@RevertDart"/>
+            break;
+        default:
+            <div>
+                Nothing
+            </div>
+            break;
+    }
+    </CascadingValue>
+</div>
+
+
+@code{
+
+    [Parameter]
+    public required GameState CurrentGame {get;set;}
+    
+    [Parameter]
+    public Viewer.DisplayType DisplayType { get; set; }
+
+    [Parameter]
+    public EventCallback<StatModel> ReportScore {get;set;}
+
+    [Parameter]
+    public EventCallback ReportMiss {get;set;}
+
+    [Parameter]
+    public EventCallback RevertDart {get;set;}
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        var id = CurrentGame.CurrentPlayerId;
+
+        if(id == null)
+            return;
+
+        await JsRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
+    }
+}

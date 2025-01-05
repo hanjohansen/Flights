@@ -1,46 +1,109 @@
 ﻿@page "/viewer"
 
-@using Microsoft.AspNetCore.SignalR.Client
 @using Flights.Client.Rtc
-@inject NavigationManager NavigationManager
+@using Flights.Client.Shared.Game
+@using Flights.Domain.Exception
+@using Flights.Domain.State
+@using Flights.Infrastructure.Port
+@using Flights.Client.Shared.Tournament
 
-@implements IAsyncDisposable
+@inject ISnackbar Snackbar
+@inject IGameRepository GameRepo;
+@inject ITournamentRepository TournamentRepo;
+
+@inherits RtcHubComponent
 
 <div>
-    Viewer
-    <div class="mt-4">
-        Messages
-        <div class="mt-1">
-            @foreach(var msg in Messages){
-                <p>
-                    @msg
-                </p>
-            }
+    @if (CurrentGame != null)
+    {
+        <GameBaseComponent CurrentGame="@CurrentGame"
+                           DisplayType="@DisplayType.Viewer"/>
+    }
+    @if (CurrentTournament != null)
+    {
+        <TournamentBaseComponent CurrentTournament="@CurrentTournament"
+                                 DisplayType="@DisplayType.Viewer"/>
+    }
+    @if(CurrentGame == null && CurrentTournament == null){
+        <div class="">
+            <div class="text-gray-600 font-bold text-4xl text-center mt-[340px]">
+                Waiting for game or tournament
+            </div>
+            <div class="mx-[400px] mt-4">
+                <MudProgressLinear Color="Color.Default" Size="Size.Small" Indeterminate="true"/>
+            </div>
+
         </div>
-    </div>
+
+    }
 </div>
 
 @code{
-    private readonly ViewerHubClient _viewerHubClient = new ();
 
-    private List<string> Messages { get; set; } = new();
-
+    public enum DisplayType
+    {
+        Normal,
+        Viewer
+    };
+    
+    private GameState? CurrentGame { get; set; }
+    
+    private TournamentState? CurrentTournament { get; set; }
+    
+    
     protected override async Task OnInitializedAsync()
     {
-        _viewerHubClient.GameEventReceived += message =>
-        {
-            var encodedMsg = $"{message.Type}: {message.Id}";
-            Messages.Add(encodedMsg);
-            InvokeAsync(StateHasChanged);
-        };
-        
-        var uri = NavigationManager.BaseUri;
-        await _viewerHubClient.Connect(uri);
+        await base.OnInitializedAsync();
+        EventClient.GameEventReceived += HandleUiEvent;
     }
 
-    public async ValueTask DisposeAsync()
+    private async Task HandleUiEvent(RtcUiMessage message)
     {
-        await _viewerHubClient.DisposeAsync();
+        CurrentGame = null;
+        CurrentTournament = null;
+        
+        switch (message.Type)
+        {
+            case UiEventType.LoadedGame:
+            case UiEventType.UpdatedGame:
+                await ReloadGame(message.Id);
+                break;
+            case UiEventType.LoadedTournament:
+            case UiEventType.UpdatedTournament:
+                await ReloadTournament(message.Id);
+                break;
+            case UiEventType.LoadedIndex:
+                break; //everything nullified..
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        await InvokeAsync(StateHasChanged);
     }
 
+    private async Task ReloadGame(Guid gameId)
+    {
+        try
+        {
+            var model = await GameRepo.GetGame(gameId);
+            CurrentGame = model.SolveGameState();
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+    
+    private async Task ReloadTournament(Guid tournamentId)
+    {
+        try
+        {
+            var model = await TournamentRepo.GetTournament(tournamentId);
+            CurrentTournament = model.ResolveTournamentState();
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
 }

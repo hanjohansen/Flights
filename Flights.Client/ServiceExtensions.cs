@@ -6,6 +6,7 @@ using Flights.Client.Service.Port.FileStorage;
 using Flights.Client.Service.FileStorage;
 using Flights.Client.Service.Port;
 using Flights.Client.Service;
+using Microsoft.AspNetCore.ResponseCompression;
 
 namespace Flights.Client;
 
@@ -33,6 +34,18 @@ public static class ServiceExtensions
         builder.Services.AddScoped<IFileStorage, BaseFileStorage>();
         builder.Services.AddScoped<IJingleFileStorage, JingleFileStorage>();
         builder.Services.AddScoped<IJingleFileUploadService, JingleFileUploadService>();
+        
+        return builder;
+    }
+    
+    public static WebApplicationBuilder AddSignalRServices(this WebApplicationBuilder builder){
+
+        builder.Services.AddSignalR();
+        builder.Services.AddResponseCompression(opts =>
+        {
+            opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                ["application/octet-stream"]);
+        });
         
         return builder;
     }

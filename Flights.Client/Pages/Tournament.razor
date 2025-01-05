@@ -1,4 +1,6 @@
 ﻿@page "/tournament/{TournamentId:guid}"
+
+@using Flights.Client.Rtc
 @using Flights.Client.Shared.Tournament
 @using Flights.Domain.Exception
 @using Flights.Infrastructure.Port
@@ -7,29 +9,16 @@
 @inject ITournamentRepository TournamentRepo
 @inject ISnackbar Snackbar
 
+@inherits RtcHubComponent
+
 <div>
-    <CascadingValue Value="CurrentTournament">
-        <div class="flex flex-row mx-1 h-[752px] overflow-hidden">
-            <div class="flex flex-column flex-auto mr-1 overflow-auto">
-                <div class="flex justify-evenly">
-                    @if (CurrentTournament?.Rounds != null)
-                    {
-                        foreach (var round in CurrentTournament.Rounds)
-                        {
-                            <CascadingValue Value="round">
-                                <TournamentRound RequestDevFinishGame="@DevFinishGame"
-                                                 RequestSwitchPlayerOrder="@SwitchPlayerOrder"
-                                                 RequestSkipLosersCup="@SkipLosersCup"/>
-                            </CascadingValue>
-                        }
-                    }
-                </div>
-            </div>
-            <div class="flex-shrink">
-                <TournamentInfo/>
-            </div>
-        </div>
-    </CascadingValue>
+    @if (CurrentTournament != null)
+    {
+        <TournamentBaseComponent CurrentTournament="@CurrentTournament"
+                                 RequestSkipLosersCup="@SkipLosersCup"
+                                 RequestSwitchPlayerOrder="@SwitchPlayerOrder"
+                                 RequestDevFinishGame="@DevFinishGame"/>
+    }
 </div>
 
 @code{
@@ -39,9 +28,14 @@
 
     private TournamentState? CurrentTournament {get;set;}
     
-    protected override async Task OnInitializedAsync() {
+    protected override async Task OnInitializedAsync() 
+    {
+        await base.OnInitializedAsync();
+        
         var model = await TournamentRepo.GetTournament(TournamentId);
         CurrentTournament = model.ResolveTournamentState();
+        
+        await Broadcast(UiEventType.LoadedTournament, TournamentId);
     }
 
     private async Task DevFinishGame(Guid gameId)
@@ -53,6 +47,8 @@
         {
             var newState = await TournamentRepo.DevFinishGame(CurrentTournament.Id, gameId);
             CurrentTournament = newState;
+            
+            await Broadcast(UiEventType.UpdatedTournament, TournamentId);
         }
         catch (FlightsGameException ex)
         {
@@ -73,6 +69,8 @@
         {
             var newState = await TournamentRepo.SwitchPlayerOrder(CurrentTournament.Id, gameId);
             CurrentTournament = newState;
+            
+            await Broadcast(UiEventType.UpdatedTournament, TournamentId);
         }
         catch (FlightsGameException ex)
         {
@@ -84,7 +82,7 @@
         }
     }
 
-    public async Task SkipLosersCup()
+    private async Task SkipLosersCup()
     {
         if (CurrentTournament == null)
             return;
@@ -93,6 +91,8 @@
         {
             var newState = await TournamentRepo.SkipLosersCup(CurrentTournament.Id);
             CurrentTournament = newState;
+            
+            await Broadcast(UiEventType.UpdatedTournament, TournamentId);
         }
         catch (FlightsGameException ex)
         {

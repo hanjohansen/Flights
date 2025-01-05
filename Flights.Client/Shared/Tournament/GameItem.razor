@@ -1,3 +1,4 @@
+@using Flights.Client.Pages
 @using Flights.Domain.State
 
 @inject IWebHostEnvironment Environment
@@ -5,7 +6,7 @@
 @inject ISnackbar Snackbar
 
 <div class="flex flex-row justify-center rounded-lg border border-gray-300 bg-white mud-elevation-3 py-2">
-    <div class="flex flex-grow justify-center ml-4 mr-2 cursor-pointer" @onclick="GoToGame">
+    <div class="flex flex-grow justify-center ml-4 mr-4 cursor-pointer" @onclick="GoToGame">
     @if(Game.IsLosersCup == false){
         <div class="text-center text-2xl text-slate-700">
             <div class="flex flex-row justify-center">
@@ -67,34 +68,39 @@
         </div>
     }
     </div>
-    <div class="flex flex-shrink items-center">
-        <div class="self-center cursor-pointer">
-            <MudMenu Disabled="@Game.Finished">
-                <ActivatorContent>
-                    <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
-                </ActivatorContent>
-                <ChildContent>
-                    <MudMenuItem IconSize="Size.Large" IconColor="Color.Primary" 
-                        Icon="@Icons.Material.Filled.PlayArrow" OnClick="@GoToGame">Play</MudMenuItem>
-                    <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
-                        Icon="@Icons.Material.Filled.Shuffle" Disabled="@Game.Started" OnClick="@SwitchPlayers">Switch players</MudMenuItem>
-                    @if(Game.IsLosersCup && Game.IsSemiFinal){
-                        <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" 
-                            Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@SkipLosersCup" Disabled="@Game.Finished" >Skip Losers Cup</MudMenuItem>
-                    }      
-                    @if(Environment.IsDevelopment()){              
+    @if(DisplayType == Viewer.DisplayType.Normal){
+        <div class="flex flex-shrink items-center">
+            <div class="self-center cursor-pointer">
+                <MudMenu Disabled="@Game.Finished">
+                    <ActivatorContent>
+                        <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MudMenuItem IconSize="Size.Large" IconColor="Color.Primary" 
+                            Icon="@Icons.Material.Filled.PlayArrow" OnClick="@GoToGame">Play</MudMenuItem>
                         <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
-                            Icon="@Icons.Material.Filled.Construction" OnClick="@DevFinishGame" Disabled="@Game.Finished" >Finish game (DEV)</MudMenuItem>
-                    }               
-                </ChildContent>
-            </MudMenu>
+                            Icon="@Icons.Material.Filled.Shuffle" Disabled="@Game.Started" OnClick="@SwitchPlayers">Switch players</MudMenuItem>
+                        @if(Game.IsLosersCup && Game.IsSemiFinal){
+                            <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" 
+                                Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@SkipLosersCup" Disabled="@Game.Finished" >Skip Losers Cup</MudMenuItem>
+                        }      
+                        @if(Environment.IsDevelopment()){              
+                            <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
+                                Icon="@Icons.Material.Filled.Construction" OnClick="@DevFinishGame" Disabled="@Game.Finished" >Finish game (DEV)</MudMenuItem>
+                        }               
+                    </ChildContent>
+                </MudMenu>
+            </div>
         </div>
-    </div>
+    }
 </div>
 
 @code{
     [Parameter]
     public required TournamentGameState Game {get;set;}
+
+    [CascadingParameter]
+    public Viewer.DisplayType DisplayType { get; set; } 
     
     [Parameter]
     public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }
@@ -106,6 +112,9 @@
     public EventCallback<Guid> RequestDevFinishGame { get; set; }
 
     private void GoToGame(){
+        if(DisplayType == Viewer.DisplayType.Viewer)
+            return;
+
         if(Game.IsLosersCup && Game.Id == null){
             Snackbar.Add("Losers cup is not ready!", Severity.Error);
             return;

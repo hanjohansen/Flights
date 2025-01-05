@@ -1,56 +1,28 @@
 ﻿@page "/game/{GameId:guid}"
 
-@using Flights.Client.Shared.Game.Cricket
-@using Flights.Client.Shared.Game.X01
 @using Flights.Domain.Exception
 @using Flights.Domain.Models
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
 @using Flights.Client.Shared.Game
-@using Flights.Client.Shared.Game.AroundTheClock
 @using Flights.Domain.Entities.Game
 @using Flights.Client.Rtc
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
-@inject IJSRuntime JsRuntime
-@inject NavigationManager NavigationManager
 
-@implements IAsyncDisposable
+@inherits RtcHubComponent
 
 <div>
     <CascadingValue Value="@TournamentId">
-    @if (CurrentGame != null)
-    {
-        switch (CurrentGame.Type)
+        @if (CurrentGame != null)
         {
-            case GameType.X01:
-                <X01Game CurrentGame="@CurrentGame"
-                         ReportScore="@ReportScore"
-                         ReportMiss="@ReportNullDart"
-                         RevertDart="@RequestRevertDart"/>
-                break;
-            case GameType.Cricket:
-            case GameType.CtCricket:
-                <CricketGame CurrentGame="@CurrentGame"
-                             ReportScore="@ReportScore"
-                             ReportMiss="@ReportNullDart"
-                             RevertDart="@RequestRevertDart"/>
-                break;
-            case GameType.AroundTheClock:
-                <AroundTheClockGame CurrentGame="@CurrentGame"
-                                    ReportScore="@ReportScore"
-                                    ReportMiss="@ReportNullDart"
-                                    RevertDart="@RequestRevertDart"/>
-                break;
-            default:
-                <div>
-                    Nothing
-                </div>
-                break;
+            <GameBaseComponent CurrentGame="@CurrentGame"
+                               ReportScore="@ReportScore"
+                               ReportMiss="@ReportNullDart"
+                               RevertDart="@RequestRevertDart"/>
         }
-    }
-    <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
+        <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
     </CascadingValue>
 </div>
 
@@ -59,32 +31,21 @@
     [Parameter]
     public Guid GameId { get; set; }
     
-    public Guid? TournamentId { get; set; }
+    private Guid? TournamentId { get; set; }
 
     private JinglePlayer? _jinglePlayer;
 
     private GameState? CurrentGame {get;set;}
     
-    private readonly ViewerHubClient _viewerHubClient = new ();
-    
     protected override async Task OnInitializedAsync()
     {
-        var baseUrl = NavigationManager.BaseUri;
-        await _viewerHubClient.Connect(baseUrl);
+        await base.OnInitializedAsync();
         
         var model = await GameRepo.GetGame(GameId);
         CurrentGame = model.SolveGameState();
         TournamentId = CurrentGame.TournamentId;
 
-        await Broadcast(ViewerHubMessageType.LoadedGame, CurrentGame.Id);
-    }
-    
-    private async Task Broadcast(ViewerHubMessageType messageType, Guid? id)
-    {
-        if (id != null)
-        {
-            await _viewerHubClient.PublishGameEvent(messageType, id.Value);
-        }
+        await Broadcast(UiEventType.LoadedGame, CurrentGame.Id);
     }
 
     private async Task ReportScore(StatModel model){
@@ -97,9 +58,9 @@
             var oldState = CurrentGame;
             
             CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
-            await Broadcast(ViewerHubMessageType.UpdatedGame, CurrentGame?.Id);
+            await Broadcast(UiEventType.UpdatedGame, CurrentGame?.Id);
 
-            await ValidatePlayJingle(oldState, CurrentGame, currPlayerId);
+            await ValidatePlayJingle(oldState, CurrentGame!, currPlayerId);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }              
@@ -117,7 +78,7 @@
             for(var i = remainingDarts; i > 0; i--)
                 CurrentGame = await GameRepo.AddPlayerStat(GameId, currentPlayer.PlayerId, StatModel.Init(0));
             
-            await Broadcast(ViewerHubMessageType.UpdatedGame, CurrentGame?.Id);
+            await Broadcast(UiEventType.UpdatedGame, CurrentGame?.Id);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }
@@ -129,19 +90,10 @@
 
         try{
             CurrentGame = await GameRepo.RevertLastDart(GameId);
-            await Broadcast(ViewerHubMessageType.UpdatedGame, CurrentGame?.Id);
+            await Broadcast(UiEventType.UpdatedGame, CurrentGame?.Id);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }            
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender){
-        var id = CurrentGame?.CurrentPlayerId;
-
-        if(id == null)
-            return;
-
-        await JsRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
     }
 
     private async Task ValidatePlayJingle(GameState oldState, GameState newState, Guid? playerId)
@@ -164,10 +116,4 @@
         if(oldRank == null && newRank != null)
             await _jinglePlayer!.PlayJingle(playerId.Value);
     }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _viewerHubClient.DisposeAsync();
-    }
-
 }

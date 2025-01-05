@@ -1,0 +1,43 @@
+@using Flights.Client.Pages
+@using Flights.Domain.State
+
+<div>
+    <CascadingValue Value="CurrentTournament">
+        <CascadingValue Value="DisplayType">
+            <div class="flex flex-row mx-1 h-[752px] overflow-hidden">
+                <div class="flex flex-column flex-auto mr-1 overflow-auto">
+                    <div class="flex justify-evenly">
+                        @foreach (var round in CurrentTournament.Rounds)
+                        {
+                            <CascadingValue Value="round">
+                                <TournamentRound RequestDevFinishGame="@RequestDevFinishGame"
+                                                 RequestSwitchPlayerOrder="@RequestSwitchPlayerOrder"
+                                                 RequestSkipLosersCup="@RequestSkipLosersCup"/>
+                            </CascadingValue>
+                        }
+                    </div>
+                </div>
+                <div class="flex-shrink">
+                    <TournamentInfo/>
+                </div>
+            </div>
+        </CascadingValue>
+    </CascadingValue>
+</div>
+
+@code{
+    [Parameter]
+    public required TournamentState CurrentTournament {get;set;}
+    
+    [Parameter]
+    public Viewer.DisplayType DisplayType { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }
+    
+    [Parameter]
+    public EventCallback RequestSkipLosersCup { get; set; }
+    
+    [Parameter]
+    public EventCallback<Guid> RequestDevFinishGame { get; set; }
+}
