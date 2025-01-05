@@ -65,7 +65,7 @@ public class TournamentTestWithLosersCupSemiFinal
         Assert.True(model.Entity.Rounds.Last().Games.Count == 3);
         Assert.True(model.Entity.Rounds.Last().Games.Last().IsLosersCup);
         Assert.Null(model.Entity.Rounds.Last().Games.Last().Game);
-        Assert.NotNull(model.Entity.Rounds.Last().WildCard);
+        Assert.Null(model.Entity.Rounds.Last().WildCard);
         
         //first round
         //simulate finish of regular games
@@ -86,32 +86,12 @@ public class TournamentTestWithLosersCupSemiFinal
         //resolve
         model.ResolveTournamentState();
         Assert.True(model.Entity.Rounds.Count == 2);
-        Assert.True(model.Entity.Rounds.Last().Games.Count == 3);
+        Assert.True(model.Entity.Rounds.Last().Games.Count == 1);
         
         //second round
         //finish second round
-        firstGame = model.Entity.Rounds[1].Games.First(); 
-        secondGame = model.Entity.Rounds[1].Games[1];
+        firstGame = model.Entity.Rounds[1].Games.First();
         testHelpers.FinishGame(firstGame.Game!);
-        testHelpers.FinishGame(secondGame.Game!);
-        
-        //resolve
-        model.ResolveTournamentState();
-        Assert.True(model.Entity.Rounds.Count == 2);
-        Assert.NotNull(model.Entity.Rounds.Last().Games.Last().Game);
-        
-        //finish losers cup
-        loserCup = model.Entity.Rounds[1].Games.Last();
-        testHelpers.FinishGame(loserCup.Game!);
-        
-        //resolve
-        model.ResolveTournamentState();
-        Assert.True(model.Entity.Rounds.Count == 3);
-        Assert.True(model.Entity.Rounds.Last().Games.Count == 1);
-
-        //finish last game
-        var lastGame = model.Entity.Rounds.Last().Games[0];
-        testHelpers.FinishGame(lastGame.Game!);
         
         //resolve
         model.ResolveTournamentState();
@@ -235,7 +215,7 @@ public class TournamentTestWithLosersCupSemiFinal
         testHelpers.FinishGame(final.Game!);
         
         //resolve
-        var state = model.ResolveTournamentState();
+        model.ResolveTournamentState();
         Assert.True(model.Entity.Rounds.Count == 3);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 1);
 

@@ -9,9 +9,65 @@ public partial class TournamentSolver
     private void InitTournament()
     {
         var players = entity.Players.ToList();
-        InitNewRound(players);
+        
+        if(players.Count == 5)
+            InitFivePlayerTournament(players);
+        else  
+            InitNewRound(players);
         
         entity.Started = DateTimeOffset.UtcNow;
+    }
+
+    private void InitFivePlayerTournament(List<TournamentPlayerEntity> tournamentPlayers)
+    {
+        var players = tournamentPlayers.ToList();
+        //create round
+        var round = new TournamentRoundEntity()
+        {
+            OrderNumber = entity.Rounds.Count + 1,
+            Tournament = entity,
+        };
+        
+        entity.Rounds.Add(round);
+        
+        //create games
+        //first
+        var gamePlayers = players.Take(2)
+            .Select(x => x.Player)
+            .ToList();
+
+        var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+            entity.OutModifier);
+            
+        round.Games.Add(new TournamentGameEntity()
+        {
+            Game = game.Entity,
+            TournamentRound = round,
+            OrderNumber = 1
+        });
+        
+        //second
+        gamePlayers = players.TakeLast(3).Select(x => x.Player).ToList();
+        game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+            entity.OutModifier);
+            
+        round.Games.Add(new TournamentGameEntity()
+        {
+            Game = game.Entity,
+            TournamentRound = round,
+            OrderNumber = 2
+        });
+        
+        //setup empty losers cup if necessary
+        if (entity.SemiFinalWithLosersCup)
+        {
+            round.Games.Add(new TournamentGameEntity()
+            {
+                OrderNumber = 3,
+                TournamentRound = round,
+                IsLosersCup = true
+            });
+        }
     }
 
     private void InitNewRound(List<TournamentPlayerEntity> tournamentPlayers)

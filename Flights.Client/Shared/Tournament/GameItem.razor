@@ -24,6 +24,23 @@
                 x
             </div>
 
+            @if(Game.Players.Count == 3){
+                <div class="flex flex-row justify-center">
+                    @if(Game.Players[1].Rank == 1){
+                        <div class="flex mr-1 mt-1">
+                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+                        </div>
+                    }
+                    <div class="">
+                        @Game.Players[1].Name
+                    </div>
+                </div>
+
+                <div class="text-lg text-slate-500 -my-2">
+                    x
+                </div>
+            }
+
             <div class="flex flex-row justify-center">
                 @if(Game.Players.Last().Rank == 1){
                     <div class="flex mr-1 mt-1">

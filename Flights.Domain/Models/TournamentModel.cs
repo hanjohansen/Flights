@@ -90,7 +90,7 @@ public class TournamentModel
             || losersCup == null) 
             throw new FlightsGameException("No Losers Cup to skip!");
 
-        Entity.Rounds.Last().Games.Remove(losersCup!);
+        Entity.Rounds.Last().Games.Remove(losersCup);
         Entity.SemiFinalWithLosersCup = false;
 
         _solver.Solve();
@@ -109,14 +109,12 @@ public class TournamentModel
             throw new FlightsGameException("Game not found");
 
         var lastRound = game.Rounds.Last();
+        var random = new Random();
+        
         foreach (var stat in lastRound.RoundStats)
         {
-            if (stat.FirstDart == null)
-            {
-                stat.FirstDart = new DartStatEntity() { Modifier = DartModifier.None, Value = 1 };
-            }
-
-            var random = new Random();
+            stat.FirstDart ??= new DartStatEntity() { Modifier = DartModifier.None, Value = 1 };
+            
             stat.EndPoints = random.Next(2, 30);
             stat.Rank = lastRound.RoundStats.IndexOf(stat) + 1;
         }

@@ -60,8 +60,9 @@ public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolv
         
         if (allGamesFinished)
         {
-            var isSemiFinal = (entity.SemiFinalWithLosersCup && roundGames.Count == 3 && lastRound.WildCard == null)
-                              || (!entity.SemiFinalWithLosersCup && roundGames.Count == 2);
+            var isSemiFinal = entity.SemiFinalWithLosersCup 
+                && roundGames.Count == 3 
+                && lastRound.WildCard == null;
                 
             if(isSemiFinal)
                 SetThirdRank();

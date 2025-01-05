@@ -25,7 +25,7 @@ public class TournamentInitTest
         var model = TournamentModel.Create(players, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
-        Assert.True(model.Entity.Rounds.First().Games.Count == 3);
+        Assert.True(model.Entity.Rounds.First().Games.Count == 2);
 
         var firstGame = model.Entity.Rounds.First().Games.First();
         Assert.True(firstGame.Game!.Players.First().Player == players[0]);
@@ -35,13 +35,10 @@ public class TournamentInitTest
         var secGame = model.Entity.Rounds.First().Games[1];
         Assert.True(secGame.Game!.Players.First().Player == players[2]);
         Assert.True(secGame.Game.Players[1].Player == players[3]);
+        Assert.True(secGame.Game.Players[2].Player == players[4]);
         Assert.True(secGame.OrderNumber == 2);
-        
-        var thirdGame = model.Entity.Rounds.First().Games[2];
-        Assert.True(thirdGame.IsLosersCup);
-        Assert.Null(thirdGame.Game);
 
-        Assert.NotNull(model.Entity.Rounds.First().WildCard);
+        Assert.Null(model.Entity.Rounds.First().WildCard);
     }
     
     [Fact]
