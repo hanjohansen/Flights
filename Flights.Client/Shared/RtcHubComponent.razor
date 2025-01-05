@@ -1,0 +1,30 @@
+@using Flights.Client.Rtc
+
+@inject NavigationManager NavigationManager
+
+@implements IAsyncDisposable
+
+@code{
+    private readonly RtcHubClient _rtcHubClient = new ();
+
+    protected RtcHubClient EventClient => _rtcHubClient;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var baseUrl = NavigationManager.BaseUri;
+        await _rtcHubClient.Connect(baseUrl);
+    }
+    
+    protected async Task Broadcast(UiEventType messageType, Guid? id)
+    {
+        if (id != null)
+        {
+            await _rtcHubClient.PublishGameEvent(messageType, id.Value);
+        }
+    }
+    
+    public async ValueTask DisposeAsync()
+    {
+        await _rtcHubClient.DisposeAsync();
+    }
+}

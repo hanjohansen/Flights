@@ -1,14 +1,10 @@
-
-@using Flights.Client.Shared.Game
+@using Flights.Client.Pages
 @using Flights.Domain.Models
 @using Flights.Domain.State
 
-@inject IJSRuntime JsRuntime
-
-
 <div class="flex flex-row mx-1 h-[752px] overflow-hidden">
     
-    <div class="flex flex-column flex-auto mr-1 overflow-hidden">   
+    <div class="flex flex-column flex-auto overflow-hidden">   
         <GameInfo Game="@CurrentGame"/>
         <div class="overflow-auto">
             @foreach(var stat in CurrentGame.PlayerStates){
@@ -17,7 +13,10 @@
         </div>
     </div>
     <div class="flex-shrink">
-        <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss" RequestRevertDart="@RevertDart"/>
+        @if (DisplayType == Viewer.DisplayType.Normal)
+        {
+            <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss" RequestRevertDart="@RevertDart"/>
+        }
     </div>
 </div>
 
@@ -25,6 +24,9 @@
 
     [Parameter]
     public GameState CurrentGame {get;set;} = null!;
+    
+    [CascadingParameter]
+    public Viewer.DisplayType DisplayType { get; set; } 
 
     [Parameter]
     public EventCallback<StatModel> ReportScore {get;set;}
@@ -34,13 +36,4 @@
 
     [Parameter]
     public EventCallback RevertDart {get;set;}
-
-    protected override async Task OnAfterRenderAsync(bool firstRender){
-        var id = CurrentGame.CurrentPlayerId;
-
-        if(id == null)
-            return;
-
-        await JsRuntime.InvokeVoidAsync("scrollToControl", id.ToString());
-    }
 }

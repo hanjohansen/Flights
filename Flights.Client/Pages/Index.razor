@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/games"
+@using Flights.Client.Rtc
 @using Flights.Infrastructure.Port
 @using Flights.Client.Shared.Toolkit
 @using Flights.Client.Shared.Games
@@ -7,6 +8,8 @@
 
 @inject NavigationManager NavigationManager
 @inject IGameRepository GamesRepo
+
+@inherits RtcHubComponent
 
 <PageTitle>Flights</PageTitle>
 
@@ -59,6 +62,8 @@
     protected override async Task OnInitializedAsync(){
         await base.OnInitializedAsync();
         await ReloadGames();
+        
+        await Broadcast(UiEventType.LoadedIndex, Guid.Empty);
     }
 
     private async Task ReloadGames()
