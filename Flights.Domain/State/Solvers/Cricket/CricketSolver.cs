@@ -89,7 +89,8 @@ public class CricketSolver(GameEntity game) : IGameSolver
                 IsBust: false,
                 Rank: state.Rank,
                 Points: state.Points,
-                PointAvg: 0m,
+                PointAvg: 0,
+                PointMax: 0,
                 Darts: state.Darts,
                 Checkout: null,
                 CricketState: state.GetCricketState()

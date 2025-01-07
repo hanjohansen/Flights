@@ -239,6 +239,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
                 refStat.Rank,
                 refStat.EndPoints,
                 CountPlayerAverage(playerStats.Player.Id),
+                GetMaxPointsInRounds(playerStats.Player.Id),
                 dartState,
                 checkout));
         }
@@ -266,7 +267,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
 
     private decimal CountPlayerAverage(Guid playerId){
         var allRounds = entity.Rounds.SelectMany(x => x.RoundStats)
-            .Where(x => x.Player.Id == playerId && x.GetDartsList().Any())
+            .Where(x => x.Player.Id == playerId && x.GetDartsList().Count != 0)
             .ToList();
 
         var allPoints = allRounds.Select(x => x.StartPoints - x.EndPoints).Sum();
@@ -276,5 +277,18 @@ public class X01Solver(GameEntity entity) : IGameSolver
 
         var avg = allPoints / (allRounds.Count * 1.0m);
         return Math.Round(avg, 1);
+    }
+
+    private int GetMaxPointsInRounds(Guid playerId)
+    {
+        var allRounds = entity.Rounds.SelectMany(x => x.RoundStats)
+            .Where(x => x.Player.Id == playerId && x.GetDartsList().Count != 0 && x.IsBust == false)
+            .ToList();
+        
+        if(allRounds.Count == 0)
+            return 0;
+
+        var max = allRounds.Max(x => x.GetDartsList().Sum(y => y.GetCalculatedValue()));
+        return max;
     }
 }

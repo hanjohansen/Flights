@@ -100,6 +100,7 @@ public class AroundTheClockSolver(GameEntity game) : IGameSolver
                 Rank: null,
                 Points: dto.Points,
                 PointAvg: 0,
+                PointMax: 0,
                 Darts: dto.Darts,
                 null,
                 null,

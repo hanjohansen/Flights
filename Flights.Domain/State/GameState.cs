@@ -25,6 +25,7 @@ public record PlayerState(
     int? Rank,
     int Points,
     decimal PointAvg,
+    int PointMax,
     DartsState? Darts,
     DartsState? Checkout = null,
     CricketState? CricketState = null,
@@ -51,6 +52,10 @@ public record DartsState(DartState? D1, DartState? D2, DartState? D3){
             result.Add(D3);
 
         return result;
+    }
+    
+    public int Sum(){
+        return GetDartsList().Sum(x => x.Calculated);
     }
 }
 

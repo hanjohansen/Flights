@@ -25,12 +25,30 @@
                         </div>
                     </MudStack>
                 </div>
-                <div class="flex flex-row items-center">
-                    <div class="">
-                        <MudIcon Icon="@Icons.Material.Filled.HideSource" Size="Size.Medium" Color="Color.Default"/>
+                <div class="flex flex-col pt-5">
+                    <div class="flex flex-row items-center">
+                        <div class="ml-1 text-2xl text-gray-500">
+                            <span>&Sigma;</span>
+                        </div>
+                        <div class="ml-[14px] mt-[3px] text-gray-700 text-lg">
+                            @(Player.Darts?.Sum() ?? 0)
+                        </div>
                     </div>
-                    <div class="ml-1 mt-1 text-gray-700 text-lg">
-                        @Player.PointAvg
+                    <div class="flex flex-row items-center">
+                        <div class="">
+                            <MudIcon Icon="@Icons.Material.Filled.HideSource" Size="Size.Medium" Color="Color.Default"/>
+                        </div>
+                        <div class="ml-2 mt-1 text-gray-700 text-lg">
+                            @Player.PointAvg
+                        </div>
+                    </div>
+                    <div class="flex flex-row items-center">
+                        <div class="">
+                            <MudIcon Icon="@Icons.Material.Outlined.Grade" Size="Size.Medium" Color="Color.Default"/>
+                        </div>
+                        <div class="ml-2 mt-1 text-gray-700 text-lg">
+                            @Player.PointMax
+                        </div>
                     </div>
                 </div>
             </div>
