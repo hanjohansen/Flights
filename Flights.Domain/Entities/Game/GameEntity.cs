@@ -7,6 +7,8 @@ public enum InOutModifier {None, Double, Triple, FullBull}
 
 public class GameEntity : BaseEntity
 {
+    public int GameNumber {get;set;}
+
     public GameType Type { get; set;}
 
     public int X01Target {get;set;} = 301;

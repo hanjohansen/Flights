@@ -18,6 +18,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         var selectedPlayers = players.Select(id => allPlayers.First(x => x.Id == id)).ToList();
 
         var model = GameModel.Create(selectedPlayers, type, finishAfterFirstRank, x01Target, inMod, outMod);
+        model.Entity.GameNumber = await GetNextGameNumber(db);
 
         await db.Games.AddAsync(model.Entity);
         await db.SaveChangesAsync();
@@ -69,9 +70,11 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
             .Include(x => x.Players)
             .ThenInclude(x => x.Player)
             .Where(x => x.TournamentGameId == null)
+            .OrderByDescending(x => x.GameNumber)
+            .Take(20)
             .ToListAsync();
         
-        foreach (var gameEntity in games.OrderByDescending(x => x.Started).Take(20))
+        foreach (var gameEntity in games)
             result.Add(GameListItemReadModel.FromGame(gameEntity));
         
         //load tournaments
@@ -80,9 +83,11 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
             .AsNoTracking()
             .Include(x => x.Players)
             .ThenInclude(x => x.Player)
+            .OrderByDescending(x => x.TournamentNumber)
+            .Take(20)
             .ToListAsync();
         
-        foreach (var tournament in tournaments.OrderByDescending(x => x.Started).Take(20))
+        foreach (var tournament in tournaments)
             result.Add(GameListItemReadModel.FromTournament(tournament));
 
         result = result.OrderByDescending(x => x.Started).Take(20).ToList();
@@ -148,4 +153,12 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         db.Games.Remove(game);
         await db.SaveChangesAsync();
     }
+
+    private async Task<int> GetNextGameNumber(FlightsDbContext db){
+
+        var nr = await db.Games.Select(x => x.GameNumber).MaxAsync();
+
+        return nr+=1;
+    }
+
 }

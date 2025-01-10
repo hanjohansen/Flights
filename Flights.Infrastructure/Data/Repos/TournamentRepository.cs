@@ -19,6 +19,7 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
         var selectedPlayers = players.Select(id => allPlayers.First(x => x.Id == id)).ToList();
 
         var model = TournamentModel.Create(selectedPlayers, type, semiFinalWithLosersCup, x01Target, inMod, outMod);
+        model.Entity.TournamentNumber = await GetNextTournamentNumber(db);
 
         await db.Tournaments.AddAsync(model.Entity);
         await db.SaveChangesAsync();
@@ -104,7 +105,7 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
         
         await db.SaveChangesAsync();
 
-        return model.ResolveTournamentState();;
+        return model.ResolveTournamentState();
     }
 
     public async Task<TournamentState> DevFinishGame(Guid tournamentId, Guid gameId)
@@ -145,4 +146,11 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
 
         return query;
     }
+
+    private async Task<int> GetNextTournamentNumber(FlightsDbContext db){
+        var nr = await db.Tournaments.Select(x => x.TournamentNumber).MaxAsync();
+
+        return nr+=1;
+    }
+
 }
