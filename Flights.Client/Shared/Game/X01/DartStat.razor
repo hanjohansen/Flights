@@ -2,7 +2,7 @@
 @using Flights.Domain.Entities.Game
 @using Flights.Domain.State
 
-<div class="@GetBustFormatting()">
+<div class="text-center">
     <div class="text-4xl font-bold">
         @GetDartPointsValue()
     </div>
@@ -57,14 +57,5 @@
         }
 
         return points.ToString();
-    }
-
-    private string GetBustFormatting(){
-        var baseClass = "text-center";
-
-        if(IsBust)
-            baseClass += "text-red-600";
-
-        return baseClass;
     }
 }

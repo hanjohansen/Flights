@@ -32,6 +32,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
             playerStates = playerStates.Select(x => {
                 if(x.PlayerId == nextPlayerId)
                     return x with { Darts = new DartsState(null, null, null),
+                                    IsBust = false,
                                     Checkout = entity.OutModifier == InOutModifier.Double 
                                                         ? _checkoutRepo.GetCheckout(x.Points, 3)
                                                         : null};
