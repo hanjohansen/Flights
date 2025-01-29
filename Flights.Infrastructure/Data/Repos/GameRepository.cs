@@ -155,10 +155,13 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
     }
 
     private async Task<int> GetNextGameNumber(FlightsDbContext db){
-
-        var nr = await db.Games.Select(x => x.GameNumber).MaxAsync();
-
-        return nr+=1;
+        try{
+            var nr = await db.Games.Select(x => x.GameNumber).MaxAsync();
+            return nr+=1;
+        }
+        catch(InvalidOperationException _){
+            return 1;
+        }
     }
 
 }

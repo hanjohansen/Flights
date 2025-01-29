@@ -148,9 +148,12 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
     }
 
     private async Task<int> GetNextTournamentNumber(FlightsDbContext db){
-        var nr = await db.Tournaments.Select(x => x.TournamentNumber).MaxAsync();
-
-        return nr+=1;
+        try{
+            var nr = await db.Tournaments.Select(x => x.TournamentNumber).MaxAsync();
+            return nr += 1;
+        }catch(InvalidOperationException _){
+            return 1;
+        }
     }
 
 }
