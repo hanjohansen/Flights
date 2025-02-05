@@ -15,7 +15,7 @@
     <div class="flex-shrink">
         @if (DisplayType == Viewer.DisplayType.Normal)
         {
-            <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss" RequestRevertDart="@RevertDart"/>
+            <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss" RequestRevertDart="@RevertDart" OpenDarts="@GetOpenDartsCount()"/>
         }
     </div>
 </div>
@@ -36,4 +36,19 @@
 
     [Parameter]
     public EventCallback RevertDart {get;set;}
+    
+    private int GetOpenDartsCount(){
+        if(CurrentGame.CurrentPlayerId == null)
+            return 3;
+
+        var currentPlayer = CurrentGame.PlayerStates.First(x => x.PlayerId == CurrentGame.CurrentPlayerId);
+        var darts = currentPlayer.Darts;
+
+        if(darts == null)
+            return 3;
+
+        var dartsThrown = darts.GetDartsList().Count;
+
+        return 3 - dartsThrown;
+    }
 }

@@ -62,6 +62,13 @@ public class GameModel
         dart.Validate();
         var dartStat = new DartStatEntity {Modifier=dart.Modifier, Value = dart.Value};
 
+        if (dartStat.Value == 26 && playerStat.AnyDartThrown())
+            throw new FlightsGameException("Waschmachine not allowed!");
+        
+        var is26Present = playerStat.GetDartsList().Any(x => x.Value == 26);
+        if(is26Present && dartStat.Value != 0)
+            throw new FlightsGameException("Waschmachine has been thrown! Only 0 or miss are allowed!");
+
         if(playerStat.FirstDart == null){
             playerStat.FirstDart = dartStat;
         }else if(playerStat.SecondDart == null){

@@ -13,9 +13,9 @@
                 <ScoreButton Number="@i" ReportScore="@ReportScore"/>
             </div>
         }
-        <div>
-            @* empty *@
-        </div>
+        <ScoreButton Number="26" Disabled="@(SelectedModifier != DartModifier.None || OpenDarts != 3)" ReportScore="@ReportScore">
+            <MudIcon Icon="@Icons.Material.Filled.LocalLaundryService" Size="@Size.Large"/>
+        </ScoreButton>
         <BullsButton SelectedModifier="@SelectedModifier" ReportScore="@ReportScore"/>
         <ScoreButton Number="0" ReportScore="@ReportScore"/>
         <ScoreButton Caption="Miss" Number="0" ReportScore="@ReportNullDart"/>
@@ -50,6 +50,9 @@
     public Guid? TournamentId { get; set; }
     
     [Parameter]
+    public int OpenDarts { get; set; }
+    
+    [Parameter]
     public EventCallback<StatModel> ReportDart {get;set;}
 
     [Parameter]
@@ -58,7 +61,7 @@
     [Parameter]
     public EventCallback RequestRevertDart {get;set;}
 
-    public DartModifier SelectedModifier {get;set;} = DartModifier.None;
+    private DartModifier SelectedModifier {get;set;} = DartModifier.None;
 
     private void ModifierChanged(DartModifier modifier){
         if(SelectedModifier == modifier){

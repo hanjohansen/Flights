@@ -58,6 +58,13 @@
             var oldState = CurrentGame;
             
             CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
+
+            if (model.Value == 26 && currPlayerId == CurrentGame.CurrentPlayerId)
+            {
+                CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, StatModel.Init(0));
+                CurrentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, StatModel.Init(0));
+            }
+            
             await Broadcast(UiEventType.UpdatedGame, CurrentGame?.Id);
 
             await ValidatePlayJingle(oldState, CurrentGame!, currPlayerId);

@@ -34,10 +34,33 @@ public class BaseGameModelTest
         d = StatModel.Init(DartModifier.Triple, 22);
         Assert.Throws<FlightsGameException>(() => d.Validate());
 
-        d = StatModel.Init(26);
+        d = StatModel.Init(27);
         Assert.Throws<FlightsGameException>(() => d.Validate());
         
     }
+    
+    [Fact]
+    public void Washmachine_Validation(){
+        var players = GetTwoPlayers();
+
+        var gameModel = GameModel.Create(players, GameType.X01, false,301, InOutModifier.None, InOutModifier.None);
+        var gameState = gameModel.SolveGameState();
+
+        Assert.True(gameState.Round == 1);
+
+        //first player
+        gameModel.AddPlayerStats(players[0].Id, StatModel.Init(1));
+        gameModel.AddPlayerStats(players[0].Id, StatModel.Init(2));
+        Assert.Throws<FlightsGameException>(() => gameModel.AddPlayerStats(players[0].Id, StatModel.Init(26))); //wm must be first and ...
+
+        gameModel.AddPlayerStats(players[0].Id, StatModel.Init(2));
+        
+        //secondPlayer
+        gameModel.AddPlayerStats(players[1].Id, StatModel.Init(26));
+        gameModel.AddPlayerStats(players[1].Id, StatModel.Init(0));
+        Assert.Throws<FlightsGameException>(() => gameModel.AddPlayerStats(players[1].Id, StatModel.Init(26))); //...only
+    }
+    
     [Fact]
     public void GameRound_Should_Be_Added(){
         var players = GetTwoPlayers();

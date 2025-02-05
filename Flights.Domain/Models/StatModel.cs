@@ -12,7 +12,7 @@ public record StatModel(DartModifier Modifier, int Value){
     }
     
     public void Validate(){
-        if((Value < 0 || Value > 20) && Value != 25)
+        if((Value < 0 || Value > 20) && Value != 25 && Value != 26)
             throw new FlightsGameException("Invalid value (" + Value + ")!");
 
         if(Value == 0 && 
@@ -21,5 +21,8 @@ public record StatModel(DartModifier Modifier, int Value){
 
         if(Value == 25 && Modifier == DartModifier.Triple)
             throw new FlightsGameException("Bulls can not be triple-modified");
+        
+        if(Value == 26 && Modifier != DartModifier.None)
+            throw new FlightsGameException("Waschmaschine can not be modified (" + Modifier.ToString() + ")!");
     }
 }
