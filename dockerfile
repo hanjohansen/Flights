@@ -17,6 +17,7 @@ RUN apt-get -y install nodejs
 COPY . .
 WORKDIR /src/Flights.Client
 # process tailwind css
+RUN npm install -D tailwindcss@3
 RUN npx tailwindcss -i ./tailwind.css -o ./wwwroot/css/styles.css
 # build app
 RUN dotnet restore "Flights.Client.csproj"
