@@ -7,6 +7,8 @@ Storage
 storage
 apidata
 
+node_modules
+
 *.db
 *.db-shm
 *.db-wal
