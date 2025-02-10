@@ -29,22 +29,26 @@
         <MudPaper class="p-4">
             <MudGrid>
                 <MudItem>
-                    Tournament
-                    <div class="border rounded mt-1 mb-4">
-                        <MudCheckBox @bind-Value="IsTournament" Label="Tournament"></MudCheckBox>
-                        <MudCheckBox @bind-Value="LosersCupForThirdRank" Disabled="IsTournament == false" Label="Losers Cup for 3rd rank"></MudCheckBox>
+                    <div class="text-lg">
+                        Tournament
                     </div>
-                    Game
+                    <div class="border rounded mt-1 mb-4">
+                        <MudCheckBox @bind-Value="IsTournament" Label="Tournament" Size="Size.Large"></MudCheckBox>
+                        <MudCheckBox @bind-Value="LosersCupForThirdRank" Disabled="IsTournament == false" Label="Losers Cup for 3rd rank" Size="Size.Large"></MudCheckBox>
+                    </div>
+                    <div class="text-lg">
+                        Game
+                    </div>
                     <div class="border rounded p-4 mt-1">
-                        <MudSelect @bind-Value="GameType" HelperText="Game" Style="width: 14rem">
+                        <MudSelect @bind-Value="GameType" HelperText="Game" Style="width: 14rem" Typo="@Typo.h5">
                             <MudSelectItem Value="GameType.X01">X01</MudSelectItem>
                             <MudSelectItem Value="GameType.Cricket">Cricket</MudSelectItem>
                             <MudSelectItem Value="GameType.CtCricket">Cut-Throat Cricket</MudSelectItem>
                             <MudSelectItem Value="GameType.AroundTheClock">Around The Clock</MudSelectItem>
                         </MudSelect>                    
                         @if(GameType == GameType.X01){
-                            <MudSelect @bind-Value="X01Value" HelperText="Points" Style="width: 12rem" class="mt-12">
-                                <MudSelectItem Value="301">301</MudSelectItem>
+                            <MudSelect @bind-Value="X01Value" HelperText="Points" Style="width: 12rem" class="mt-10" Typo="@Typo.h5">
+                                <MudSelectItem Value="301" >301</MudSelectItem>
                                 <MudSelectItem Value="401" >401</MudSelectItem>
                                 <MudSelectItem Value="501" >501</MudSelectItem>
                                 <MudSelectItem Value="601" >601</MudSelectItem>
@@ -53,39 +57,44 @@
                                 <MudSelectItem Value="901" >901</MudSelectItem>
                                 <MudSelectItem Value="1001" >1001</MudSelectItem>
                             </MudSelect>
-                            <MudSelect @bind-Value="InModifier" HelperText="IN" Style="width: 12rem" class="mt-4">
+                            <MudSelect @bind-Value="InModifier" HelperText="IN" Style="width: 12rem" class="mt-4" Typo="@Typo.h5">
                                 <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
                             </MudSelect>
-                            <MudSelect @bind-Value="OutModifier" HelperText="OUT" Style="width: 12rem"  class="mt-4">
+                            <MudSelect @bind-Value="OutModifier" HelperText="OUT" Style="width: 12rem"  class="mt-4" Typo="@Typo.h5">
                                 <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
                             </MudSelect>
                         }
+                        <div>
+                            <MudCheckBox @bind-Value="ShufflePlayers" Disabled="IsTournament" Label="Shuffle players" Size="Size.Large"></MudCheckBox>
+                        </div>
+                        @if(GameType != GameType.AroundTheClock){
+                            <MudCheckBox @bind-Value="QuickFinish" Label="Finish game after 1st rank" Disabled="IsTournament" Size="Size.Large"></MudCheckBox>
+                        }
                     </div>
-                    @if(GameType != GameType.AroundTheClock){
-                        <MudCheckBox @bind-Value="QuickFinish" Label="Finish game after 1st rank" Disabled="IsTournament    "></MudCheckBox>
-                    }
                 </MudItem>
                 <MudItem>
-                    Players
-                    <div class="flex flex-row justify-between mb-1">
-                        <div>
-                            <MudCheckBox @bind-Value="ShufflePlayers" Disabled="IsTournament" Label="Shuffle players"></MudCheckBox>
-                        </div>
+                    <div class="text-lg">
+                        Players
+                    </div>
+                    @* <div class="flex flex-row justify-between mb-1">
+
                         <div>
                             <MudIconButton Icon="@Icons.Material.Filled.PlaylistAddCheck" Size="Size.Medium" Color="Color.Inherit" OnClick="SelectAll"/> 
                         </div>
-                    </div>
-                    <div class="border rounded p-4 h-[620px] overflow-auto" style="width: 20rem">
-                        @foreach (var player in Players)
-                        {
-                            <SelectablePlayer Player="@player" SelectedPlayers="@SelectedPlayers" OnSelectionChange="@SelectionChanged"/>
-                        }
+                    </div> *@
+                    <div class="border rounded p-4 mt-1 overflow-auto" style="width: 20rem; height: 668px;">
+                        <div>
+                            @foreach (var player in Players)
+                            {
+                                <SelectablePlayer Player="@player" SelectedPlayers="@SelectedPlayers" OnSelectionChange="@SelectionChanged"/>
+                            }
+                        </div>
                     </div>
                 </MudItem>
             </MudGrid>
