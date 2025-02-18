@@ -6,7 +6,7 @@ namespace Flights.Infrastructure.Port;
 
 public interface ITournamentRepository
 {
-    Task<TournamentState> CreateTournament(List<Guid> players, GameType type, bool semiFinalWithLosersCup, int x01Target, InOutModifier inMod,
+    Task<TournamentState> CreateTournament(List<Guid> players, int firstRoundPlayersPerGame, GameType type, bool semiFinalWithLosersCup, int x01Target, InOutModifier inMod,
         InOutModifier outMod);
 
     Task<TournamentModel> GetTournament(Guid id);

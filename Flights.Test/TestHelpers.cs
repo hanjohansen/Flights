@@ -21,6 +21,8 @@ public class TestHelpers
         _players.Add(new PlayerEntity {Id = Guid.NewGuid(), Name="Jens"});
         _players.Add(new PlayerEntity {Id = Guid.NewGuid(), Name="Jens K."});
         _players.Add(new PlayerEntity {Id = Guid.NewGuid(), Name="Martin"});
+        _players.Add(new PlayerEntity {Id = Guid.NewGuid(), Name="Vanessa"});
+        _players.Add(new PlayerEntity {Id = Guid.NewGuid(), Name="Björn"});
     }
 
     public List<PlayerEntity> GetPlayers(int count){

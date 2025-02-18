@@ -14,7 +14,7 @@ public class TournamentTest : DbTestBase
         var players = await pRepo.GetPlayers();
         players = players.Take(5).ToList();
 
-        var state = await tRepo.CreateTournament(players.Select(x => x.Id).ToList(),
+        var state = await tRepo.CreateTournament(players.Select(x => x.Id).ToList(), 2,
             GameType.X01, false,301, InOutModifier.None, InOutModifier.Double);
 
         var model = await tRepo.GetTournament(state.Id);

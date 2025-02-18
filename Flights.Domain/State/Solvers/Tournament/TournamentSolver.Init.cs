@@ -1,6 +1,8 @@
 ﻿using Flights.Domain.Entities;
 using Flights.Domain.Entities.Tournament;
+using Flights.Domain.Exception;
 using Flights.Domain.Models;
+using Flights.Util;
 
 namespace Flights.Domain.State.Solvers.Tournament;
 
@@ -9,11 +11,15 @@ public partial class TournamentSolver
     private void InitTournament()
     {
         var players = entity.Players.ToList();
-        
-        if(players.Count == 5)
-            InitFivePlayerTournament(players);
-        else  
-            InitNewRound(players);
+
+        if(entity.FirstRoundPlayersPerGame == 2){ //'normal' tournament
+            if(players.Count == 5)
+                InitFivePlayerTournament(players);
+            else
+                InitNewRound(players);
+        }else
+            InitMultiplePlayerTournament(players); //custom number of players per game
+            
         
         entity.Started = DateTimeOffset.UtcNow;
     }
@@ -64,6 +70,67 @@ public partial class TournamentSolver
             round.Games.Add(new TournamentGameEntity()
             {
                 OrderNumber = 3,
+                TournamentRound = round,
+                IsLosersCup = true
+            });
+        }
+    }
+
+    private void InitMultiplePlayerTournament(List<TournamentPlayerEntity> tournamentPlayers){
+        if(entity.FirstRoundPlayersPerGame < 2)
+            throw new FlightsGameException("Value for players-per-game-in-first-round is invalid (" + entity.FirstRoundPlayersPerGame + ")");
+
+        if (tournamentPlayers.Count - entity.FirstRoundPlayersPerGame < 2)
+            throw new FlightsGameException("Not enough players selected");
+
+        var needsWildcard = tournamentPlayers.Count % entity.FirstRoundPlayersPerGame == 1;
+        var players = tournamentPlayers.ToList();
+        TournamentPlayerEntity? wildcard = null;
+
+        //set wildcard
+        if (needsWildcard)
+        {
+            wildcard = players.Last();
+            players.Remove(wildcard);
+        }
+        
+        //create round
+        var round = new TournamentRoundEntity()
+        {
+            OrderNumber = 1,
+            Tournament = entity,
+            WildCard = wildcard
+        };
+        
+        entity.Rounds.Add(round);
+        
+        //create games
+        var playerGroups = players.ToGroupsOf(entity.FirstRoundPlayersPerGame);
+        var gameOrderNumber = 1;
+        
+        foreach (var group in playerGroups)
+        {
+            var gamePlayers = group.Select(x => x.Player).ToList();
+            var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+                entity.OutModifier);
+            
+            round.Games.Add(new TournamentGameEntity()
+            {
+                Game = game.Entity,
+                TournamentRound = round,
+                OrderNumber = gameOrderNumber
+            });
+
+            gameOrderNumber++;
+        }
+        
+        //setup losers cup if necessary
+        var nextRoundPlayers = round.Games.Count + (round.WildCard != null ? 1 : 0);
+        if (nextRoundPlayers != 1 && nextRoundPlayers % 2 != 0)
+        {
+            round.Games.Add(new TournamentGameEntity()
+            {
+                OrderNumber = gameOrderNumber,
                 TournamentRound = round,
                 IsLosersCup = true
             });

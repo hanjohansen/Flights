@@ -10,7 +10,7 @@ namespace Flights.Infrastructure.Data.Repos;
 
 public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory) : ITournamentRepository
 {
-    public async Task<TournamentState> CreateTournament(List<Guid> players, GameType type, bool semiFinalWithLosersCup, int x01Target, InOutModifier inMod, InOutModifier outMod)
+    public async Task<TournamentState> CreateTournament(List<Guid> players, int firstRoundPlayersPerGame, GameType type, bool semiFinalWithLosersCup, int x01Target, InOutModifier inMod, InOutModifier outMod)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
         
@@ -18,7 +18,7 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
         
         var selectedPlayers = players.Select(id => allPlayers.First(x => x.Id == id)).ToList();
 
-        var model = TournamentModel.Create(selectedPlayers, type, semiFinalWithLosersCup, x01Target, inMod, outMod);
+        var model = TournamentModel.Create(selectedPlayers, firstRoundPlayersPerGame, type, semiFinalWithLosersCup, x01Target, inMod, outMod);
         model.Entity.TournamentNumber = await GetNextTournamentNumber(db);
 
         await db.Tournaments.AddAsync(model.Entity);
@@ -54,6 +54,7 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
 
         return await CreateTournament(
             players,
+            t.Entity.FirstRoundPlayersPerGame,
             t.Entity.Type,
             t.Entity.SemiFinalWithLosersCup,
             t.Entity.X01Target,

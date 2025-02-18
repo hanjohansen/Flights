@@ -1,4 +1,4 @@
-@page "/creategame"
+﻿@page "/creategame"
 @using Flights.Client.Shared.Games
 @using Flights.Domain.Entities
 @using Flights.Infrastructure.Port
@@ -32,22 +32,27 @@
                     <div class="text-lg">
                         Tournament
                     </div>
-                    <div class="border rounded mt-1 mb-4">
+                    <div class="border rounded px-4 mt-1 mb-4">
                         <MudCheckBox @bind-Value="IsTournament" Label="Tournament" Size="Size.Large"></MudCheckBox>
+                        <MudSelect @bind-Value="PlayersPerGame" HelperText="Players per game" class="mx-4" Typo="@Typo.h5">
+                            <MudSelectItem Value="2">2</MudSelectItem>
+                            <MudSelectItem Value="3">3</MudSelectItem>
+                            <MudSelectItem Value="4">4</MudSelectItem>
+                        </MudSelect>
                         <MudCheckBox @bind-Value="LosersCupForThirdRank" Disabled="IsTournament == false" Label="Losers Cup for 3rd rank" Size="Size.Large"></MudCheckBox>
                     </div>
                     <div class="text-lg">
                         Game
                     </div>
-                    <div class="border rounded p-4 mt-1">
-                        <MudSelect @bind-Value="GameType" HelperText="Game" Style="width: 14rem" Typo="@Typo.h5">
+                    <div class="border rounded px-4 mt-1 pt-4 pb-1">
+                        <MudSelect @bind-Value="GameType" HelperText="Game" Class="mx-4" Typo="@Typo.h5">
                             <MudSelectItem Value="GameType.X01">X01</MudSelectItem>
                             <MudSelectItem Value="GameType.Cricket">Cricket</MudSelectItem>
                             <MudSelectItem Value="GameType.CtCricket">Cut-Throat Cricket</MudSelectItem>
                             <MudSelectItem Value="GameType.AroundTheClock">Around The Clock</MudSelectItem>
                         </MudSelect>                    
                         @if(GameType == GameType.X01){
-                            <MudSelect @bind-Value="X01Value" HelperText="Points" Style="width: 12rem" class="mt-10" Typo="@Typo.h5">
+                            <MudSelect @bind-Value="X01Value" HelperText="Points" class="mt-4 mx-4" Typo="@Typo.h5">
                                 <MudSelectItem Value="301" >301</MudSelectItem>
                                 <MudSelectItem Value="401" >401</MudSelectItem>
                                 <MudSelectItem Value="501" >501</MudSelectItem>
@@ -57,13 +62,13 @@
                                 <MudSelectItem Value="901" >901</MudSelectItem>
                                 <MudSelectItem Value="1001" >1001</MudSelectItem>
                             </MudSelect>
-                            <MudSelect @bind-Value="InModifier" HelperText="IN" Style="width: 12rem" class="mt-4" Typo="@Typo.h5">
+                            <MudSelect @bind-Value="InModifier" HelperText="IN" class="mx-4" Typo="@Typo.h5">
                                 <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.FullBull">Full Bull</MudSelectItem>
                             </MudSelect>
-                            <MudSelect @bind-Value="OutModifier" HelperText="OUT" Style="width: 12rem"  class="mt-4" Typo="@Typo.h5">
+                            <MudSelect @bind-Value="OutModifier" HelperText="OUT" class="mx-4" Typo="@Typo.h5">
                                 <MudSelectItem Value="InOutModifier.None">-</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Double">Double</MudSelectItem>
                                 <MudSelectItem Value="InOutModifier.Triple">Triple</MudSelectItem>
@@ -107,6 +112,8 @@
     private GameType GameType { get; set; }
     
     private bool IsTournament {get;set; }
+
+    private int PlayersPerGame {get;set;} = 2;
 
     private bool LosersCupForThirdRank {get;set;} = true;
 
@@ -186,7 +193,7 @@
         var players = SelectedPlayers.ToList();
         players.Shuffle();
 
-        var state = await TournamentRepo.CreateTournament(players, GameType, LosersCupForThirdRank, X01Value, InModifier, OutModifier);
+        var state = await TournamentRepo.CreateTournament(players, PlayersPerGame, GameType, LosersCupForThirdRank, X01Value, InModifier, OutModifier);
         
         NavigationManager.NavigateTo("/tournament/" + state.Id);
     }

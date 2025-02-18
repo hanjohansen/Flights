@@ -7,6 +7,8 @@ public class TournamentEntity : BaseEntity
     public int TournamentNumber {get;set;}
     
     public GameType Type {get; set;}
+
+    public int FirstRoundPlayersPerGame {get;set;} = 2;
     
     public bool SemiFinalWithLosersCup {get; set;}
 

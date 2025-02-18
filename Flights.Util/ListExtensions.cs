@@ -13,4 +13,30 @@ public static class ListExtensions
             (list[k], list[n]) = (list[n], list[k]);
         }  
     }
+
+    public static List<List<T>> ToGroupsOf<T>(this List<T> list, int count)
+    {
+        if(count < 1)
+            throw new ArgumentException("'count' must be greater than 0");
+
+        var result = new List<List<T>>();
+        var currentCount = 0;
+        var currentList = new List<T>();
+        result.Add(currentList);
+
+        foreach (var item in list)
+        {
+            if (currentCount == count)
+            {
+                currentList = new List<T>();
+                result.Add(currentList);
+                currentCount = 0;
+            }
+            
+            currentList.Add(item);
+            currentCount++;
+        }
+        
+        return result;
+    }
 }
