@@ -1,9 +1,13 @@
+version: "3.5"
+
 services:
   flights:
-    image: hanjohansen/flights:1.22
     container_name: flights
     environment:
         - TZ=Europe/Berlin
+    build: 
+      context: .
+      dockerfile: dockerfile
     ports:
       - 127.0.0.1:8080:8080
     volumes:
