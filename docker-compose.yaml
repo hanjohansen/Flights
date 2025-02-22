@@ -1,6 +1,6 @@
 services:
   flights:
-    image: hanjohansen/flights:1.22
+    image: hanjohansen/flights:latest
     container_name: flights
     environment:
         - TZ=Europe/Berlin
