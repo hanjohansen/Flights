@@ -1,11 +1,7 @@
-@using Flights.Client.Pages
-@using Flights.Domain.Models
-@using Flights.Domain.State
-
 @inject IJSRuntime JsRuntime
 
 <div class="flex flex-row h-[755px] pl-2 pt-1 pb-1 overflow-y-auto">
-    @if(DisplayType == Viewer.DisplayType.Viewer){
+    @if(Controls.DisplayType == DisplayType.Viewer){
         <div class="flex flex-none pr-2 pt-[-1] pb-1">
             <div class="flex flex-row px-2 border border-gray-300 rounded-lg mud-elevation-3 bg-white">
                 <div class="mr-2 text-gray-600">
@@ -14,19 +10,19 @@
                             <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" Color="Color.Default"/>  
                         </div>                                                       
                         <div class="text-4xl font-bold">
-                            @CurrentGame?.Round
+                            @Controls.CurrentGame.Round
                         </div> 
                     </div>  
                     <div class="flex flex-row justify-center">
-                        @if(CurrentGame!.PlayerStates.Count > 6){
+                        @if(Controls.CurrentGame.PlayerStates.Count > 6){
                             <div class="grid grid-rows-7 pr-2 gap-[28px] mt-8 mx-4">
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V15"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V16"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V17"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V18"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V19"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V20"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.Bulls"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V15"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V16"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V17"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V18"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V19"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V20"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.Bulls"/>
                             </div>
                         }
                         <div class="flex flex-col justify-items-center mt-10">
@@ -45,13 +41,12 @@
         </div>
     }
     <div class="flex flex-auto overflow-y-auto">
-        @if(CurrentGame != null){
-            foreach(var player in CurrentGame.PlayerStates){
-            <PlayerStat Player="@player" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
+        @foreach (var player in Controls.CurrentGame.PlayerStates)
+            {
+                <PlayerStat Player="@player" CurrentPlayerId="@Controls.CurrentGame.CurrentPlayerId"/>
             }
-        }
     </div>
-    @if(DisplayType == Viewer.DisplayType.Normal){
+    @if(Controls.DisplayType == DisplayType.Normal){
         <div class="flex flex-none pr-2 pt-[-1] pb-1">
             <div class="flex flex-row pl-2 border border-gray-300 rounded-lg mud-elevation-3 bg-white">
                 <div class="mr-2 text-gray-600">
@@ -60,19 +55,19 @@
                             <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Large" Color="Color.Default"/>  
                         </div>                                                       
                         <div class="text-4xl font-bold">
-                            @CurrentGame?.Round
+                            @Controls.CurrentGame.Round
                         </div> 
                     </div>  
                     <div class="flex flex-row">
-                        @if(CurrentGame!.PlayerStates.Count > 5){
+                        @if(Controls.CurrentGame.PlayerStates.Count > 5){
                             <div class="grid grid-rows-7 gap-[28px] mt-8 mx-4">
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V15"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V16"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V17"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V18"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V19"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.V20"/>
-                                <CricketScore IconValue="@CurrentGame?.CricketState?.Bulls"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V15"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V16"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V17"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V18"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V19"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.V20"/>
+                                <CricketScore IconValue="@Controls.CurrentGame.CricketState?.Bulls"/>
                             </div>
                         }
                         <div class="flex flex-col justify-items-center pl-2 mt-10">
@@ -87,30 +82,17 @@
                         </div>
                     </div> 
                 </div>
-                <ScoreButtonBoard ReportDart="@ReportScore" RequestRevertDart="@RevertDart" ReportMiss="@ReportMiss"/>
+                <ScoreButtonBoard/>
             </div>        
         </div>
     }
 </div>
 
 @code{
-
-    [Parameter]
-    public GameState? CurrentGame {get;set;}
-
     [CascadingParameter]
-    public Viewer.DisplayType DisplayType { get; set; } 
-
-    [Parameter]
-    public EventCallback<StatModel> ReportScore {get;set;}
-
-    [Parameter]
-    public EventCallback ReportMiss {get;set;}
-
-    [Parameter]
-    public EventCallback RevertDart {get;set;}
+    public required GameControls Controls { get; set; }
 
     private string GetGridColumnClasses(){
-        return $"grid grid-cols-{CurrentGame?.PlayerStates.Count ?? 1}";
+        return $"grid grid-cols-{Controls.CurrentGame.PlayerStates.Count}";
     }
 }

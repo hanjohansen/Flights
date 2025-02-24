@@ -1,4 +1,4 @@
-@using Flights.Client.Pages
+@using Flights.Client.Shared.Game
 @using Flights.Domain.State
 
 @inject IWebHostEnvironment Environment
@@ -25,7 +25,7 @@
             </div>
 
             @if(Game.Players.Count == 3){
-                <div class="flex flex-row justify-center">
+                <div class="flex fleViewerx-row justify-center">
                     @if(Game.Players[1].Rank == 1){
                         <div class="flex mr-1 mt-1">
                             <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
@@ -85,7 +85,7 @@
         </div>
     }
     </div>
-    @if(DisplayType == Viewer.DisplayType.Normal){
+    @if(DisplayType == DisplayType.Normal){
         <div class="flex flex-shrink items-center">
             <div class="self-center cursor-pointer">
                 <MudMenu Disabled="@Game.Finished">
@@ -117,7 +117,7 @@
     public required TournamentGameState Game {get;set;}
 
     [CascadingParameter]
-    public Viewer.DisplayType DisplayType { get; set; } 
+    public DisplayType DisplayType { get; set; } 
     
     [Parameter]
     public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }
@@ -129,7 +129,7 @@
     public EventCallback<Guid> RequestDevFinishGame { get; set; }
 
     private void GoToGame(){
-        if(DisplayType == Viewer.DisplayType.Viewer)
+        if(DisplayType == DisplayType.Viewer)
             return;
 
         if(Game.IsLosersCup && Game.Id == null){

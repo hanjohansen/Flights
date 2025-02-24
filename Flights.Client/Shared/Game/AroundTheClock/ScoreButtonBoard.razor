@@ -1,26 +1,25 @@
-@using Flights.Client.Pages
-@using Flights.Domain.Entities
 @using Flights.Domain.Entities.Game
 @using Flights.Domain.Models
 
 @inject NavigationManager NavigationManager
 
 <div class="rounded-md border border-gray-300 mud-elevation-3 bg-white p-2 w-[190px] h-[747px]">
-    @if(DisplayType == Viewer.DisplayType.Normal){
+    @if(Controls.DisplayType == DisplayType.Normal){
         <div class="grid justify-items-center my-8">
             <div class="flex flex-row">
                 <div class="mt-7 mr-4">
                     <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Large" Color="Color.Default"/>
                 </div>
                 <div class="text-8xl font-bold text-gray-600">
-                    @CurrentTarget
+                    @Controls.CurrentGame.AroundTheClockState!.CurrentTarget
                 </div>
             </div>       
         </div>
         <div class="grid grid-cols-1 gap-2">
-            <AroundTheClockScoreButton Caption="Single" Modifier="DartModifier.None" ReportScore="@ReportDart" Number="@CurrentTarget"/>
-            <AroundTheClockScoreButton Caption="Double" Modifier="DartModifier.Double" ReportScore="@ReportDart" Number="@CurrentTarget"/>
-            <AroundTheClockScoreButton Caption="Triple" Modifier="DartModifier.Triple" ReportScore="@ReportDart" Number="@CurrentTarget" Disabled="@(CurrentTarget == 25)"/>
+            <AroundTheClockScoreButton Caption="Single" Modifier="DartModifier.None"/>
+            <AroundTheClockScoreButton Caption="Double" Modifier="DartModifier.Double"/>
+            <AroundTheClockScoreButton Caption="Triple" Modifier="DartModifier.Triple" 
+                                       Disabled="@(Controls.CurrentGame.AroundTheClockState!.CurrentTarget == 25)"/>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-6 h-[80px]">
             <ScoreButton Number="0" ReportScore="@ReportScore"/>
@@ -31,7 +30,7 @@
         </div>
         <div class="grid grid-cols-2 gap-2 mt-[25px] h-[80px]">
             <div class="">
-                <RevertButton RequestRevertDart="@RequestRevertDart"/>
+                <RevertButton/>
             </div>      
             <div class="rounded bg-red-500 text-center cursor-pointer pt-[22px] mud-elevation-5"
                 @onclick="GoToGames">
@@ -39,14 +38,14 @@
             </div>      
         </div>
     }
-    @if(DisplayType == Viewer.DisplayType.Viewer){
+    @if(Controls.DisplayType == DisplayType.Viewer){
         <div class="grid justify-items-center items-center my-8">
             <div class="flex flex-row mt-[300px]">
                 <div class="mt-7 mr-4">
                     <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Large" Color="Color.Default"/>
                 </div>
                 <div class="text-8xl font-bold text-gray-600">
-                    @CurrentTarget
+                    @Controls.CurrentGame.AroundTheClockState!.CurrentTarget
                 </div>
             </div>       
         </div>
@@ -55,34 +54,27 @@
 
 @code{
     [CascadingParameter]
-    public Guid? TournamentId { get; set; }
-
-    [CascadingParameter]
-    public Viewer.DisplayType DisplayType { get; set; } 
+    public required GameControls Controls { get; set; }
     
-    [Parameter]
-    public int CurrentTarget {get;set;}
-
-    [Parameter]
-    public EventCallback<StatModel> ReportDart {get;set;}
-
-    [Parameter]
-    public EventCallback ReportMiss {get;set;}
-
-    [Parameter]
-    public EventCallback RequestRevertDart {get;set;}
-    
-    private async Task ReportScore(int score){
-        await ReportDart.InvokeAsync(StatModel.Init(DartModifier.None, score));
+    private async Task ReportScore(int score)
+    {
+        if (Controls.ReportScore == null)
+            return;
+            
+        await Controls.ReportScore(StatModel.Init(DartModifier.None, score));
     }
 
-    private async Task ReportNullDart(int score){
-        await ReportMiss.InvokeAsync();
+    private async Task ReportNullDart(int score)
+    {
+        if (Controls.ReportNullDart == null)
+            return;
+        
+        await Controls.ReportNullDart();
     }
 
     private void GoToGames(){
-        if (TournamentId != null)
-            NavigationManager.NavigateTo("/tournament/" + TournamentId);
+        if (Controls.CurrentGame.TournamentId != null)
+            NavigationManager.NavigateTo("/tournament/" + Controls.CurrentGame.TournamentId);
         else
             NavigationManager.NavigateTo("/games");
     }

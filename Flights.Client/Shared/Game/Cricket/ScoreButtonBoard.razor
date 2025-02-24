@@ -1,4 +1,3 @@
-@using Flights.Domain.Entities
 @using Flights.Domain.Models
 @using Flights.Client.Shared.Game;
 @using Flights.Domain.Entities.Game
@@ -29,7 +28,7 @@
     </div>
     <div class="grid grid-cols-2 gap-2 m-2 mt-9 h-[80px]">
         <div class="">
-            <RevertButton RequestRevertDart="@RequestRevertDart"/>
+            <RevertButton/>
         </div>      
         <div class="rounded bg-red-500 text-center cursor-pointer pt-[22px] mud-elevation-5"
             @onclick="GoToGames">
@@ -40,18 +39,9 @@
 
 @code{
     [CascadingParameter]
-    public Guid? TournamentId { get; set; }
-    
-    [Parameter]
-    public EventCallback<StatModel> ReportDart {get;set;}
+    public required GameControls Controls { get; set; }
 
-    [Parameter]
-    public EventCallback ReportMiss {get;set;}
-
-    [Parameter]
-    public EventCallback RequestRevertDart {get;set;}
-
-    public DartModifier SelectedModifier {get;set;} = DartModifier.None;
+    private DartModifier SelectedModifier {get;set;} = DartModifier.None;
 
     private void ModifierChanged(DartModifier modifier){
         if(SelectedModifier == modifier){
@@ -62,23 +52,33 @@
         SelectedModifier = modifier;
     }
 
-    private async Task ReportScore(int score){
-        await ReportDart.InvokeAsync(StatModel.Init(SelectedModifier, score));
+    private async Task ReportScore(int score)
+    {
+        if (Controls.ReportScore == null)
+            return;
+        
+        await Controls.ReportScore(StatModel.Init(SelectedModifier, score));
         SelectedModifier = DartModifier.None;
     }
 
     private async Task ReportNullDart(int score){
-        await ReportMiss.InvokeAsync();
+        if (Controls.ReportNullDart == null)
+            return;
+        
+        await Controls.ReportNullDart();
         SelectedModifier = DartModifier.None;
     }
 
     private async Task RequestRevert(){
-        await RequestRevertDart.InvokeAsync();
+        if (Controls.RequestRevertDart == null)
+            return;
+        
+        await Controls.RequestRevertDart();
     }
 
     private void GoToGames(){
-        if (TournamentId != null)
-            NavigationManager.NavigateTo("/tournament/" + TournamentId);
+        if (Controls.CurrentGame.TournamentId != null)
+            NavigationManager.NavigateTo("/tournament/" + Controls.CurrentGame.TournamentId);
         else
             NavigationManager.NavigateTo("/games");
     }

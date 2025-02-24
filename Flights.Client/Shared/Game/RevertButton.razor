@@ -3,16 +3,20 @@
 </div>
 
 @code{
-    [Parameter]
-    public EventCallback RequestRevertDart {get;set;}
+    [CascadingParameter]
+    public required GameControls Controls { get; set; }
 
     private bool IsPressed {get;set;}
 
-    private async Task OnClick(){
+    private async Task OnClick()
+    {
+        if (Controls.RequestRevertDart == null)
+            return;
+        
         IsPressed = true;
         var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);    
 
-        await RequestRevertDart.InvokeAsync();
+        await Controls.RequestRevertDart();
 
         await Task.Delay(200);
         await timer.DisposeAsync();

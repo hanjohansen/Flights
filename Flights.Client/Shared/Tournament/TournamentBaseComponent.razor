@@ -1,4 +1,4 @@
-@using Flights.Client.Pages
+@using Flights.Client.Shared.Game
 @using Flights.Domain.State
 
 <div>
@@ -30,7 +30,7 @@
     public required TournamentState CurrentTournament {get;set;}
     
     [Parameter]
-    public Viewer.DisplayType DisplayType { get; set; }
+    public DisplayType DisplayType { get; set; }
     
     [Parameter]
     public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }

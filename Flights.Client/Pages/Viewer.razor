@@ -14,17 +14,18 @@
 @inherits RtcHubComponent
 
 <div>
-    @if (CurrentGame != null)
+    @if (GameControls != null)
     {
-        <GameBaseComponent CurrentGame="@CurrentGame"
-                           DisplayType="@DisplayType.Viewer"/>
+        <CascadingValue Value="@GameControls">
+            <GameBaseComponent/>
+        </CascadingValue>
     }
     @if (CurrentTournament != null)
     {
         <TournamentBaseComponent CurrentTournament="@CurrentTournament"
                                  DisplayType="@DisplayType.Viewer"/>
     }
-    @if(CurrentGame == null && CurrentTournament == null){
+    @if(GameControls == null && CurrentTournament == null){
         <div class="">
             <div class="text-gray-600 font-bold text-4xl text-center mt-[340px]">
                 Waiting for game or tournament
@@ -39,14 +40,8 @@
 </div>
 
 @code{
-
-    public enum DisplayType
-    {
-        Normal,
-        Viewer
-    };
     
-    private GameState? CurrentGame { get; set; }
+    private GameControls? GameControls { get; set; }
     
     private TournamentState? CurrentTournament { get; set; }
     
@@ -59,7 +54,7 @@
 
     private async Task HandleUiEvent(RtcUiMessage message)
     {
-        CurrentGame = null;
+        GameControls = null;
         CurrentTournament = null;
         
         switch (message.Type)
@@ -86,7 +81,16 @@
         try
         {
             var model = await GameRepo.GetGame(gameId);
-            CurrentGame = model.SolveGameState();
+            var currentGame = model.SolveGameState();
+
+            GameControls = new GameControls()
+            {
+                CurrentGame = currentGame,
+                DisplayType = DisplayType.Viewer,
+                ReportScore = null,
+                ReportNullDart = null,
+                RequestRevertDart = null
+            };
         }
         catch (FlightsGameException ex)
         {

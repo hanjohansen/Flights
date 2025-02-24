@@ -1,54 +1,22 @@
-@using Flights.Client.Pages
-@using Flights.Domain.Models
-@using Flights.Domain.State
-
 <div class="flex flex-row mx-1 h-[752px] overflow-hidden">
     
     <div class="flex flex-column flex-auto overflow-hidden">   
-        <GameInfo Game="@CurrentGame"/>
+        <GameInfo Game="@Controls.CurrentGame"/>
         <div class="overflow-auto">
-            @foreach(var stat in CurrentGame.PlayerStates){
-                <PlayerStats Player="@stat" CurrentPlayerId="@CurrentGame.CurrentPlayerId"/>
+            @foreach(var stat in Controls.CurrentGame.PlayerStates){
+                <PlayerStats Player="@stat" CurrentPlayerId="@Controls.CurrentGame.CurrentPlayerId"/>
             }
         </div>
     </div>
     <div class="flex-shrink">
-        @if (DisplayType == Viewer.DisplayType.Normal)
+        @if (Controls.DisplayType == DisplayType.Normal)
         {
-            <ScoreButtonBoard ReportDart="@ReportScore" ReportMiss="@ReportMiss" RequestRevertDart="@RevertDart" OpenDarts="@GetOpenDartsCount()"/>
+            <ScoreButtonBoard/>
         }
     </div>
 </div>
 
 @code{
-
-    [Parameter]
-    public GameState CurrentGame {get;set;} = null!;
-    
     [CascadingParameter]
-    public Viewer.DisplayType DisplayType { get; set; } 
-
-    [Parameter]
-    public EventCallback<StatModel> ReportScore {get;set;}
-
-    [Parameter]
-    public EventCallback ReportMiss {get;set;}
-
-    [Parameter]
-    public EventCallback RevertDart {get;set;}
-    
-    private int GetOpenDartsCount(){
-        if(CurrentGame.CurrentPlayerId == null)
-            return 3;
-
-        var currentPlayer = CurrentGame.PlayerStates.First(x => x.PlayerId == CurrentGame.CurrentPlayerId);
-        var darts = currentPlayer.Darts;
-
-        if(darts == null)
-            return 3;
-
-        var dartsThrown = darts.GetDartsList().Count;
-
-        return 3 - dartsThrown;
-    }
+    public required GameControls Controls { get; set; }
 }
