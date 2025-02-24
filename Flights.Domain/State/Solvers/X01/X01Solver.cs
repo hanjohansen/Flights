@@ -208,10 +208,10 @@ public class X01Solver(GameEntity entity) : IGameSolver
                 && playerStats.Rank == null
                 && playerStats.Player.Id != currentPlayerId
                 && roundBefore != null) //player has not thrown this round - refer to round before
-                {
-                    var statIndex = lastRound.RoundStats.IndexOf(playerStats);
-                    refStat = roundBefore.RoundStats[statIndex];
-                }
+            {
+                var statIndex = lastRound.RoundStats.IndexOf(playerStats);
+                refStat = roundBefore.RoundStats[statIndex];
+            }
          
             var first = refStat.FirstDart != null
                 ? DartState.FromEntity(refStat.FirstDart)

@@ -17,12 +17,12 @@ public record StatModel(DartModifier Modifier, int Value){
 
         if(Value == 0 && 
         (Modifier == DartModifier.Double || Modifier == DartModifier.Triple))
-            throw new FlightsGameException("0 can not be modified (" + Modifier.ToString() + ")!");
+            throw new FlightsGameException("0 can not be modified (" + Modifier + ")!");
 
         if(Value == 25 && Modifier == DartModifier.Triple)
             throw new FlightsGameException("Bulls can not be triple-modified");
         
         if(Value == 26 && Modifier != DartModifier.None)
-            throw new FlightsGameException("Waschmaschine can not be modified (" + Modifier.ToString() + ")!");
+            throw new FlightsGameException("Waschmaschine can not be modified (" + Modifier + ")!");
     }
 }

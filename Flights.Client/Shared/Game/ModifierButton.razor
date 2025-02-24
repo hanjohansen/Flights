@@ -1,5 +1,3 @@
-@using Flights.Domain.Entities;
-@using System.Diagnostics
 @using Flights.Domain.Entities.Game
 
 <div class="@GetClasses()" @onclick="CallToggle">
@@ -31,8 +29,8 @@
 
         if(Selected == Target)
             return baseClass + "bg-yellow-500 text-white";
-        else
-            return baseClass + "border border-yellow-500 text-yellow-500";
+        
+        return baseClass + "border border-yellow-500 text-yellow-500";
     }
 
     private async Task CallToggle(){

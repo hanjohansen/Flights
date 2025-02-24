@@ -39,7 +39,7 @@
         var model = await GameRepo.GetGame(GameId);
         var currentGame = model.SolveGameState();
 
-        Controls = new GameControls()
+        Controls = new GameControls
         {
             DisplayType = DisplayType.Normal,
             CurrentGame = currentGame,

@@ -7,7 +7,7 @@ public class ListExtensionTests
     [Fact]
     public void GroupTo_Test()
     {
-        var list = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        var list = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
         var groupsOf = list.ToGroupsOf(4);
         

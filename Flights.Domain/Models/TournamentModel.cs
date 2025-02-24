@@ -17,7 +17,7 @@ public class TournamentModel
         if (players.Count < 4)
             throw new FlightsGameException("Minimum of four players required for tournament!");
         
-        var tournament = new TournamentEntity()
+        var tournament = new TournamentEntity
         {
             Type = type,
             SemiFinalWithLosersCup = semiFinalWithLosersCup,
@@ -27,7 +27,7 @@ public class TournamentModel
             OutModifier = outMod,
         };
         
-        players.ForEach(x => tournament.Players.Add(new TournamentPlayerEntity()
+        players.ForEach(x => tournament.Players.Add(new TournamentPlayerEntity
         {
             OrderNumber = players.IndexOf(x) + 1,
             Player = x,
@@ -114,7 +114,7 @@ public class TournamentModel
         
         foreach (var stat in lastRound.RoundStats)
         {
-            stat.FirstDart ??= new DartStatEntity() { Modifier = DartModifier.None, Value = 1 };
+            stat.FirstDart ??= new DartStatEntity { Modifier = DartModifier.None, Value = 1 };
             
             stat.EndPoints = random.Next(2, 30);
             stat.Rank = lastRound.RoundStats.IndexOf(stat) + 1;

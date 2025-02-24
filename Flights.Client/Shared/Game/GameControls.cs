@@ -7,7 +7,7 @@ public enum DisplayType
 {
     Normal,
     Viewer
-};
+}
 
 public class GameControls
 {

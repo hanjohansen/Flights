@@ -37,7 +37,7 @@
         }else{
             <div class="flex flex-row">
                 <div class="flex-grow mb-3 pt-0">
-                    <input id="name-input" type="text" value="@EditName" @onchange="@((e) => EditNameChanging(e))" placeholder="Name" class="px-3 py-4 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-2xl border-0 shadow outline-none focus:outline-none focus:ring w-full"/>
+                    <input id="name-input" type="text" value="@EditName" @onchange="@(e => EditNameChanging(e))" placeholder="Name" class="px-3 py-4 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-2xl border-0 shadow outline-none focus:outline-none focus:ring w-full"/>
                 </div>
                 <div class="ml-4 mt-4" @onclick="() => SaveEditing()">
                     <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Large" Color="Color.Success"/>

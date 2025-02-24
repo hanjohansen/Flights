@@ -28,7 +28,7 @@ public partial class TournamentSolver
     {
         var players = tournamentPlayers.ToList();
         //create round
-        var round = new TournamentRoundEntity()
+        var round = new TournamentRoundEntity
         {
             OrderNumber = entity.Rounds.Count + 1,
             Tournament = entity,
@@ -45,7 +45,7 @@ public partial class TournamentSolver
         var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
             entity.OutModifier);
             
-        round.Games.Add(new TournamentGameEntity()
+        round.Games.Add(new TournamentGameEntity
         {
             Game = game.Entity,
             TournamentRound = round,
@@ -57,7 +57,7 @@ public partial class TournamentSolver
         game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
             entity.OutModifier);
             
-        round.Games.Add(new TournamentGameEntity()
+        round.Games.Add(new TournamentGameEntity
         {
             Game = game.Entity,
             TournamentRound = round,
@@ -67,7 +67,7 @@ public partial class TournamentSolver
         //setup empty losers cup if necessary
         if (entity.SemiFinalWithLosersCup)
         {
-            round.Games.Add(new TournamentGameEntity()
+            round.Games.Add(new TournamentGameEntity
             {
                 OrderNumber = 3,
                 TournamentRound = round,
@@ -95,7 +95,7 @@ public partial class TournamentSolver
         }
         
         //create round
-        var round = new TournamentRoundEntity()
+        var round = new TournamentRoundEntity
         {
             OrderNumber = 1,
             Tournament = entity,
@@ -114,7 +114,7 @@ public partial class TournamentSolver
             var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
                 entity.OutModifier);
             
-            round.Games.Add(new TournamentGameEntity()
+            round.Games.Add(new TournamentGameEntity
             {
                 Game = game.Entity,
                 TournamentRound = round,
@@ -128,7 +128,7 @@ public partial class TournamentSolver
         var nextRoundPlayers = round.Games.Count + (round.WildCard != null ? 1 : 0);
         if (nextRoundPlayers != 1 && nextRoundPlayers % 2 != 0)
         {
-            round.Games.Add(new TournamentGameEntity()
+            round.Games.Add(new TournamentGameEntity
             {
                 OrderNumber = gameOrderNumber,
                 TournamentRound = round,
@@ -150,7 +150,7 @@ public partial class TournamentSolver
         }
 
         //create round
-        var round = new TournamentRoundEntity()
+        var round = new TournamentRoundEntity
         {
             OrderNumber = entity.Rounds.Count + 1,
             Tournament = entity,
@@ -163,7 +163,7 @@ public partial class TournamentSolver
         var gameOrderNumber = 1;
         for (int i = 0; i < players.Count; i += 2)
         {
-            var gamePlayers = new List<PlayerEntity>()
+            var gamePlayers = new List<PlayerEntity>
             {
                 players[i].Player,
                 players[i + 1].Player
@@ -172,7 +172,7 @@ public partial class TournamentSolver
             var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
                 entity.OutModifier);
             
-            round.Games.Add(new TournamentGameEntity()
+            round.Games.Add(new TournamentGameEntity
             {
                 Game = game.Entity,
                 TournamentRound = round,
@@ -187,7 +187,7 @@ public partial class TournamentSolver
         var nextRoundPlayers = round.Games.Count + (round.WildCard != null ? 1 : 0);
         if (nextRoundPlayers != 1 && (nextRoundPlayers % 2 != 0 || semiFinalWithLosersCup))
         {
-            round.Games.Add(new TournamentGameEntity()
+            round.Games.Add(new TournamentGameEntity
             {
                 OrderNumber = gameOrderNumber,
                 TournamentRound = round,

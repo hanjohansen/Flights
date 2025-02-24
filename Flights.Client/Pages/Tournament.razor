@@ -34,7 +34,7 @@
         var model = await TournamentRepo.GetTournament(TournamentId);
         var currentTournament = model.ResolveTournamentState();
 
-        Controls = new TournamentControls()
+        Controls = new TournamentControls
         {
             DisplayType = DisplayType.Normal,
             CurrentTournament = currentTournament,

@@ -25,7 +25,7 @@ public record TournamentState(
             Rounds: entity.Rounds.Select(TournamentRoundState.FromEntity).ToList(),
             Finished: entity.Finished != null);
     }
-};
+}
 
 public record TournamentPlayerState(
     Guid Id,

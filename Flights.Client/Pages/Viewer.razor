@@ -83,7 +83,7 @@
             var model = await GameRepo.GetGame(gameId);
             var currentGame = model.SolveGameState();
 
-            GameControls = new GameControls()
+            GameControls = new GameControls
             {
                 CurrentGame = currentGame,
                 DisplayType = DisplayType.Viewer,
@@ -105,7 +105,7 @@
             var model = await TournamentRepo.GetTournament(tournamentId);
             var currentTournament = model.ResolveTournamentState();
 
-            TournamentControls = new TournamentControls()
+            TournamentControls = new TournamentControls
             {
                 CurrentTournament = currentTournament,
                 DisplayType = DisplayType.Viewer,
