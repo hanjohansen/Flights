@@ -16,21 +16,18 @@
 
 @code{
     [CascadingParameter]
-    public TournamentState? Tournament {get;set;}
+    public required TournamentControls Controls {get;set;}
 
     private List<TournamentPlayerState> GetPlayers(){
-        if(Tournament == null)
-            return [];
+        if(Controls.CurrentTournament.Finished == false)
+            return Controls.CurrentTournament.Players;
 
-        if(Tournament.Finished == false)
-            return Tournament.Players;
-
-        var orderedWinners = Tournament.Players
+        var orderedWinners = Controls.CurrentTournament.Players
             .Where(x => x.Rank != 0 && x.Rank != null)
             .OrderBy(x => x.Rank)
             .ToList();
 
-        var losers = Tournament.Players
+        var losers = Controls.CurrentTournament.Players
             .Where(x => x.Rank == 0 || x.Rank == null)
             .ToList();
 

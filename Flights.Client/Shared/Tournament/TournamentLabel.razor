@@ -1,17 +1,16 @@
-@using Flights.Domain.State
 @using Domain.Entities.Game
 
 <div class="text-slate-700 h-[135px]">
-    @if(Type == GameType.X01){
+    @if(Controls.CurrentTournament.Type == GameType.X01){
         <div class="text-6xl font-bold">
-            @Tournament?.X01Target
+            @Controls.CurrentTournament.X01Target
         </div>
         <div class="flex flex-row">
             <div class="mt-1 mr-1">
                 <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowDown" Size="Size.Medium" Color="Color.Default"/>  
             </div>                                                       
             <div class="text-2xl">
-                @GetModifierString(Tournament?.InModifier ?? InOutModifier.None)
+                @GetModifierString(Controls.CurrentTournament.InModifier)
             </div> 
         </div>   
         <div class="flex flex-row">
@@ -19,21 +18,22 @@
                 <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Size="Size.Medium" Color="Color.Default"/>  
             </div>                                                       
             <div class="text-2xl">
-                @GetModifierString(Tournament?.OutModifier ?? InOutModifier.None)
+                @GetModifierString(Controls.CurrentTournament.OutModifier)
             </div> 
         </div>   
     }
-    @if(Type == GameType.CtCricket){
+    @if(Controls.CurrentTournament.Type == GameType.CtCricket){
         <div class="text-2xl font-bold">
             Cut-Throat
         </div>
     }
-    @if(Type == GameType.CtCricket || Type == GameType.Cricket){
+    @if(Controls.CurrentTournament.Type == GameType.CtCricket 
+        || Controls.CurrentTournament.Type == GameType.Cricket){
         <div class="text-6xl font-bold">
             Cricket
         </div>
     }
-    @if(Type == GameType.AroundTheClock){
+    @if(Controls.CurrentTournament.Type == GameType.AroundTheClock){
         <div class="text-6xl font-bold">
             Around
         </div>
@@ -47,9 +47,7 @@
 
 @code{
     [CascadingParameter]
-    public TournamentState? Tournament {get;set;}
-
-    private GameType Type => Tournament?.Type ?? GameType.X01; 
+    public required TournamentControls Controls {get;set;}
 
     private string GetModifierString(InOutModifier modifier){
         switch(modifier){

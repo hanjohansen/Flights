@@ -1,5 +1,4 @@
 @using Flights.Client.Shared.Game
-@using Flights.Domain.State
 
 @inject NavigationManager NavigationManager
 
@@ -10,7 +9,7 @@
     <div class="mt-8 ml-4 flex-grow">
         <TournamentPlayers/>
     </div>
-    @if(DisplayType == DisplayType.Normal){
+    @if(Controls.DisplayType == DisplayType.Normal){
         <div class="rounded bg-red-500 mud-elevation-5 text-center cursor-pointer m-2 h-[80px] pt-5"
             @onclick="GoToGames">
             <div class="">
@@ -22,10 +21,7 @@
 
 @code{
     [CascadingParameter]
-    public TournamentState? Tournament {get;set;}
-
-    [CascadingParameter]
-    public DisplayType DisplayType { get; set; }
+    public required TournamentControls Controls {get;set;}
 
     private void GoToGames(){
         NavigationManager.NavigateTo("/games");

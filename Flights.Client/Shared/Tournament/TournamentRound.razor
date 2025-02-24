@@ -1,32 +1,20 @@
 @using Flights.Domain.State;
 
 <div class="flex flex-col justify-evenly h-[752px]">
-    @if(Round?.Wildcard != null){
+    @if(Round.Wildcard != null){
         <Wildcard Player="@Round.Wildcard"/>
     }
-    @if (Round?.Games != null)
-    {
-        foreach(var game in Round.Games){
-            <GameItem Game="@game"
-                      RequestSwitchPlayerOrder="@RequestSwitchPlayerOrder"
-                      RequestSkipLosersCup="@RequestSkipLosersCup"
-                      RequestDevFinishGame="@RequestDevFinishGame"/>
-        }
+    @foreach(var game in Round.Games){
+        <GameItem Game="@game"/>
     }
 </div>
 
 @code{
     [CascadingParameter]
-    public TournamentRoundState? Round {get;set;} 
+    public required TournamentControls Controls {get;set;}
     
     [Parameter]
-    public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }
-    
-    [Parameter]
-    public EventCallback RequestSkipLosersCup { get; set; }
-    
-    [Parameter]
-    public EventCallback<Guid> RequestDevFinishGame { get; set; }
+    public required TournamentRoundState Round {get;set;}
 }    
 
 

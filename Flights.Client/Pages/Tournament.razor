@@ -1,10 +1,10 @@
 ﻿@page "/tournament/{TournamentId:guid}"
 
 @using Flights.Client.Rtc
+@using Flights.Client.Shared.Game
 @using Flights.Client.Shared.Tournament
 @using Flights.Domain.Exception
 @using Flights.Infrastructure.Port
-@using Flights.Domain.State
 
 @inject ITournamentRepository TournamentRepo
 @inject ISnackbar Snackbar
@@ -12,12 +12,11 @@
 @inherits RtcHubComponent
 
 <div>
-    @if (CurrentTournament != null)
+    @if (Controls != null)
     {
-        <TournamentBaseComponent CurrentTournament="@CurrentTournament"
-                                 RequestSkipLosersCup="@SkipLosersCup"
-                                 RequestSwitchPlayerOrder="@SwitchPlayerOrder"
-                                 RequestDevFinishGame="@DevFinishGame"/>
+        <CascadingValue Value="@Controls">
+            <TournamentBaseComponent/>
+        </CascadingValue>
     }
 </div>
 
@@ -25,28 +24,38 @@
 
     [Parameter] 
     public Guid TournamentId { get; set; }
-
-    private TournamentState? CurrentTournament {get;set;}
+    
+    private TournamentControls? Controls { get; set; }
     
     protected override async Task OnInitializedAsync() 
     {
         await base.OnInitializedAsync();
         
         var model = await TournamentRepo.GetTournament(TournamentId);
-        CurrentTournament = model.ResolveTournamentState();
+        var currentTournament = model.ResolveTournamentState();
+
+        Controls = new TournamentControls()
+        {
+            DisplayType = DisplayType.Normal,
+            CurrentTournament = currentTournament,
+            DevFinishGame = DevFinishGame,
+            SkipLosersCup = SkipLosersCup,
+            SwitchPlayerOrder = SwitchPlayerOrder
+        };
         
         await Broadcast(UiEventType.LoadedTournament, TournamentId);
     }
 
     private async Task DevFinishGame(Guid gameId)
     {
-        if (CurrentTournament == null)
+        if (Controls?.CurrentTournament == null)
             return;
         
         try
         {
-            var newState = await TournamentRepo.DevFinishGame(CurrentTournament.Id, gameId);
-            CurrentTournament = newState;
+            var newState = await TournamentRepo.DevFinishGame(Controls.CurrentTournament.Id, gameId);
+            Controls.CurrentTournament = newState;
+            await InvokeAsync(StateHasChanged);
             
             await Broadcast(UiEventType.UpdatedTournament, TournamentId);
         }
@@ -62,13 +71,14 @@
     
     private async Task SwitchPlayerOrder(Guid gameId)
     {
-        if (CurrentTournament == null)
+        if (Controls?.CurrentTournament == null)
             return;
         
         try
         {
-            var newState = await TournamentRepo.SwitchPlayerOrder(CurrentTournament.Id, gameId);
-            CurrentTournament = newState;
+            var newState = await TournamentRepo.SwitchPlayerOrder(Controls.CurrentTournament.Id, gameId);
+            Controls.CurrentTournament = newState;
+            await InvokeAsync(StateHasChanged);
             
             await Broadcast(UiEventType.UpdatedTournament, TournamentId);
         }
@@ -84,13 +94,14 @@
 
     private async Task SkipLosersCup()
     {
-        if (CurrentTournament == null)
+        if (Controls?.CurrentTournament == null)
             return;
         
         try
         {
-            var newState = await TournamentRepo.SkipLosersCup(CurrentTournament.Id);
-            CurrentTournament = newState;
+            var newState = await TournamentRepo.SkipLosersCup(Controls.CurrentTournament.Id);
+            Controls.CurrentTournament = newState;
+            await InvokeAsync(StateHasChanged);
             
             await Broadcast(UiEventType.UpdatedTournament, TournamentId);
         }

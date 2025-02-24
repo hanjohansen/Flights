@@ -85,7 +85,7 @@
         </div>
     }
     </div>
-    @if(DisplayType == DisplayType.Normal){
+    @if(Controls.DisplayType == DisplayType.Normal){
         <div class="flex flex-shrink items-center">
             <div class="self-center cursor-pointer">
                 <MudMenu Disabled="@Game.Finished">
@@ -113,23 +113,14 @@
 </div>
 
 @code{
+    [CascadingParameter]
+    public required TournamentControls Controls {get;set;}
+    
     [Parameter]
     public required TournamentGameState Game {get;set;}
 
-    [CascadingParameter]
-    public DisplayType DisplayType { get; set; } 
-    
-    [Parameter]
-    public EventCallback<Guid> RequestSwitchPlayerOrder { get; set; }
-    
-    [Parameter]
-    public EventCallback RequestSkipLosersCup { get; set; }
-    
-    [Parameter]
-    public EventCallback<Guid> RequestDevFinishGame { get; set; }
-
     private void GoToGame(){
-        if(DisplayType == DisplayType.Viewer)
+        if(Controls.DisplayType == DisplayType.Viewer)
             return;
 
         if(Game.IsLosersCup && Game.Id == null){
@@ -148,7 +139,10 @@
             return;
         }
 
-        await RequestDevFinishGame.InvokeAsync(Game.Id!.Value);
+        if (Controls.DevFinishGame == null)
+            return;
+
+        await Controls.DevFinishGame(Game.Id!.Value);
     }
     
     private async Task SwitchPlayers()
@@ -159,11 +153,17 @@
             return;
         }
 
-        await RequestSwitchPlayerOrder.InvokeAsync(Game.Id!.Value);
+        if (Controls.SwitchPlayerOrder == null)
+            return;
+
+        await Controls.SwitchPlayerOrder(Game.Id!.Value);
     }
 
     private async Task SkipLosersCup()
     {
-        await RequestSkipLosersCup.InvokeAsync();
+        if (Controls.SkipLosersCup == null)
+            return;
+        
+        await Controls.SkipLosersCup();
     }
 }
