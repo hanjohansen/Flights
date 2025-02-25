@@ -45,7 +45,9 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
+        var game = await GetBaseQuery(db).Include(x => x.TournamentGame)
+            .ThenInclude(x => x!.TournamentRound)
+            .FirstOrDefaultAsync(x => x.Id == gameId);
 
         if (game == null)
             throw new FlightsGameException("Game not found!");
@@ -126,7 +128,10 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        var game = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == gameId);
+        var game = await GetBaseQuery(db)          
+            .Include(x => x.TournamentGame)
+            .ThenInclude(x => x!.TournamentRound)
+            .FirstOrDefaultAsync(x => x.Id == gameId);
 
         if (game == null)
             throw new FlightsGameException("Game not found!");
