@@ -40,7 +40,8 @@
             CurrentTournament = currentTournament,
             DevFinishGame = DevFinishGame,
             SkipLosersCup = SkipLosersCup,
-            SwitchPlayerOrder = SwitchPlayerOrder
+            SwitchPlayerOrder = SwitchPlayerOrder,
+            AddPlayerToGame = AddPlayerToGame
         };
         
         await Broadcast(UiEventType.LoadedTournament, TournamentId);
@@ -100,6 +101,32 @@
         try
         {
             var newState = await TournamentRepo.SkipLosersCup(Controls.CurrentTournament.Id);
+            Controls.CurrentTournament = newState;
+            await InvokeAsync(StateHasChanged);
+            
+            await Broadcast(UiEventType.UpdatedTournament, TournamentId);
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("unknown error:" + e.Message, Severity.Error);
+        }
+    }
+    
+    private async Task AddPlayerToGame(Guid tournamentGameId, Guid playerId)
+    {
+        if (Controls?.CurrentTournament == null)
+            return;
+        
+        try
+        {
+            var newState = await TournamentRepo.AddPlayerToGame(
+                Controls.CurrentTournament.Id,
+                tournamentGameId,
+                playerId);
             Controls.CurrentTournament = newState;
             await InvokeAsync(StateHasChanged);
             

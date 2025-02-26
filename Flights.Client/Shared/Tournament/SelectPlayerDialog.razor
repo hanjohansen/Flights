@@ -1,0 +1,45 @@
+@using Flights.Domain.Entities
+
+<MudDialog>
+    <TitleContent>
+        Select player
+    </TitleContent>
+    <DialogContent>
+        <div class="border rounded-lg mx-1">
+            <MudList T="PlayerEntity" @bind-SelectedValue="SelectedPlayer" SelectionMode="SelectionMode.SingleSelection"
+                class="w-[250px]">
+                @foreach (var player in Players)
+                {
+                    <MudListItem Text="@player.Name" Value="@player"/>
+                }
+            </MudList>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" class="mr-4">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(SelectedPlayer == null)"
+         class="mr-4">Select</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code{
+    
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public required List<PlayerEntity> Players { get; set; }
+    
+    public PlayerEntity? SelectedPlayer { get; set; }
+
+    private void Submit()
+    {
+        if (SelectedPlayer == null)
+            return;
+        
+        MudDialog.Close(DialogResult.Ok(SelectedPlayer));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+}

@@ -126,6 +126,28 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
         return model.ResolveTournamentState();
     }
 
+    public async Task<TournamentState> AddPlayerToGame(Guid tournamentId, Guid tournamentGameId, Guid playerId)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync();
+
+        var tournament = await GetBaseQuery(db).FirstOrDefaultAsync(x => x.Id == tournamentId);
+        
+        if (tournament == null)
+            throw new FlightsGameException("Tournament not found!");
+        
+        var player = await db.Players.FirstOrDefaultAsync(x => x.Id == playerId);
+        
+        if(player == null)
+            throw new FlightsGameException("Player not found!");
+        
+        var model = TournamentModel.FromEntity(tournament);
+        model.AddPlayerToGame(tournamentGameId, player);
+        
+        await db.SaveChangesAsync();
+        
+        return model.ResolveTournamentState();
+    }
+
     private IQueryable<TournamentEntity> GetBaseQuery(FlightsDbContext db)
     {
         var query = db.Tournaments

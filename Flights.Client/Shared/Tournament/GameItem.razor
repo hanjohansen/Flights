@@ -1,56 +1,60 @@
 @using Flights.Client.Shared.Game
+@using Flights.Domain.Entities
 @using Flights.Domain.State
+@using Flights.Infrastructure.Port
 
 @inject IWebHostEnvironment Environment
 @inject NavigationManager NavigationManager
+@inject IPlayerRepository PlayerRepo
+@inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
 <div class="flex flex-row justify-center rounded-lg border border-gray-300 bg-white mud-elevation-3 py-2">
     <div class="flex flex-grow justify-center ml-4 mr-4 cursor-pointer" @onclick="GoToGame">
     @if(Game.IsLosersCup == false){
         <div class="text-center text-2xl text-slate-700">
-            <div class="flex flex-row justify-center">
-                @if(Game.Players.First().Rank == 1){
-                    <div class="flex mr-1 mt-1">
-                        <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
-                    </div>
-                }
-                <div class="">
-                    @Game.Players.First().Name
-                </div>
-            </div>
-
-            <div class="text-lg text-slate-500 -my-2">
-                x
-            </div>
-
-            @if(Game.Players.Count == 3){
-                <div class="flex fleViewerx-row justify-center">
-                    @if(Game.Players[1].Rank == 1){
+            @if(Game.Players.Count == 2){
+                <div class="flex flex-row justify-center">
+                    @if(Game.Players.First().Rank == 1){
                         <div class="flex mr-1 mt-1">
                             <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
                         </div>
                     }
                     <div class="">
-                        @Game.Players[1].Name
+                        @Game.Players.First().Name
                     </div>
                 </div>
 
                 <div class="text-lg text-slate-500 -my-2">
                     x
                 </div>
+
+                <div class="flex flex-row justify-center">
+                    @if(Game.Players.Last().Rank == 1){
+                        <div class="flex mr-1 mt-1">
+                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+                        </div>
+                    }
+                    <div class="">
+                        @Game.Players.Last().Name
+                    </div>
+                </div>
             }
 
-            <div class="flex flex-row justify-center">
-                @if(Game.Players.Last().Rank == 1){
-                    <div class="flex mr-1 mt-1">
-                        <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+            @if(Game.Players.Count > 2){
+                foreach(var player in Game.Players){
+                    <div class="flex flex-row justify-center">
+                        @if(player.Rank == 1){
+                            <div class="flex mr-1 mt-1">
+                                <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
+                            </div>
+                        }
+                    <div class="">
+                        @player.Name
                     </div>
-                }
-                <div class="">
-                    @Game.Players.Last().Name
                 </div>
-            </div>
+                }
+            }
         </div>
     }
     @if(Game.IsLosersCup){
@@ -100,7 +104,11 @@
                         @if(Game.IsLosersCup && Game.IsSemiFinal){
                             <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" 
                                 Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@SkipLosersCup" Disabled="@Game.Finished" >Skip Losers Cup</MudMenuItem>
-                        }      
+                        }
+                        @if(!Game.IsSemiFinal && !Game.IsFinal){
+                            <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary"
+                                         Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@AddPlayerToGame" Disabled="@IsAddPlayerDisabled()">Add Player</MudMenuItem>
+                        }
                         @if(Environment.IsDevelopment()){              
                             <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
                                 Icon="@Icons.Material.Filled.Construction" OnClick="@DevFinishGame" Disabled="@Game.Finished" >Finish game (DEV)</MudMenuItem>
@@ -123,17 +131,17 @@
         if(Controls.DisplayType == DisplayType.Viewer)
             return;
 
-        if(Game.IsLosersCup && Game.Id == null){
+        if(Game.IsLosersCup && Game.GameId == null){
             Snackbar.Add("Losers cup is not ready!", Severity.Error);
             return;
         }
 
-        NavigationManager.NavigateTo("/game/" + Game.Id);
+        NavigationManager.NavigateTo("/game/" + Game.GameId);
     }
 
     private async Task DevFinishGame()
     {
-        if (Game.IsLosersCup && Game.Id == null)
+        if (Game.IsLosersCup && Game.GameId == null)
         {
             Snackbar.Add("Losers cup is not ready for finish!", Severity.Error);
             return;
@@ -142,7 +150,7 @@
         if (Controls.DevFinishGame == null)
             return;
 
-        await Controls.DevFinishGame(Game.Id!.Value);
+        await Controls.DevFinishGame(Game.GameId!.Value);
     }
     
     private async Task SwitchPlayers()
@@ -156,7 +164,7 @@
         if (Controls.SwitchPlayerOrder == null)
             return;
 
-        await Controls.SwitchPlayerOrder(Game.Id!.Value);
+        await Controls.SwitchPlayerOrder(Game.GameId!.Value);
     }
 
     private async Task SkipLosersCup()
@@ -165,5 +173,47 @@
             return;
         
         await Controls.SkipLosersCup();
+    }
+
+    private async Task AddPlayerToGame()
+    {
+        if (Controls.AddPlayerToGame == null)
+            return;
+
+
+
+        //load and filter players
+        var existingPlayerIds = Controls.CurrentTournament.Players.Select(x => x.Id);
+        var allPlayers = await PlayerRepo.GetPlayers();
+        var availablePlayers = allPlayers.Where(x => existingPlayerIds.Contains(x.Id) == false).ToList();
+        
+        //show dialog
+        var parameters = new DialogParameters<SelectPlayerDialog>
+        {
+            { x => x.Players, availablePlayers },
+        };
+        
+        var dialog = await DialogService.ShowAsync<SelectPlayerDialog>("Select player", parameters);
+        var result = await dialog.Result;
+
+        //request add
+        if (result?.Canceled == false && result.Data is PlayerEntity player)
+        {
+            var gameId = Game.TournamentGameId;
+            var playerId = player.Id;
+            
+            await Controls.AddPlayerToGame(gameId, playerId);
+        }
+    }
+
+    private bool IsAddPlayerDisabled()
+    {
+        var finalOrSemi = Game.IsSemiFinal || Game.IsFinal;
+        var startedOrFinished = Game.Started || Game.Finished;
+
+        if (startedOrFinished || finalOrSemi || Game.GameId == null)
+            return true;
+
+        return false;
     }
 }

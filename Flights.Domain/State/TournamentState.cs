@@ -69,10 +69,13 @@ public record TournamentRoundState(
 }
 
 public record TournamentGameState(
-    Guid? Id,
+    Guid? GameId,
+    Guid TournamentGameId,
     int Number,
+    int Round,
     bool Finished,
     bool Started,
+    bool IsFinal,
     bool IsSemiFinal,
     bool IsLosersCup,
     bool IsLosersCupReady,
@@ -82,6 +85,7 @@ public record TournamentGameState(
     {
         var players = new List<TournamentPlayerState>();
 
+        var isFinal = entity.TournamentRound.Games.Count == 1;
         var semiFinalRound = entity.TournamentRound.Games.Count(x => x.IsLosersCup == false) == 2 && entity.TournamentRound.WildCard == null;
         
         if(entity.Game != null)
@@ -109,10 +113,13 @@ public record TournamentGameState(
                 .Any(z => z.FirstDart != null || z.SecondDart != null || z.ThirdDart != null)); 
         
         return new TournamentGameState(
-            Id: entity.Game?.Id,
+            GameId: entity.Game?.Id,
+            TournamentGameId: entity.Id,
+            Round: entity.TournamentRound.OrderNumber,
             Number: entity.OrderNumber,
             Finished: entity.Game?.Finished != null,
             Started: started ?? false,
+            IsFinal: isFinal,
             IsSemiFinal: semiFinalRound,
             IsLosersCup: entity.IsLosersCup,
             IsLosersCupReady: entity.IsLosersCup && entity.Game != null,

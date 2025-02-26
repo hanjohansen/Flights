@@ -124,4 +124,65 @@ public class TournamentModel
 
         _solver.Solve();
     }
+
+    public void AddPlayerToGame(Guid tournamentGameId, PlayerEntity player)
+    {
+        var game = Entity.Rounds
+            .SelectMany(x => x.Games)
+            .FirstOrDefault(x => x.Id == tournamentGameId);
+
+        if (game == null)
+            throw new FlightsGameException("Game not found");
+        
+        if(game.Game == null)
+            throw new FlightsGameException("Game is not ready yet");
+            
+        if(game.Game.Finished != null)
+            throw new FlightsGameException("Game is already finished");
+        
+        var started = game.Game.Rounds
+            .Any(y => y.RoundStats
+                .Any(z => z.FirstDart != null || z.SecondDart != null || z.ThirdDart != null));
+        
+        if(started)
+            throw new FlightsGameException("Game was already started");
+
+        var isFinalOrSemi = game.TournamentRound.Games.Count == 1
+                            || game.TournamentRound.Games.Count == 2;
+        
+        if(isFinalOrSemi)
+            throw new FlightsGameException("Adding player in final- or semi-final round is not allowed");
+        
+        var existingPlayerIds = Entity.Players.Select(x => x.Player.Id).ToList();
+        if(existingPlayerIds.Contains(player.Id))
+            throw new FlightsGameException("Player is already playing");
+        
+        //add to tournament
+        var playerOrderMax = Entity.Players.Max(x => x.OrderNumber);
+        Entity.Players.Add(new TournamentPlayerEntity()
+        {
+            Player = player,
+            PlayerId = player.Id,
+            OrderNumber = playerOrderMax + 1
+        });
+
+        //add to game
+        var gameOrderMax = game.Game.Players.Max(x => x.OrderNumber);
+        game.Game.Players.Add(new GamePlayerEntity()
+        {
+            Player = player,
+            PlayerId = player.Id,
+            OrderNumber = gameOrderMax + 1
+        });
+        
+        //add to first round
+        var roundOrderMax = game.Game.Rounds.First().RoundStats.Max(x => x.OrderNumber);
+        game.Game.Rounds.First().RoundStats.Add(new RoundStatEntity()
+        {
+            Player = player,
+            PlayerId = player.Id,
+            OrderNumber = roundOrderMax + 1
+        });
+
+    }
 }

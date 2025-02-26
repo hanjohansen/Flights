@@ -20,4 +20,6 @@ public interface ITournamentRepository
     Task<TournamentState> SkipLosersCup(Guid tournamentId);
 
     Task<TournamentState> DevFinishGame(Guid tournamentId, Guid gameId);
+    
+    Task<TournamentState> AddPlayerToGame(Guid tournamentId, Guid tournamentGameId, Guid playerId);
 }
