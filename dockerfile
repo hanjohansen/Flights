@@ -8,20 +8,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# install nodejs to run npx/tailwind
-# RUN apt-get update
-# RUN apt-get -y install curl gnupg
-# RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
-# RUN apt-get -y install nodejs
-
 COPY . .
 WORKDIR /src/Flights.Client
 
-# process tailwind css
-# RUN npm install -D tailwindcss@3
-# RUN npx tailwindcss -i ./tailwind.css -o ./wwwroot/css/styles.css
-
-# build app
+# restore and build app
 RUN dotnet restore "Flights.Client.csproj"
 RUN dotnet build "Flights.Client.csproj" -c Release -o /app/build
 
