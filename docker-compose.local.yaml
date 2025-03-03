@@ -7,7 +7,7 @@ services:
         - TZ=Europe/Berlin
     build: 
       context: .
-      dockerfile: dockerfile
+      dockerfile: dockerfile.local
     ports:
       - 127.0.0.1:8080:8080
     volumes:
