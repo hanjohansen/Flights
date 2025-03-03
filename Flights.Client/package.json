@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build-tailwind-css": "npx tailwindcss -i ./tailwind.css -o ./wwwroot/css/styles.css"
+  },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
   }

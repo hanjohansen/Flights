@@ -20,12 +20,12 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: update tailwindcss
-        uses: ZoeyVid/tailwindcss-update@main
+      - name: Set Node.js and build tailwind-css
+        uses: actions/setup-node@v1
         with:
-          input: Flights.Client/tailwind.css
-          output: Flights.Client/wwwroot/css/styles.css
-          # params: "--minify"
+          node-version: 21
+      - run: npm install
+      - run: npm run build-tailwind-css
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
