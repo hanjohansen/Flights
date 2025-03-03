@@ -24,8 +24,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 21
+
+      - run: cd Flights.Client
       - run: npm install
       - run: npm run build-tailwind-css
+      - run: cd ..
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
