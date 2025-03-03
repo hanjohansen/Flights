@@ -20,6 +20,13 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
+      - name: update tailwindcss
+        uses: ZoeyVid/tailwindcss-update@main
+        with:
+          input: Flights.Client/tailwind.css
+          output: Flights.Client/wwwroot/css/styles.css
+          # params: "--minify"
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
