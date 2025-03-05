@@ -14,6 +14,10 @@ public static class ListExtensions
         }  
     }
 
+    public static bool None<T>(this List<T> list){
+        return list.Count() == 0;
+    }
+
     public static List<List<T>> ToGroupsOf<T>(this List<T> list, int count)
     {
         if(count < 1)
@@ -38,5 +42,25 @@ public static class ListExtensions
         }
         
         return result;
+    }
+
+    public static T? RemoveLast<T>(this List<T> list, int numberOfItems){
+        T? last = default(T);
+
+        for(var i = 0; i < numberOfItems; i++)
+            last = list.RemoveLast();
+
+        return last;
+    }
+
+    public static T? RemoveLast<T>(this List<T> list){
+        if(list.Count == 0)
+            return default(T);
+
+        var lastIndex = list.Count - 1;
+        var last = list[lastIndex];
+        list.RemoveAt(lastIndex);
+        
+        return last;
     }
 }

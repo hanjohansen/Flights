@@ -14,7 +14,7 @@ public interface IGameRepository
 
     Task<GameState> AddPlayerStat(Guid gameId, Guid playerId, StatModel stat);
 
-    Task<GameState> RevertLastDart(Guid gameId);
+    Task<(GameState, StatModel)> RevertLastDart(Guid gameId);
 
     Task<List<GameListItemReadModel>> GetGames();
 

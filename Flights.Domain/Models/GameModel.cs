@@ -145,10 +145,10 @@ public class GameModel
             x.ThirdDart == null || x.SecondDart == null || x.FirstDart == null);
     }
 
-    public GameState RevertLastDart(){
+    public (GameState, StatModel) RevertLastDart(){
         var lastRound = Entity.Rounds.Last();
 
-        var removed = false;
+        StatModel? removed = null;
 
         for(var i = lastRound.RoundStats.Count - 1; i >= 0; i--){
             var stat = lastRound.RoundStats[i];
@@ -159,22 +159,22 @@ public class GameModel
 
             if(stat.ThirdDart != null)
             {
+                removed = new StatModel(stat.ThirdDart.Modifier, stat.ThirdDart.Value);
                 stat.ThirdDart = null;
-                removed = true;
                 break;
             }
 
             if(stat.SecondDart != null)
             {
+                removed = new StatModel(stat.SecondDart.Modifier, stat.SecondDart.Value);
                 stat.SecondDart = null;
-                removed = true;
                 break;
             }
 
             if(stat.FirstDart != null)
             {
+                removed = new StatModel(stat.FirstDart.Modifier, stat.FirstDart.Value);
                 stat.FirstDart = null;
-                removed = true;
                 if(i == 0)
                     if(Entity.Rounds.Count > 1)
                         Entity.Rounds.Remove(lastRound);
@@ -182,9 +182,9 @@ public class GameModel
             }
         }
 
-        if(!removed)
+        if(removed == null)
             throw new FlightsGameException("No more Darts to remove!");
 
-        return SolveGameState();
+        return (SolveGameState(),removed);
     }
 }
