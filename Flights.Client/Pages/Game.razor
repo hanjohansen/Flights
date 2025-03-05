@@ -7,6 +7,7 @@
 @using Flights.Client.Shared.Game
 @using Flights.Domain.Entities.Game
 @using Flights.Client.Rtc
+@using Flights.Util
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
@@ -14,11 +15,13 @@
 @inherits RtcHubComponent
 
 <div>
-    @if (Controls != null)
+    @if (GameControls != null)
     {
-        <CascadingValue Value="@Controls">
-            <GameBaseComponent/>
-            <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
+        <CascadingValue Value="@GameControls">
+            <CascadingValue Value="@UndoControls">
+                <GameBaseComponent/>
+                <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
+            </CascadingValue>
         </CascadingValue>
     }
 </div>
@@ -28,9 +31,13 @@
     [Parameter]
     public Guid GameId { get; set; }
 
-    private GameControls? Controls {get;set;}
+    private GameControls? GameControls {get;set;}
+    
+    private UndoControls? UndoControls {get;set;}
 
     private JinglePlayer? _jinglePlayer;
+
+    private List<StatModel> _undoStack = new();
     
     protected override async Task OnInitializedAsync()
     {
@@ -39,37 +46,45 @@
         var model = await GameRepo.GetGame(GameId);
         var currentGame = model.SolveGameState();
 
-        Controls = new GameControls
+        UndoControls = new UndoControls()
+        {
+            UndoStack = _undoStack,
+            RequestUndoDart = RequestUndoDart,
+            RequestRedoDart = RequestRedoDart,
+            RequestAbortUndo = RequestAbortUndo
+        };
+
+        GameControls = new GameControls
         {
             DisplayType = DisplayType.Normal,
             CurrentGame = currentGame,
             ReportScore = ReportScore,
             ReportNullDart = ReportNullDart,
-            RequestRevertDart = RequestRevertDart
         };
 
-        await Broadcast(UiEventType.LoadedGame, Controls.CurrentGame.Id);
+        await Broadcast(UiEventType.LoadedGame, GameControls.CurrentGame.Id);
     }
 
     private async Task ReportScore(StatModel model){
-        if(Controls?.CurrentGame.CurrentPlayerId == null)
+        if(GameControls?.CurrentGame.CurrentPlayerId == null)
             return;
 
         try
         {
-            var currentGame = Controls.CurrentGame;
+            var currentGame = GameControls.CurrentGame;
             var currPlayerId = currentGame.CurrentPlayerId!.Value;
             var oldState = currentGame;
             
             currentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, model);
 
-            if (model.Value == 26 && currPlayerId == Controls.CurrentGame.CurrentPlayerId)
+            if (model.Value == 26 && currPlayerId == GameControls.CurrentGame.CurrentPlayerId)
             {
                 await GameRepo.AddPlayerStat(GameId, currPlayerId, StatModel.Init(0));
                 currentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, StatModel.Init(0));
             }
-
-            Controls.CurrentGame = currentGame;
+            
+            _undoStack.RemoveLast();
+            GameControls.CurrentGame = currentGame;
             await InvokeAsync(StateHasChanged);
             
             await Broadcast(UiEventType.UpdatedGame, currentGame.Id);
@@ -80,10 +95,10 @@
     }
 
     private async Task ReportNullDart(){
-        if(Controls?.CurrentGame.CurrentPlayerId == null)
+        if(GameControls?.CurrentGame.CurrentPlayerId == null)
             return;
 
-        var currentGame = Controls.CurrentGame;
+        var currentGame = GameControls.CurrentGame;
         var currentPlayer = currentGame.PlayerStates.First(x => x.PlayerId == currentGame.CurrentPlayerId);
         var remainingDarts = currentPlayer.Darts?.RemainingDarts() ?? 3;
 
@@ -92,7 +107,8 @@
             for(var i = remainingDarts; i > 0; i--)
                 currentGame = await GameRepo.AddPlayerStat(GameId, currentPlayer.PlayerId, StatModel.Init(0));
 
-            Controls.CurrentGame = currentGame;
+            _undoStack.RemoveLast(remainingDarts);
+            GameControls.CurrentGame = currentGame;
             await InvokeAsync(StateHasChanged);
             
             await Broadcast(UiEventType.UpdatedGame, currentGame.Id);
@@ -101,17 +117,70 @@
         }
     }
 
-    private async Task RequestRevertDart(){
-        if(Controls?.CurrentGame.Finished == true || Controls == null)
+    private async Task RequestUndoDart(){
+        if(GameControls == null || GameControls.CurrentGame.Finished)
             return;
 
         try{
-            Controls.CurrentGame = await GameRepo.RevertLastDart(GameId);
+            var (state, stat) = await GameRepo.RevertLastDart(GameId);
+            
+            _undoStack.Add(stat);
+            GameControls.CurrentGame = state;
             await InvokeAsync(StateHasChanged);
-            await Broadcast(UiEventType.UpdatedGame, Controls.CurrentGame.Id);
+            await Broadcast(UiEventType.UpdatedGame, GameControls.CurrentGame.Id);
         }catch(FlightsGameException ex){
             Snackbar.Add(ex.Message, Severity.Error);
         }            
+    }
+
+    public async Task RequestRedoDart()
+    {
+        if(GameControls == null || GameControls.CurrentGame.Finished
+           || !_undoStack.Any())
+            return;
+
+        try
+        {
+            var lastUndone = _undoStack.Last();
+            _undoStack.Remove(lastUndone);
+            
+            var currentGame = GameControls.CurrentGame;
+            var currPlayerId = currentGame.CurrentPlayerId!.Value;
+            
+            currentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, lastUndone);
+            
+            GameControls.CurrentGame = currentGame;
+            await InvokeAsync(StateHasChanged);
+            
+            await Broadcast(UiEventType.UpdatedGame, currentGame.Id);
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }   
+    }
+    
+    public async Task RequestAbortUndo()
+    {
+        if(GameControls == null || GameControls.CurrentGame.Finished
+                                || !_undoStack.Any())
+            return;
+
+        try
+        {
+            var currentGame = GameControls.CurrentGame;            
+
+            for (var i = _undoStack.Count - 1; i >= 0; i--){
+                var currPlayerId = currentGame.CurrentPlayerId!.Value;
+                currentGame = await GameRepo.AddPlayerStat(GameId, currPlayerId, _undoStack[i]);
+            }            
+            
+            _undoStack.Clear();
+            GameControls.CurrentGame = currentGame;
+            await InvokeAsync(StateHasChanged);
+            
+            await Broadcast(UiEventType.UpdatedGame, currentGame.Id);
+        }catch(FlightsGameException ex){
+            Snackbar.Add(ex.Message, Severity.Error);
+        }   
     }
 
     private async Task ValidatePlayJingle(GameState oldState, GameState newState, Guid? playerId)

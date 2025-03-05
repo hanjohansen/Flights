@@ -18,6 +18,4 @@ public class GameControls
     public required Func<StatModel, Task>? ReportScore {get;set;}
 
     public required Func<Task>? ReportNullDart {get;set;}
-
-    public required Func<Task>? RequestRevertDart {get;set;}
 }

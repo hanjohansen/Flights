@@ -1,39 +1,143 @@
-<div class="@GetClasses()" @onclick="@OnClick">
-    <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+@using Flights.Util
+
+<div>
+    @if((Controls?.UndoStack.None() ?? true) || ShowUndoOptions == false){
+        <div class="rounded border border-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetUndoClasses())" @onclick="@RequestUndo">
+            <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+        </div>
+    }
+
+    @if((Controls?.UndoStack.Any() ?? false) && ShowUndoOptions){
+        <div class="grid grid-cols-3 gap-3 h-[80px]">
+            <div class="rounded border border-yellow-500 text-yellow-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetRedoClasses())" @onclick="@RequestRedo">
+                <MudIcon Icon="@Icons.Material.Filled.Redo" Size="Size.Large"/>
+            </div>
+            <div class="rounded border border-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetUndoClasses())" @onclick="@RequestUndo">
+                <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+            </div>
+
+            <div class="relative rounded border border-red-500 text-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetAbortClasses())" @onclick="@RequestAbort">
+                <div class="absolute -top-2 -right-2 rounded-full w-8 text-lg bg-red-500 text-white font-bold">
+                    @Controls?.UndoStack.Count
+                </div>
+                <MudIcon Icon="@Icons.Material.Filled.RestoreFromTrash" Size="Size.Large"/>
+            </div>                        
+        </div>
+    }
+
+    @* @if(Controls?.UndoStack.Any() ?? false && ShowUndoOptions && ShowUndoOptionsAsPopover){
+        <div style="position:absolute; left:@(MenuPosX)px; top:@(MenuPosY)px">
+            <MudPopover Open="true">
+                <div class="grid grid-cols-3 gap-3 h-[80px] m-2">
+                    <div class="rounded border border-yellow-500 text-yellow-500 mud-elevation-5 text-center cursor-pointer pt-[20px] w-[80px] h-[80px] @(GetRedoClasses())" @onclick="@RequestRedo">
+                        <MudIcon Icon="@Icons.Material.Filled.Redo" Size="Size.Large"/>
+                    </div>
+                    <div class="rounded border border-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetUndoClasses())" @onclick="@RequestUndo">
+                        <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
+                    </div>
+
+                    <div class="relative rounded border border-red-500 text-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetAbortClasses())" @onclick="@RequestAbort">
+                        <div class="absolute -top-2 -right-2 rounded-full w-8 text-lg bg-red-500 text-white font-bold">
+                            @Controls?.UndoStack.Count
+                        </div>
+                        <MudIcon Icon="@Icons.Material.Filled.RestoreFromTrash" Size="Size.Large"/>
+                    </div>                        
+                </div>
+            </MudPopover>
+        </div> 
+    }*@
+
 </div>
 
 @code{
     [CascadingParameter]
-    public required GameControls Controls { get; set; }
+    public UndoControls? Controls { get; set; }
 
-    private bool IsPressed {get;set;}
+    [Parameter]
+    public bool ShowUndoOptions {get;set;}
 
-    private async Task OnClick()
+    [Parameter]
+    public bool ShowUndoOptionsAsPopover {get;set;}
+
+    [Parameter]
+    public int MenuPosX {get;set;}
+
+    [Parameter]
+    public int MenuPosY {get;set;}
+
+    private bool IsUndoPressed {get;set;}
+    private bool IsRedoPressed {get;set;}
+    private bool IsAbortPressed {get;set;}
+
+    private async Task RequestUndo()
     {
-        if (Controls.RequestRevertDart == null)
+        if (Controls?.RequestUndoDart == null)
             return;
         
-        IsPressed = true;
-        var timer = new Timer(EndPressed, null, 180, Timeout.Infinite);    
+        IsUndoPressed = true;
+        var timer = new Timer(_ => {
+            IsUndoPressed = false;
+            InvokeAsync(StateHasChanged);
+        }, null, 180, Timeout.Infinite);    
 
-        await Controls.RequestRevertDart();
+        await Controls.RequestUndoDart();
 
         await Task.Delay(200);
         await timer.DisposeAsync();
     }
 
-    private void EndPressed(object? _)
+    private async Task RequestRedo()
     {
-        IsPressed = false;
-        InvokeAsync(StateHasChanged);
+        if (Controls?.RequestRedoDart == null)
+            return;
+        
+        IsRedoPressed = true;
+        var timer = new Timer(_ => {
+            IsRedoPressed = false;
+            InvokeAsync(StateHasChanged);
+        }, null, 180, Timeout.Infinite);    
+
+        await Controls.RequestRedoDart();
+
+        await Task.Delay(200);
+        await timer.DisposeAsync();
     }
 
-    private string GetClasses(){
-        var baseClass = "rounded border border-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] ";
+    private async Task RequestAbort()
+    {
+        if (Controls?.RequestAbortUndo == null)
+            return;
+        
+        IsAbortPressed = true;
+        var timer = new Timer(_ => {
+            IsAbortPressed = false;
+            InvokeAsync(StateHasChanged);
+        }, null, 180, Timeout.Infinite);    
 
-        if(IsPressed)
-            return baseClass + " bg-red-500";
+        await Controls.RequestAbortUndo();
 
-        return baseClass;
+        await Task.Delay(200);
+        await timer.DisposeAsync();
+    }
+
+    private string GetUndoClasses(){
+        if(IsUndoPressed)
+            return " bg-red-500";
+
+        return string.Empty;
+    }
+
+    private string GetRedoClasses(){
+        if(IsRedoPressed)
+            return " bg-yellow-500";
+
+        return string.Empty;
+    }
+
+    private string GetAbortClasses(){
+        if(IsAbortPressed)
+            return " bg-red-500";
+
+        return string.Empty;
     }
 }

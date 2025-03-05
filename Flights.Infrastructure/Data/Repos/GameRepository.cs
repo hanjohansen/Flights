@@ -124,7 +124,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         return query;
     }
 
-    public async Task<GameState> RevertLastDart(Guid gameId)
+    public async Task<(GameState, StatModel)> RevertLastDart(Guid gameId)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
@@ -140,10 +140,10 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
             throw new FlightsGameException("Game is finished!");
 
         var model = GameModel.FromEntity(game);
-        var newState = model.RevertLastDart();
+        var newStateAndStat = model.RevertLastDart();
 
         await db.SaveChangesAsync();
-        return newState;
+        return newStateAndStat;
     }
 
     public async Task DeleteGame(Guid gameId)

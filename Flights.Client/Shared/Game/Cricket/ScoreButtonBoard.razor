@@ -69,13 +69,6 @@
         SelectedModifier = DartModifier.None;
     }
 
-    private async Task RequestRevert(){
-        if (Controls.RequestRevertDart == null)
-            return;
-        
-        await Controls.RequestRevertDart();
-    }
-
     private void GoToGames(){
         if (Controls.CurrentGame.TournamentId != null)
             NavigationManager.NavigateTo("/tournament/" + Controls.CurrentGame.TournamentId);

@@ -35,7 +35,7 @@
     </div>
     <div class="grid grid-cols-5 gap-3 m-2 mt-[27px] h-[80px]">
         <div class="col-span-3">
-            <RevertButton/>
+            <RevertButton ShowUndoOptions="true"/>
         </div>      
         <div class="col-span-2 rounded bg-red-500 mud-elevation-5 text-center cursor-pointer pt-[22px]"
             @onclick="GoToGames">
@@ -74,13 +74,6 @@
             return;
         
         await Controls.ReportNullDart();
-    }
-
-    private async Task RequestRevert(){
-        if (Controls.RequestRevertDart == null)
-            return;
-        
-        await Controls.RequestRevertDart();
     }
 
     private void GoToGames(){
