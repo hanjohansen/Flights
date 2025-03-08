@@ -1,0 +1,13 @@
+services:
+  flights:
+    image: hanjohansen/flights:latest
+    container_name: flights
+    platform: linux/arm64/v8
+    environment:
+        - TZ=Europe/Berlin
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      - ./apidata:/app/apidata:rw
+      - ./storage:/app/wwwroot/Storage:rw
+    restart: always
