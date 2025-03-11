@@ -7,7 +7,7 @@
         </div>
     }
 
-    @if((Controls?.UndoStack.Any() ?? false) && ShowUndoOptions){
+    @if((Controls?.UndoStack.Any() ?? false) && ShowUndoOptions && !ShowUndoOptionsAsPopover){
         <div class="grid grid-cols-3 gap-3 h-[80px]">
             <div class="rounded border border-yellow-500 text-yellow-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetRedoClasses())" @onclick="@RequestRedo">
                 <MudIcon Icon="@Icons.Material.Filled.Redo" Size="Size.Large"/>
@@ -16,8 +16,8 @@
                 <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
             </div>
 
-            <div class="relative rounded border border-red-500 text-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetAbortClasses())" @onclick="@RequestAbort">
-                <div class="absolute -top-2 -right-2 rounded-full w-8 text-lg bg-red-500 text-white font-bold">
+            <div class="relative rounded border border-green-600 text-green-600 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetAbortClasses())" @onclick="@RequestAbort">
+                <div class="absolute -top-2 -right-2 rounded-full w-8 text-lg bg-green-600 text-white font-bold pt-[3px]">
                     @Controls?.UndoStack.Count
                 </div>
                 <MudIcon Icon="@Icons.Material.Filled.RestoreFromTrash" Size="Size.Large"/>
@@ -25,7 +25,7 @@
         </div>
     }
 
-    @* @if(Controls?.UndoStack.Any() ?? false && ShowUndoOptions && ShowUndoOptionsAsPopover){
+    @if((Controls?.UndoStack.Any() ?? false) && ShowUndoOptions && ShowUndoOptionsAsPopover){
         <div style="position:absolute; left:@(MenuPosX)px; top:@(MenuPosY)px">
             <MudPopover Open="true">
                 <div class="grid grid-cols-3 gap-3 h-[80px] m-2">
@@ -36,8 +36,8 @@
                         <MudIcon Icon="@Icons.Material.Outlined.Backspace" Size="Size.Large" Color="Color.Error"/>
                     </div>
 
-                    <div class="relative rounded border border-red-500 text-red-500 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetAbortClasses())" @onclick="@RequestAbort">
-                        <div class="absolute -top-2 -right-2 rounded-full w-8 text-lg bg-red-500 text-white font-bold">
+                    <div class="relative rounded border border-green-600 text-green-600 mud-elevation-5 text-center cursor-pointer pt-[20px] h-[80px] @(GetAbortClasses())" @onclick="@RequestAbort">
+                        <div class="absolute -top-2 -right-2 rounded-full w-8 text-lg bg-green-600 text-white font-bold">
                             @Controls?.UndoStack.Count
                         </div>
                         <MudIcon Icon="@Icons.Material.Filled.RestoreFromTrash" Size="Size.Large"/>
@@ -45,7 +45,7 @@
                 </div>
             </MudPopover>
         </div> 
-    }*@
+    }
 
 </div>
 
