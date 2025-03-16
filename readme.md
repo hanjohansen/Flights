@@ -2,7 +2,6 @@
 Simple game- and tournament calculate for Darts matches
 
 ## Features
-
 Currently four game types:
 - X01
 - Cricket
@@ -14,18 +13,25 @@ Customizable winner jingles and in-game sound effects.
 Viewer mode for secondary spectator display
 
 ## Deployment
+Published as multi-arch docker image (amd64/arm64)  
+Checkout repository, then from repo-root:  
 
-Designed to run as docker container. Checkout repository,  
-then from repo-root
+for linux/amd64
 > docker compose up -d  
 
-then browse to  
+for linux/arm64
+> docker compose -f docker-compose.rpi.yaml up -d
+
+for other platforms you can do a build from scratch
+> docker compose -f docker-compose.local.yaml up -d
+
+The started container can be reached on
 
 >localhost:8080
 
-Note 1: per default port 8080 is used to map to the container.  
-Change docker-compose.yaml if necessary  
-Note 2: docker-compose.yaml applies custom timezone!  
+Note 1: per default, port 8080 is used to map to the container.  
+Change the compose file if necessary  
+Note 2: All compose files apply a custom timezone!  
 
 ## Hardware
 Designed to work on a RaspberryPi 4 (4gig version) with a  
