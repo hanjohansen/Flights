@@ -92,7 +92,7 @@ public class CricketSolver(GameEntity game) : IGameSolver
                 PointAvg: 0,
                 PointMax: 0,
                 Darts: state.Darts,
-                Checkout: null,
+                Checkouts: null,
                 CricketState: state.GetCricketState()
             );
             result.Add(playerState);

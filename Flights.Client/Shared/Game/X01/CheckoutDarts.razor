@@ -2,16 +2,78 @@
 @using Flights.Domain.Entities.Game
 
 <div class="flex flex-row">
-    @foreach(var dart in Checkout?.GetDartsList() ?? new List<DartState>()){
-        <div class="@GetPillClasses()">
-            @GetDartString(dart)
-        </div>
+    @foreach(var darts in Checkouts.Take(Controls.DisplayType == DisplayType.Normal ? 2 : 3)){
+        if(darts.GetDartsList().Count == 1){
+            <div class="rounded-xl font-semibold text-2xl py-1 px-4 mr-2  @GetPillClasses()">
+                <div class="flex flex-row">
+                    <div class="text-lg mr-[2px]">
+                        @GetDartString(darts.D1!)
+                    </div>
+                    <div>
+                        @GetDartValue(darts.D1!.Value)
+                    </div>
+                </div>
+            </div>
+        }
+
+        if(darts.GetDartsList().Count == 2 ){
+            <div class="flex flex-row rounded-xl font-semibold text-2xl py-1 px-4 mr-2  @GetPillClasses()">
+                <div class="flex flex-row">
+                    <div class="text-lg mr-[2px]">
+                        @GetDartString(darts.D1!)
+                    </div>
+                    <div>
+                        @GetDartValue(darts.D1!.Value)
+                    </div>
+                </div>
+                <div class="flex flex-row border-gray-300 border-l pl-2 ml-2">
+                    <div class="text-lg mr-[2px]">
+                        @GetDartString(darts.D2!)
+                    </div>
+                    <div>
+                        @GetDartValue(darts.D2!.Value)
+                    </div>
+                </div>
+            </div>
+        }
+
+        if(darts.GetDartsList().Count == 3){
+            <div class="flex flex-row rounded-xl font-semibold text-2xl py-1 px-4 mr-2  @GetPillClasses()">
+                <div class="flex flex-row">
+                    <div class="text-lg mr-[2px]">
+                        @GetDartString(darts.D1!)
+                    </div>
+                    <div>
+                        @GetDartValue(darts.D1!.Value)
+                    </div>
+                </div>
+                <div class="flex flex-row border-gray-300 border-l border-r px-2 mx-2">
+                    <div class="text-lg mr-[2px]">
+                        @GetDartString(darts.D2!)
+                    </div>
+                    <div>
+                        @GetDartValue(darts.D2!.Value)
+                    </div>
+                </div>
+                <div class="flex flex-row">
+                    <div class="text-lg mr-[2px]">
+                        @GetDartString(darts.D3!)
+                    </div>
+                    <div>
+                        @GetDartValue(darts.D3!.Value)
+                    </div>
+                </div>
+            </div>
+        }
+
     }
 </div>
 
 @code{
-    [Parameter]
-    public DartsState? Checkout {get;set;}
+    [CascadingParameter]
+    public required GameControls Controls { get; set; }
+
+    [Parameter] public List<DartsState> Checkouts { get; set; } = new ();
 
     [Parameter]
     public bool IsCurrentPlayer {get;set;}
@@ -23,19 +85,26 @@
             case DartModifier.None:
                 break;
             case DartModifier.Double:
-                result += "D/";
+                result += "D";
                 break;
             case DartModifier.Triple:
-                result += "T/";
+                result += "T";
                 break;
         }
 
-        result += dart.Value;
+        //result += dart.Value;
         return result;
     }
 
+    public string GetDartValue(int value){
+        if(value == 25)
+            return "B";
+
+        return value.ToString();
+    }
+
     private string GetPillClasses(){
-        var baseClass = "rounded-full font-semibold text-2xl py-1 px-4 mr-2 ";
+        var baseClass = "";
 
         if(IsCurrentPlayer)
             return baseClass + "bg-blue-800 text-white ";

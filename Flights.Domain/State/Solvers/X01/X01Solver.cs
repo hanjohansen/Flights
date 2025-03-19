@@ -33,7 +33,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
                 if(x.PlayerId == nextPlayerId)
                     return x with { Darts = new DartsState(null, null, null),
                                     IsBust = false,
-                                    Checkout = entity.OutModifier == InOutModifier.Double 
+                                    Checkouts = entity.OutModifier == InOutModifier.Double 
                                                         ? _checkoutRepo.GetCheckout(x.Points, 3)
                                                         : null};
                                         
@@ -227,7 +227,7 @@ public class X01Solver(GameEntity entity) : IGameSolver
 
             var remainingDarts = dartState.RemainingDarts();
             remainingDarts = remainingDarts == 0 ? 3 : remainingDarts;
-            DartsState? checkout = null;
+            List<DartsState> checkout = [];
 
             if(entity.OutModifier == InOutModifier.Double)
                 checkout = _checkoutRepo.GetCheckout(refStat.EndPoints, remainingDarts);            

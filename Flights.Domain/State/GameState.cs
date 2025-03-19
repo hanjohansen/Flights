@@ -27,7 +27,7 @@ public record PlayerState(
     decimal PointAvg,
     int PointMax,
     DartsState? Darts,
-    DartsState? Checkout = null,
+    List<DartsState>? Checkouts = null,
     CricketState? CricketState = null,
     AroundTheClockState? AroundTheClockState = null);
 
@@ -53,6 +53,18 @@ public record DartsState(DartState? D1, DartState? D2, DartState? D3){
 
         return result;
     }
+
+    public static DartsState Create(DartModifier modifier, int value){
+        return new DartsState(DartState.Create(modifier, value), null, null);
+    }
+
+    public static DartsState Create(DartModifier mod1, int val1, DartModifier mod2, int val2){
+        return new DartsState(DartState.Create(mod1, val1), DartState.Create(mod2, val2), null);
+    }
+
+    public static DartsState Create(DartModifier mod1, int val1, DartModifier mod2, int val2, DartModifier mod3, int val3){
+        return new DartsState(DartState.Create(mod1, val1), DartState.Create(mod2, val2), DartState.Create(mod3, val3));
+    }
     
     public int Sum(){
         return GetDartsList().Sum(x => x.Calculated);
@@ -66,6 +78,22 @@ public record DartState(
 ){
     public static DartState FromEntity(DartStatEntity entity){
         return new DartState(entity.Modifier, entity.Value, entity.GetCalculatedValue());
+    }
+
+    public static DartState Create(DartModifier mod, int value){
+        return new DartState(mod, value, GetCalculatedValue(mod, value));
+    }
+
+    public static int GetCalculatedValue(DartModifier mod, int value){
+        switch(mod){
+            case DartModifier.Double:
+                return value * 2;
+            case DartModifier.Triple:
+                return value * 3;
+            case DartModifier.None:
+            default:
+                return value;
+        }
     }
 }
 
