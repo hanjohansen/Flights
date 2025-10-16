@@ -1,0 +1,93 @@
+@using Flights.Domain.State
+
+<div class="m-2">
+    <div class="flex flex-row">
+        <div class="flex-grow text-2xl m-2">
+            Wins
+        </div>
+        <div class="m-2">
+            <MudSelect T="string" Value="@SelectedView" ValueChanged="UpdateViewData" Typo="@Typo.h5" class="w-48">
+                @foreach (var opt in ViewOptions)
+                {
+                    <MudSelectItem Value="opt">@opt</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+    </div>
+
+
+    <MudTable Items="@ViewData">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>First</MudTh>
+            <MudTh>Second</MudTh>
+            <MudTh>Third</MudTh>
+            <MudTh>Games</MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.Points)">Points</MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.FirstToGamesRatio)">First %
+                </MudTableSortLabel>
+            </MudTh>
+            <MudTh>
+                <MudTableSortLabel InitialDirection="SortDirection.Descending"
+                    SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.PointsToGamesRatio)">Ratio</MudTableSortLabel>
+            </MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Key</MudTd>
+            <MudTd DataLabel="First">@context.Value.First</MudTd>
+            <MudTd DataLabel="Second">@context.Value.Second</MudTd>
+            <MudTd DataLabel="Third">@context.Value.Third</MudTd>
+            <MudTd DataLabel="Games">@context.Value.Games</MudTd>
+            <MudTd DataLabel="Points">@context.Value.Points</MudTd>
+            <MudTd DataLabel="First %">@FormatPercent(context.Value.FirstToGamesRatio)</MudTd>
+            <MudTd DataLabel="Ratio %">@FormatPercent(context.Value.PointsToGamesRatio)</MudTd>
+        </RowTemplate>
+    </MudTable>
+</div>
+
+@code {
+    [Parameter] public List<PlayerWins> PlayerStats { get; set; } = new();
+
+    private Dictionary<string, GameWins> ViewData = new Dictionary<string, GameWins>();
+
+    private string SelectedView = "Total";
+    private List<string> ViewOptions = ["Total", "X01", "Cricket", "Cut-Throat Cricket", "Around the Clock"];
+
+    protected override async Task OnInitializedAsync() => await UpdateViewData(SelectedView);
+
+    private async Task UpdateViewData(string selectedView)
+    {
+        SelectedView = selectedView;
+        ViewData.Clear();
+
+        switch (selectedView)
+        {
+            case "Total":
+                ViewData = PlayerStats.ToDictionary(x => x.Name, x => x.Total);
+                break;
+            case "X01":
+                ViewData = PlayerStats.ToDictionary(x => x.Name, x => x.X01);
+                break;
+            case "Cricket":
+                ViewData = PlayerStats.ToDictionary(x => x.Name, x => x.Cricket);
+                break;
+            case "Cut-Throat Cricket":
+                ViewData = PlayerStats.ToDictionary(x => x.Name, x => x.CtCricket);
+                break;
+            case "Around the Clock":
+                ViewData = PlayerStats.ToDictionary(x => x.Name, x => x.AroundTheClock);
+                break;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private string FormatPercent(decimal decValue)
+    {
+        var factored = Math.Round(decValue * 100, 2);
+        return factored + " %";
+    }
+}

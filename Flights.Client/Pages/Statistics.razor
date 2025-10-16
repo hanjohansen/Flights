@@ -29,6 +29,12 @@
                     <GameCount Games="@GameCount"/>
                 </div>
             }
+            @if (PlayerWins.Any())
+            {
+                <div class="@GetChartCardClass() mt-2">
+                    <PlayerWinStats PlayerStats="@PlayerWins"/>
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -38,6 +44,8 @@
     private bool IsLoading {get;set;} = true;
 
     private GameCountState? GameCount {get;set;}
+
+    private List<PlayerWins> PlayerWins { get; set; } = new();
 
     private void GoToIndex()
     {
@@ -49,7 +57,8 @@
     private async Task LoadData()
     {
         GameCount = await StatRepo.GetTotalGameCount();
-
+        PlayerWins = await StatRepo.GetTotalPlayerWins();
+        
         IsLoading = false;
     }
 

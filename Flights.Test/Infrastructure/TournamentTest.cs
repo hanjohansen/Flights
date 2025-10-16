@@ -7,7 +7,7 @@ public class TournamentTest : DbTestBase
     [Fact]
     public async Task TournamentDbTest()
     {
-        var conn = "DataSource=D:\\Code\\Flights\\Flights.Client\\app.db;Cache=Shared;foreign keys=true";
+        var conn = "DataSource=/home/hannes/Documents/Code/Flights/Flights.Client/app.db;Cache=Shared;foreign keys=true";
         var tRepo = CreateTournamentRepo(conn);
         var pRepo = CreatePlayerRepo(conn);
 
@@ -28,7 +28,7 @@ public class TournamentTest : DbTestBase
     [Fact]
     public async Task TournamentLoadTest()
     {
-        var conn = "DataSource=D:\\Code\\Flights\\Flights.Client\\app.db;Cache=Shared;foreign keys=true";
+        var conn = "DataSource=/home/hannes/Documents/Code/Flights/Flights.Client/app.db;Cache=Shared;foreign keys=true";
         var tRepo = CreateTournamentRepo(conn);
 
         var model = await tRepo.GetTournament(Guid.Parse("da0ab07e-1f3a-4064-b27f-3e8b424a771c"));

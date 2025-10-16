@@ -28,5 +28,11 @@ public class DbTestBase
 
         return new TournamentRepository(factory);
     }
+
+    public IStatRepository CreateStatsRepo(string constr)
+    {
+        var factory = CreateFactory(constr);
+        return new StatRepository(factory);
+    }
     
 }
