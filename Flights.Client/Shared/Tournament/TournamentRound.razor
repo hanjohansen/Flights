@@ -7,6 +7,15 @@
     @foreach(var game in Round.Games){
         <GameItem Game="@game"/>
     }
+    @if (Round.Games.All(x => x.Started == false))
+    {
+        <div class="flex flex-none justify-center">
+            <div class="justify-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Default" Size="Size.Large" 
+                        OnClick="@(async(_) => await DoReshuffle())" StartIcon="@Icons.Material.Filled.Shuffle">Shuffle</MudButton>
+            </div>
+        </div>
+    }
 </div>
 
 @code{
@@ -15,6 +24,14 @@
     
     [Parameter]
     public required TournamentRoundState Round {get;set;}
+
+    private async Task DoReshuffle()
+    {
+        if (Controls.ReshuffleLastRound == null)
+            return;
+        
+        await Controls.ReshuffleLastRound();
+    }
 }    
 
 

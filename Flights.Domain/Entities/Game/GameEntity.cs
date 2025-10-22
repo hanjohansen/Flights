@@ -29,4 +29,9 @@ public class GameEntity : BaseEntity
     
     public Guid? TournamentGameId {get;set;}
     public TournamentGameEntity? TournamentGame {get;set;}
+
+    public bool HasDarts()
+    {
+        return Rounds.Any(x => x.HasDarts());
+    }
 }

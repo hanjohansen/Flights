@@ -11,4 +11,9 @@ public class TournamentRoundEntity : BaseEntity
     public TournamentPlayerEntity? WildCard { get; set; }
 
     public List<TournamentGameEntity> Games { get; set; } = new();
+
+    public bool HasDarts()
+    {
+        return Games.Any(x => x.Game?.HasDarts() == true);
+    }
 }

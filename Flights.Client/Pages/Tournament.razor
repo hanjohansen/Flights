@@ -41,7 +41,8 @@
             DevFinishGame = DevFinishGame,
             SkipLosersCup = SkipLosersCup,
             SwitchPlayerOrder = SwitchPlayerOrder,
-            AddPlayerToGame = AddPlayerToGame
+            AddPlayerToGame = AddPlayerToGame,
+            ReshuffleLastRound = ReshuffleLastRound
         };
         
         await Broadcast(UiEventType.LoadedTournament, TournamentId);
@@ -127,6 +128,30 @@
                 Controls.CurrentTournament.Id,
                 tournamentGameId,
                 playerId);
+            Controls.CurrentTournament = newState;
+            await InvokeAsync(StateHasChanged);
+            
+            await Broadcast(UiEventType.UpdatedTournament, TournamentId);
+        }
+        catch (FlightsGameException ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("unknown error:" + e.Message, Severity.Error);
+        }
+    }
+
+    private async Task ReshuffleLastRound()
+    {
+        if (Controls?.CurrentTournament == null)
+            return;
+        
+        try
+        {
+            var tournamentId = Controls.CurrentTournament.Id;
+            var newState = await TournamentRepo.ReshuffleLastRound(tournamentId);
             Controls.CurrentTournament = newState;
             await InvokeAsync(StateHasChanged);
             

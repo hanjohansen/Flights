@@ -16,5 +16,7 @@ public class TournamentControls
     public required Func<Task>? SkipLosersCup { get; set; }
     
     public required Func<Guid,Guid,Task>? AddPlayerToGame { get; set; }
+    
+    public required Func<Task>? ReshuffleLastRound { get; set; }
 
 }

@@ -8,4 +8,9 @@ public class GameRoundEntity : BaseEntity
     public int Number {get;set;}
 
     public List<RoundStatEntity> RoundStats {get;set;} = new();
+
+    public bool HasDarts()
+    {
+        return RoundStats.Any(x => x.AnyDartThrown());
+    }
 }

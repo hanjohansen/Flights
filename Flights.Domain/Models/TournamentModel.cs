@@ -4,6 +4,7 @@ using Flights.Domain.Entities.Tournament;
 using Flights.Domain.Exception;
 using Flights.Domain.State;
 using Flights.Domain.State.Solvers;
+using Flights.Util;
 
 namespace Flights.Domain.Models;
 
@@ -184,5 +185,35 @@ public class TournamentModel
             OrderNumber = roundOrderMax + 1
         });
 
+    }
+
+    public void ReshuffleLastRound()
+    {
+        var lastRound = Entity.Rounds.Last();
+        
+        if(lastRound.HasDarts())
+            throw new FlightsGameException("Round was already started!");
+        
+        //approaches to reshuffling depend on the round number
+        //a) its the first round or...
+        //b) ...its any following round
+        //
+        //shuffling is automatically done for any new round except the first one.
+        //the first round creates the player order according the provided players.
+        
+        //1. conditionally  reshuffle tournament players
+        if (Entity.Rounds.Count == 1)
+        {
+            //shuffle + reindex
+            Entity.Players.Shuffle();
+            foreach (var player in Entity.Players)
+                player.OrderNumber = Entity.Players.IndexOf(player) + 1;
+        }
+        
+        //2. remove the last round for both cases
+        Entity.Rounds.Remove(lastRound);
+        
+        //3. recreate shuffled round by resolving state
+        ResolveTournamentState();
     }
 }
