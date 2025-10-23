@@ -7,7 +7,8 @@
     @foreach(var game in Round.Games){
         <GameItem Game="@game"/>
     }
-    @if (Round.Games.All(x => x.Started == false))
+    @if (Round.Games.All(x => x.Started == false)
+        && Round.Games.Count > 1)
     {
         <div class="flex flex-none justify-center">
             <div class="justify-center">
