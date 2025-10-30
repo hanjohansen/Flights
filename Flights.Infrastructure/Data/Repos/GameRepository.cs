@@ -136,9 +136,6 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         if (game == null)
             throw new FlightsGameException("Game not found!");
 
-        if (game.Finished != null)
-            throw new FlightsGameException("Game is finished!");
-
         var model = GameModel.FromEntity(game);
         var newStateAndStat = model.RevertLastDart();
 

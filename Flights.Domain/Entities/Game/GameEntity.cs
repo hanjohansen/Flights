@@ -22,6 +22,8 @@ public class GameEntity : BaseEntity
     public DateTimeOffset Started {get;set;}
 
     public DateTimeOffset? Finished {get;set;}
+    
+    public bool FinishLocked { get; set; }
 
     public List<GamePlayerEntity> Players { get; set;} = new();
 

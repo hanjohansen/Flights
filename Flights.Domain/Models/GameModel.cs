@@ -55,6 +55,9 @@ public class GameModel
     public GameState AddPlayerStats(Guid playerId, StatModel dart){
         var playerStat = GetCurrentPlayer();
 
+        if (Entity.FinishLocked || Entity.Finished != null)
+            throw new FlightsGameException("Game is finished");
+
         if(playerStat.Player.Id != playerId){
             throw new FlightsGameException("Its " + playerStat.Player.Name + "'s turn!");
         }
@@ -145,7 +148,14 @@ public class GameModel
             x.ThirdDart == null || x.SecondDart == null || x.FirstDart == null);
     }
 
-    public (GameState, StatModel) RevertLastDart(){
+    public (GameState, StatModel) RevertLastDart()
+    {
+        if(Entity.FinishLocked)
+            throw new FlightsGameException("Game is finished!");
+        
+        if(Entity.Finished != null)
+            Entity.Finished = null;
+        
         var lastRound = Entity.Rounds.Last();
 
         StatModel? removed = null;

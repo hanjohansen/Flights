@@ -139,6 +139,13 @@ public partial class TournamentSolver
 
     private void InitNewRound(List<TournamentPlayerEntity> tournamentPlayers)
     {
+        //lock all games from last round
+        var lastRound = entity.Rounds.LastOrDefault();
+        if(lastRound != null)
+            foreach (var roundGame in lastRound.Games)
+                roundGame.Game!.FinishLocked = true;
+        
+        //order players
         var isEven = tournamentPlayers.Count % 2 == 0;
         var players = tournamentPlayers.ToList();
         TournamentPlayerEntity? wildcard = null;

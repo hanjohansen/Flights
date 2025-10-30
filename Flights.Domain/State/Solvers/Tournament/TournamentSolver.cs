@@ -8,11 +8,6 @@ public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolv
     public TournamentState Solve()
     {
         CalculateTournamentState();
-        return Projection();
-    }
-
-    private TournamentState Projection()
-    {
         return TournamentState.FromEntity(entity);
     }
 
@@ -34,6 +29,7 @@ public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolv
             lastRound.Games.Single().Game!.Finished != null)
         {
             SetFirstAndSecondRank();
+            lastRound.Games.Single().Game!.FinishLocked = true;
             entity.Finished = lastRound.Games.Single().Game!.Finished;
             return;
         }

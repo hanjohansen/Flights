@@ -118,7 +118,7 @@
     }
 
     private async Task RequestUndoDart(){
-        if(GameControls == null || GameControls.CurrentGame.Finished)
+        if(GameControls == null)
             return;
 
         try{
@@ -135,8 +135,7 @@
 
     public async Task RequestRedoDart()
     {
-        if(GameControls == null || GameControls.CurrentGame.Finished
-           || !_undoStack.Any())
+        if(GameControls == null || !_undoStack.Any())
             return;
 
         try
@@ -160,8 +159,7 @@
     
     public async Task RequestAbortUndo()
     {
-        if(GameControls == null || GameControls.CurrentGame.Finished
-                                || !_undoStack.Any())
+        if(GameControls == null || !_undoStack.Any())
             return;
 
         try
