@@ -1,3 +1,4 @@
+@using Flights.Client.Shared.Game
 @using Flights.Domain.State;
 
 <div class="flex flex-col justify-evenly h-[752px]">
@@ -8,7 +9,8 @@
         <GameItem Game="@game"/>
     }
     @if (Round.Games.All(x => x.Started == false)
-        && Round.Games.Count > 1)
+        && Round.Games.Count > 1
+        && Controls.DisplayType == DisplayType.Normal)
     {
         <div class="flex flex-none justify-center">
             <div class="justify-center">
