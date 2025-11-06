@@ -3,14 +3,14 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="rounded-md border border-gray-300 mud-elevation-3 bg-white p-2 w-[190px] h-[747px]">
+<div class="h-full rounded-md border border-light-border bg-light-surface mud-elevation-3 p-2 dark:bg-dark-surface dark:border-dark-border">
     @if(Controls.DisplayType == DisplayType.Normal){
         <div class="grid justify-items-center my-8">
             <div class="flex flex-row">
                 <div class="mt-7 mr-4">
                     <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Large" Color="Color.Default"/>
                 </div>
-                <div class="text-8xl font-bold text-gray-600">
+                <div class="text-8xl font-bold text-[#777777] dark:text-[#919294]">
                     @Controls.CurrentGame.AroundTheClockState!.CurrentTarget
                 </div>
             </div>       
@@ -39,12 +39,12 @@
         </div>
     }
     @if(Controls.DisplayType == DisplayType.Viewer){
-        <div class="grid justify-items-center items-center my-8">
-            <div class="flex flex-row mt-[300px]">
+        <div class="flex mt-72 mx-4">
+            <div class="flex flex-row">
                 <div class="mt-7 mr-4">
                     <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Size="Size.Large" Color="Color.Default"/>
                 </div>
-                <div class="text-8xl font-bold text-gray-600">
+                <div class="text-8xl font-bold text-[#777777] dark:text-[#919294]">
                     @Controls.CurrentGame.AroundTheClockState!.CurrentTarget
                 </div>
             </div>       

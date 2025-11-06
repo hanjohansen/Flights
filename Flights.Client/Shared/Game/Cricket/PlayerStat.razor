@@ -1,8 +1,8 @@
 @using Flights.Domain.State
 
-<div id="@Player.PlayerId" class="flex flex-none rounded-lg mr-2 mb-1 shadow-lg w-[175px] @GetBackgroundColor()">
+<div id="@Player.PlayerId" class="flex flex-none rounded-lg mr-2 mb-1 shadow-lg w-[175px] bg-light-surface dark:bg-dark-surface">
     <div class="@GetBorderClasses()">
-        <div class="text-gray-600 p-1 text-center">
+        <div class="p-1 text-center @GetNameAndPointsClasses()">
             <div class="text-3xl">
                 @Player.PlayerName
             </div>
@@ -30,13 +30,13 @@
             </div>
         </div>
         <div class="flex-shrink grid grid-rows-7 gap-7 pt-4 justify-center mb-[15px]">
-            <CricketScore IconValue="@Player.CricketState?.Bulls" IsPlayer="@true"/>
-            <CricketScore IconValue="@Player.CricketState?.V20" IsPlayer="@true"/>
-            <CricketScore IconValue="@Player.CricketState?.V19" IsPlayer="@true"/>
-            <CricketScore IconValue="@Player.CricketState?.V18" IsPlayer="@true"/>
-            <CricketScore IconValue="@Player.CricketState?.V17" IsPlayer="@true"/>
-            <CricketScore IconValue="@Player.CricketState?.V16" IsPlayer="@true"/>
-            <CricketScore IconValue="@Player.CricketState?.V15" IsPlayer="@true"/>            
+            <CricketScore IconValue="@Player.CricketState?.Bulls" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>
+            <CricketScore IconValue="@Player.CricketState?.V20" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>
+            <CricketScore IconValue="@Player.CricketState?.V19" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>
+            <CricketScore IconValue="@Player.CricketState?.V18" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>
+            <CricketScore IconValue="@Player.CricketState?.V17" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>
+            <CricketScore IconValue="@Player.CricketState?.V16" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>
+            <CricketScore IconValue="@Player.CricketState?.V15" IsPlayer="@true" IsCurrentPlayer="@(Player.PlayerId == CurrentPlayerId)"/>            
         </div>
     </div>
 </div>
@@ -48,6 +48,12 @@
     [Parameter]
     public Guid? CurrentPlayerId {get;set;}
 
+    private string GetNameAndPointsClasses(){
+        return Player.PlayerId == CurrentPlayerId
+            ? "text-light-player-text-active py-2 dark:text-dark-player-text-active"
+            : "text-light-player-text-inactive py-2 dark:text-dark-player-text-inactive";
+    }
+
     private string GetBorderClasses(){
         var baseClasses = "flex flex-grow flex-col rounded-lg border-t-[15px] my-[-1px] border-r-2 border-l-2 border-b-2 ";
 
@@ -55,15 +61,7 @@
             return baseClasses + "border-yellow-400";
 
         return Player.PlayerId == CurrentPlayerId
-            ? baseClasses + "border-green-600"
-            : baseClasses + "border-gray-400";
-    }
-
-    private string GetBackgroundColor()
-    {
-        if(CurrentPlayerId == Player.PlayerId)
-            return "mud-elevation-8 bg-white";
-
-        return "mud-elevation-3 bg-white/[.7]";
+            ? baseClasses + "border-light-player-bd-active dark:border-dark-player-bd-active"
+            : baseClasses + "border-light-player-bd-inactive dark:border-dark-player-bd-inactive";
     }
 }

@@ -1,5 +1,6 @@
 @using Flights.Client.Shared.Game
 @using Flights.Domain.Entities
+@using Flights.Domain.Entities.Game
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
 
@@ -9,10 +10,10 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<div class="flex flex-row justify-center rounded-lg border border-gray-300 bg-white mud-elevation-3 py-2">
+<div class="flex flex-row justify-center rounded-lg border mud-elevation-3 py-2 border-light-border bg-light-surface dark:border-dark-border dark:bg-dark-surface">
     <div class="flex flex-grow justify-center ml-4 mr-4 cursor-pointer" @onclick="GoToGame">
     @if(Game.IsLosersCup == false){
-        <div class="text-center text-2xl text-slate-700">
+        <div class="text-center text-2xl text-light-player-text-active dark:text-dark-player-text-active">
             @if(Game.Players.Count == 2){
                 <div class="flex flex-row justify-center">
                     @if(Game.Players.First().Rank == 1){
@@ -25,7 +26,7 @@
                     </div>
                 </div>
 
-                <div class="text-lg text-slate-500 -my-2">
+                <div class="text-lg text-[#777777] dark:text-[#919294] -my-2">
                     x
                 </div>
 
@@ -60,12 +61,12 @@
     @if(Game.IsLosersCup){
         <div class="flex flex-col">
             @if(Game.IsSemiFinal){
-                <div class="text-center text-slate-500 mb-1">
+                <div class="text-center text-[#777777] dark:text-[#919294] mb-1">
                     Losers Cup
                 </div>
             }      
             @if(!Game.IsSemiFinal){
-                <div class="text-center text-slate-500 mb-1">
+                <div class="text-center text-[#777777] dark:text-[#919294] mb-1">
                     Second chance
                 </div>
             }         
@@ -76,7 +77,7 @@
                             <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Medium" Color="Color.Warning"/>
                         </div>
                     }
-                    <div class="text-center text-2xl text-slate-700">
+                    <div class="text-center text-2xl text-light-player-text-active dark:text-dark-player-text-active">
                         @player.Name
                     </div>
                 </div>
@@ -89,10 +90,10 @@
         </div>
     }
     </div>
-    @if(Controls.DisplayType == DisplayType.Normal){
+    @if(Controls.DisplayType == DisplayType.Normal && !Game.Finished){
         <div class="flex flex-shrink items-center">
             <div class="self-center cursor-pointer">
-                <MudMenu Disabled="@Game.Finished">
+                <MudMenu>
                     <ActivatorContent>
                         <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
                     </ActivatorContent>

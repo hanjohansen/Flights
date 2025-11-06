@@ -1,6 +1,5 @@
 using Flights.Client;
 using Flights.Client.Rtc;
-using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddGamesDatabase();
 builder.AddFileStorage();
 builder.AddSignalRServices();
-
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddMudServices();
+builder.AddUiServices();
 
 var app = builder.Build();
 

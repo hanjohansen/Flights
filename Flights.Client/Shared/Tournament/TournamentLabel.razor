@@ -1,6 +1,6 @@
 @using Domain.Entities.Game
 
-<div class="text-slate-700 h-[135px]">
+<div class="h-[135px] text-[#777777] dark:text-[#919294]">
     @if(Controls.CurrentTournament.Type == GameType.X01){
         <div class="text-6xl font-bold">
             @Controls.CurrentTournament.X01Target
@@ -22,26 +22,27 @@
             </div> 
         </div>   
     }
-    @if(Controls.CurrentTournament.Type == GameType.CtCricket){
-        <div class="text-2xl font-bold">
-            Cut-Throat
-        </div>
-    }
-    @if(Controls.CurrentTournament.Type == GameType.CtCricket 
-        || Controls.CurrentTournament.Type == GameType.Cricket){
-        <div class="text-6xl font-bold">
-            Cricket
-        </div>
-    }
-    @if(Controls.CurrentTournament.Type == GameType.AroundTheClock){
-        <div class="text-6xl font-bold">
-            Around
-        </div>
-        <div class="text-3xl font-bold">
-            the Clock
-        </div>
-    }
-
+    <div class="text-light-player-text-active dark:text-dark-player-text-active">
+        @if(Controls.CurrentTournament.Type == GameType.CtCricket){
+            <div class="text-2xl font-bold">
+                Cut-Throat
+            </div>
+        }
+        @if(Controls.CurrentTournament.Type == GameType.CtCricket 
+            || Controls.CurrentTournament.Type == GameType.Cricket){
+            <div class="text-6xl font-bold">
+                Cricket
+            </div>
+        }
+        @if(Controls.CurrentTournament.Type == GameType.AroundTheClock){
+            <div class="text-6xl font-bold">
+                Around
+            </div>
+            <div class="text-3xl font-bold">
+                the Clock
+            </div>
+        }
+    </div>
 
 </div>
 

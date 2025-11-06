@@ -9,20 +9,26 @@
 @inject IGameRepository GamesRepo
 @inject ITournamentRepository TournamentRepo
 
-<div class="relative cursor-pointer rounded border border-gray-100 @GetBottomMargin()">
-    <MudPaper Elevation="4" Width="500px">
+<div class="relative cursor-pointer rounded-lg mud-elevation-4 mb-2 ">
+    <div class="bg-light-surface border rounded-lg border-gray-300 dark:bg-dark-surface dark:border-dark-border">
         <div class="p-4">
             <div class="font-bold text-4xl">
                 <div class="flex flex-row">
-                    @if(Game.Finished != null){
-                        <div class="w-[50px]" @onclick="() => GoToGame()">
-                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Default"/>
-                        </div>
-                    }
-                    <div class="flex flex-grow pt-1" @onclick="() => GoToGame()">
+
+                    <div class="flex flex-grow pt-1 pr-8" @onclick="() => GoToGame()">
                         <GameName Game="@Game"/>
                     </div>
-                    <div class="pt-1">
+                    @if(Game.IsTournament){
+                        <div class="ml-2" @onclick="() => GoToGame()">
+                            <MudIcon Icon="@Icons.Material.Outlined.Groups" Size="Size.Medium" Color="Color.Default"/>
+                        </div>
+                    }
+                    @if(Game.Finished != null){
+                        <div class="ml-2" @onclick="() => GoToGame()">
+                            <MudIcon Icon="@Icons.Material.Outlined.EmojiEvents" Size="Size.Large" Color="Color.Warning"/>
+                        </div>
+                    } 
+                    <div class="pt-1 ml-4">
                         <MudMenu>
                             <ActivatorContent>
                                 <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
@@ -32,7 +38,8 @@
                                 <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Delete" OnClick="@DeleteGame">Delete game</MudMenuItem>
                             </ChildContent>
                         </MudMenu>
-                    </div>                 
+                    </div> 
+               
                 </div>           
             </div>
             <div class="mt-4" @onclick="() => GoToGame()">
@@ -42,21 +49,7 @@
                 @Game.Started.ToLocalTime().ToString("dd.MM.yy  HH:mm")
             </div>
         </div>
-        @if(Game.IsTournament){
-            <div class="absolute top-1 left-1 -z-10">
-                <MudPaper Elevation="4" Width="500px" Height="133px">
-                    Test
-                </MudPaper>
-            </div>
-            <div class="absolute top-2 left-2 -z-20">
-                <MudPaper Elevation="4" Width="500px" Height="133px">
-                    Test
-                </MudPaper>
-            </div>
-        }
-    </MudPaper>
-
-    
+    </div>    
 </div>
 
 @code{

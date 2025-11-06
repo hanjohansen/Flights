@@ -1,14 +1,14 @@
 @using Flights.Domain.Entities.Game
 @using Flights.Domain.State
 
-<div class="border rounded-lg mud-elevation-3 mb-2 mr-2 bg-white">
-    <div class="flex justify-evenly">
+<div class="border rounded-lg mud-elevation-3 mb-2 mr-2 bg-light-surface border-gray-300 dark:bg-dark-surface dark:border-dark-border">
+    <div class="flex justify-evenly text-[#777777] dark:text-[#919294]">
         <div class="">  
             <div class="flex flex-row">
                 <div class="mt-1 mr-1">
                     <MudIcon Icon="@Icons.Material.Filled.Refresh" Size="Size.Medium" Color="Color.Default"/>  
                 </div>                                                       
-                <div class="text-2xl text-slate-700">
+                <div class="text-2xl">
                     @Game?.Round
                 </div> 
             </div>       
@@ -18,7 +18,7 @@
                 <div class="mt-1 mr-1">
                     <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowDown" Size="Size.Medium" Color="Color.Default"/>  
                 </div>                                                       
-                <div class="text-2xl text-slate-700">
+                <div class="text-2xl">
                     @GetModifierString(Game?.InModifier ?? InOutModifier.None)
                 </div> 
             </div>    
@@ -28,7 +28,7 @@
                 <div class="mt-1 mr-1">
                     <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowUp" Size="Size.Medium" Color="Color.Default"/>  
                 </div>                                                       
-                <div class="text-2xl text-slate-700">
+                <div class="text-2xl">
                     @GetModifierString(Game?.OutModifier ?? InOutModifier.None)
                 </div> 
             </div>   

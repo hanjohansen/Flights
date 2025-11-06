@@ -1,4 +1,4 @@
-<div class="flex flex-row mx-1 h-[752px] overflow-hidden">
+<div class="flex flex-1 flex-row mx-1 overflow-hidden">
     
     <div class="flex flex-column flex-auto overflow-hidden">   
         <GameInfo Game="@Controls.CurrentGame"/>
@@ -8,7 +8,7 @@
             }
         </div>
     </div>
-    <div class="flex-shrink">
+    <div class=" h-full flex-shrink-0">
         @if (Controls.DisplayType == DisplayType.Normal)
         {
             <ScoreButtonBoard/>

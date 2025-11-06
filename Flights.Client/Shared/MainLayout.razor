@@ -1,22 +1,31 @@
-﻿@inherits LayoutComponentBase
+﻿@using Flights.Client.Service.Port
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+
+@inherits LayoutComponentBase
+
+@inject IThemeInfoProvider ThemeInfoProvider
+@inject ProtectedLocalStorage BrowserStorage
 
 <PageTitle>Flights</PageTitle>
 
-<MudThemeProvider Theme="@_customTheme"/>
+<MudThemeProvider Theme="@_customTheme" @bind-IsDarkMode="@IsDark"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
-<MudLayout>
-    <AppBar/>
-    <MudMainContent>
-        <div class="pt-1">
+<MudLayout class="@GetThemeClass()">
+    <AppBar ToggleTheme="@ToggleTheme"/>
+    <MudMainContent class="flex flex-1 overflow-hidden">
+        <div class="pt-1 flex flex-1 overflow-hidden">
             @Body
         </div>        
     </MudMainContent>
 </MudLayout>
 
 @code{
+    private const string BrowserStorageThemeKey = "DarkMode";
+
+    private bool IsDark {get;set;}
 
     private readonly MudTheme _customTheme = new()
     {
@@ -25,4 +34,37 @@
             AppbarHeight = "40px"
         }
     };
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var isDarkResult = await BrowserStorage.GetAsync<bool>(BrowserStorageThemeKey);
+
+            if (isDarkResult.Success)
+            {
+                IsDark = isDarkResult.Value;
+                ThemeInfoProvider.IsDarkMode = IsDark;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task ToggleTheme()
+    {
+        IsDark = !IsDark;
+        
+        ThemeInfoProvider.IsDarkMode = IsDark;
+        await BrowserStorage.SetAsync(BrowserStorageThemeKey, IsDark);
+    }
+
+    private string GetThemeClass(){
+        var baseClass = "flex min-h-screen max-h-screen bg-light-background overflow-hidden dark:bg-dark-background";
+
+        if(IsDark)
+        baseClass += " dark ";
+            
+
+        return baseClass;
+    }
 }

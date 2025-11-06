@@ -14,6 +14,7 @@
     <MudSpacer />
     <Clock/>
     <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.Contrast" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleTheme"/>    
     <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleFullscreen"/>    
     <div class="text-xs mt-1">
         @GetVersion()
@@ -21,6 +22,8 @@
 </MudAppBar>
 
 @code{
+    [Parameter]
+    public required EventCallback ToggleTheme {get;set;}
 
     private string GetVersion()
     {
@@ -33,6 +36,10 @@
     public async Task ToggleFullscreen()
     {
         await JsRuntime.InvokeVoidAsync("toggleFullScreen");
+    }
+
+    public async Task DoToggleTheme(){
+        await ToggleTheme.InvokeAsync();
     }
 
     private void GoToIndex()

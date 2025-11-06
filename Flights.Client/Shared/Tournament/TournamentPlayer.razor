@@ -24,8 +24,8 @@
 
     private string GetPlayerFont(){
         return Player?.Rank == 0
-            ? "text-gray-400"
-            : String.Empty;
+            ? "text-[#777777] dark:text-[#919294]"
+            : "text-light-player-text-active dark:text-dark-player-text-active";
     }
 
     private string GetRankString(){

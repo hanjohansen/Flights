@@ -11,6 +11,7 @@ Currently four game types:
 All types may be played as single game or in a tournament.  
 Customizable winner jingles and in-game sound effects.  
 Viewer mode for secondary spectator display
+Light and dark app-themes
 
 ## Deployment
 Published as multi-arch docker image (amd64/arm64)  

@@ -7,11 +7,22 @@ using Flights.Client.Service.FileStorage;
 using Flights.Client.Service.Port;
 using Flights.Client.Service;
 using Microsoft.AspNetCore.ResponseCompression;
+using MudBlazor.Services;
 
 namespace Flights.Client;
 
 public static class ServiceExtensions
 {
+    public static WebApplicationBuilder AddUiServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IThemeInfoProvider, ThemeInfoProvider>();
+        builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor();
+        builder.Services.AddMudServices();
+
+        return builder;
+    }
+    
     public static WebApplicationBuilder AddGamesDatabase(this WebApplicationBuilder builder){
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

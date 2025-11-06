@@ -1,8 +1,8 @@
 @using Flights.Domain.State
 
-<div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3 bg-white mr-2">
+<div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3 mr-2 bg-light-surface dark:bg-dark-surface">
     <div class="@GetBorderClasses()">
-        <div class="grid grid-cols-2 text-gray-600 py-2 ">
+        <div class="grid grid-cols-2 @GetNameAndPointsClasses()">
             <div class="grid grid-cols-4">
                 <div class="col-span-3 pl-4">
                     <MudStack Spacing="0">
@@ -25,16 +25,16 @@
                         </div>
                     </MudStack>
                 </div>
-                <div class="flex flex-col pt-5">
+                <div class="flex flex-col pt-5 text-[#777777] dark:text-[#919294]">
                     <div class="flex flex-row items-center">
-                        <div class="ml-1 text-2xl text-gray-500">
+                        <div class="ml-1 text-2xl">
                             <span>&Sigma;</span>
                         </div>
-                        <div class="ml-[14px] text-gray-700 text-lg">
+                        <div class="ml-[14px] text-lg">
                             @(Player.Darts?.Sum() ?? 0)
                         </div>
                         @if(Player.IsBust){
-                            <div class="mt-[-2px] ml-2">
+                            <div class="ml-2">
                                 <MudIcon Icon="@Icons.Material.Filled.Clear" Size="Size.Medium" Color="Color.Error"/>
                             </div>
                         }
@@ -43,7 +43,7 @@
                         <div class="">
                             <MudIcon Icon="@Icons.Material.Filled.HideSource" Size="Size.Medium" Color="Color.Default"/>
                         </div>
-                        <div class="ml-2 mt-0 text-gray-700 text-lg">
+                        <div class="ml-2 mt-0 text-lg">
                             @Player.PointAvg
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                         <div class="">
                             <MudIcon Icon="@Icons.Material.Outlined.Grade" Size="Size.Medium" Color="Color.Default"/>
                         </div>
-                        <div class="ml-2 mt-0 text-gray-700 text-lg">
+                        <div class="ml-2 mt-0 text-lg">
                             @Player.PointMax
                         </div>
                     </div>
@@ -76,6 +76,12 @@
     [Parameter]
     public Guid? CurrentPlayerId {get;set;}
 
+    private string GetNameAndPointsClasses(){
+        return Player.PlayerId == CurrentPlayerId
+            ? "text-light-player-text-active py-2 dark:text-dark-player-text-active"
+            : "text-light-player-text-inactive py-2 dark:text-dark-player-text-inactive";
+    }
+
     private string GetBorderClasses(){
         var baseClasses = "rounded-lg border-l-[15px] border-t-2 border-b-2 border-r-2 ";
 
@@ -83,7 +89,7 @@
             return baseClasses + "border-yellow-400";
 
         return Player.PlayerId == CurrentPlayerId
-            ? baseClasses + "border-green-600"
-            : baseClasses + "border-gray-400";
+            ? baseClasses + "border-light-player-bd-active dark:border-dark-player-bd-active"
+            : baseClasses + "border-light-player-bd-inactive dark:border-dark-player-bd-inactive";
     }
 }

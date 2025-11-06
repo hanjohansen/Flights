@@ -1,4 +1,7 @@
+@using Flights.Client.Service.Port
 @using Flights.Domain.State
+
+@inject IThemeInfoProvider ThemeInfoProvider
 
 <div>
     <div class="mb-1">
@@ -25,8 +28,10 @@
     private int Size {get;set;} = 10;
 
     private string GetFill(DartState? dart){
+        var isDark = ThemeInfoProvider.IsDarkMode;
+        var gray = isDark ? "#919294" : "#777777";
         if(dart == null)
-            return "#d5d5d5";
+            return gray;
         
         return "#16a34a"; //green
     }

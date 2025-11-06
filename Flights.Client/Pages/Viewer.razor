@@ -12,7 +12,7 @@
 
 @inherits RtcHubComponent
 
-<div>
+<div class="flex flex-1 overflow-hidden">
     @if (GameControls != null)
     {
         <CascadingValue Value="@GameControls">
@@ -26,8 +26,8 @@
         </CascadingValue>
     }
     @if(GameControls == null && TournamentControls == null){
-        <div class="">
-            <div class="text-gray-600 font-bold text-4xl text-center mt-[340px]">
+        <div class="flex flex-1 flex-col justify-center">
+            <div class="text-[#777777] dark:text-[#919294] font-bold text-4xl text-center">
                 Waiting for game or tournament
             </div>
             <div class="mx-[400px] mt-4">

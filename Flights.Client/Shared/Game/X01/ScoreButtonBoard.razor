@@ -4,8 +4,7 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="rounded-md border border-gray-300 mud-elevation-3 bg-white">
-
+<div class="mb-2 rounded-md border border-gray-300 mud-elevation-3 bg-light-surface dark:bg-dark-surface dark:border-dark-border">
     <div class="grid grid-cols-5 gap-2 pt-2 px-2">
         @for(var i = 1; i <= 20; i++){
             <div>
@@ -33,7 +32,7 @@
             <AirhornButton MenuPosX="605" MenuPosY="220"/>
         </div>
     </div>
-    <div class="grid grid-cols-5 gap-3 m-2 mt-[27px] h-[80px]">
+    <div class="grid grid-cols-5 gap-3 m-2 mt-[27px] mb-3 h-[80px]">
         <div class="col-span-3">
             <RevertButton ShowUndoOptions="true"/>
         </div>      

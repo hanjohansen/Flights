@@ -1,4 +1,8 @@
+@using Flights.Client.Service.Port
 @using Flights.Domain.State
+
+@inject IThemeInfoProvider ThemeInfoProvider
+
 <svg viewBox="0 0 26.458333 26.458333" width="60" height="60" fill="@GetFillData()">
     <path d="@GetPathData()"/>
 </svg>
@@ -10,6 +14,9 @@
 
     [Parameter]
     public bool IsPlayer {get;set;}
+
+    [Parameter]
+    public bool IsCurrentPlayer {get;set;}
 
     private const string NonePath = "m 9.7226707,11.586484 h 7.0129923 c 0.910047,0 1.642683,0.732637 1.642683,1.642683 0,0.910047 -0.732636,1.642683 -1.642683,1.642683 H 9.7226707 c -0.9100465,0 -1.6426832,-0.732636 -1.6426832,-1.642683 0,-0.910046 0.7326367,-1.642683 1.6426832,-1.642683 z";
 
@@ -46,26 +53,65 @@
     }
 
     private string GetFillData(){
+
+        //indicator icon => used in scoreboard for multipage player count
+        const string NoneDark = "#919294";
+        const string NoneLight = "#777777";
+
+        const string PointDark = "#919294";
+        const string PointLight = "#777777";
+        
+        //player icon => used in playerstats
+        const string NoneActiveDark = "#919294";
+        const string NoneActiveLight = "#777777";
+        const string NoneInactiveDark = "#919294";
+        const string NoneInactiveLight = "#777777";
+
+        const string PointActiveDark = "#e8e8e8";
+        const string PointActiveLight = "#1f2937";
+        const string PointInactiveDark = "#9e9fa2";
+        const string PointInactiveLight = "#4b5563";
+
+        const string ClosedActiveDark = "#ef4444";
+        const string ClosedActiveLight = "#ef4444";
+        const string ClosedInactiveDark = "#de7f7f";
+        const string ClosedInactiveLight = "#de7f7f";
+
+        //get theme info
+        var isDark = ThemeInfoProvider.IsDarkMode;
+
+        //indicator
         if(!IsPlayer){
+            var point = isDark ? PointDark : PointLight;
+            var none = isDark ? NoneDark : NoneLight;
             switch(IconValue){
                 case CricketValue.Single:
                 case CricketValue.Double:
                 case CricketValue.Open:
                 case CricketValue.Closed:
-                    return "#abaaaa";
+                    return point;
                 default:
-                    return "#ddd9d9";
+                    return none;
             }      
         }
+
+        //user
+        var pointActive = isDark ? PointActiveDark : PointActiveLight;
+        var pointInactive = isDark ? PointInactiveDark : PointInactiveLight;
+        var noneActive = isDark ? NoneActiveDark : NoneActiveLight;
+        var noneInactive = isDark ? NoneInactiveDark : NoneInactiveLight;
+        var closedActive = isDark ? ClosedActiveDark : ClosedActiveLight;
+        var closedInactive = isDark ? ClosedInactiveDark : ClosedInactiveLight;
+
         switch(IconValue){
             case CricketValue.Single:
             case CricketValue.Double:
             case CricketValue.Open:
-                return "#4B5563";
+                return IsCurrentPlayer ? pointActive : pointInactive;
             case CricketValue.Closed:
-                return "#ef4444";//"#32af00";
+                return IsCurrentPlayer ? closedActive : closedInactive;
             default:
-                return "#ddd9d9";
+                return IsCurrentPlayer ? noneActive : noneInactive;
         }
     }
 }

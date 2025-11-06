@@ -27,12 +27,12 @@
                 <MudTableSortLabel SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.Points)">Points</MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.FirstToGamesRatio)">First %
+                <MudTableSortLabel InitialDirection="SortDirection.Descending" 
+                    SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.FirstToGamesRatio)">First %
                 </MudTableSortLabel>
             </MudTh>
             <MudTh>
-                <MudTableSortLabel InitialDirection="SortDirection.Descending"
-                    SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.PointsToGamesRatio)">Ratio</MudTableSortLabel>
+                <MudTableSortLabel SortBy="new Func<KeyValuePair<string, GameWins>, object>(x => x.Value.PointsToGamesRatio)">Ratio</MudTableSortLabel>
             </MudTh>
         </HeaderContent>
         <RowTemplate>
