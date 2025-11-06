@@ -14,8 +14,12 @@
     {
         <div class="flex flex-none justify-center">
             <div class="justify-center">
-                <MudButton Variant="Variant.Filled" Color="Color.Default" Size="Size.Large" 
-                        OnClick="@(async(_) => await DoReshuffle())" StartIcon="@Icons.Material.Filled.Shuffle">Shuffle</MudButton>
+                <div class="flex flex-row items-center rounded-lg p-2 bg-[#919294] dark:bg-[#777777] hover:bg-[#777777] dark:hover:bg-[#919294] cursor-pointer " @onclick="DoReshuffle">
+                    <MudIcon Icon="@Icons.Material.Filled.Shuffle" Color="Color.Default" Size="Size.Large"/>
+                    <div class="text-2xl text-[#414242] dark:text-[#bcbcbc]">
+                        Shuffle
+                    </div>
+                </div>
             </div>
         </div>
     }
