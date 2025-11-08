@@ -98,20 +98,20 @@
                         <MudIcon Icon="@Icons.Material.Filled.MoreVert" Size="Size.Large" Color="Color.Default"/>
                     </ActivatorContent>
                     <ChildContent>
-                        <MudMenuItem IconSize="Size.Large" IconColor="Color.Primary" 
+                        <MudMenuItem IconColor="Color.Primary" 
                             Icon="@Icons.Material.Filled.PlayArrow" OnClick="@GoToGame">Play</MudMenuItem>
-                        <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
+                        <MudMenuItem IconColor="Color.Default" 
                             Icon="@Icons.Material.Filled.Shuffle" Disabled="@Game.Started" OnClick="@SwitchPlayers">Switch players</MudMenuItem>
                         @if(Game.IsLosersCup && Game.IsSemiFinal){
-                            <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" 
+                            <MudMenuItem IconColor="Color.Secondary" 
                                 Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@SkipLosersCup" Disabled="@Game.Finished" >Skip Losers Cup</MudMenuItem>
                         }
                         @if(!Game.IsSemiFinal && !Game.IsFinal){
-                            <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary"
+                            <MudMenuItem IconColor="Color.Secondary"
                                          Icon="@Icons.Material.Filled.PlaylistRemove" OnClick="@AddPlayerToGame" Disabled="@IsAddPlayerDisabled()">Add Player</MudMenuItem>
                         }
                         @if(Environment.IsDevelopment()){              
-                            <MudMenuItem IconSize="Size.Large" IconColor="Color.Default" 
+                            <MudMenuItem IconColor="Color.Default" 
                                 Icon="@Icons.Material.Filled.Construction" OnClick="@DevFinishGame" Disabled="@Game.Finished" >Finish game (DEV)</MudMenuItem>
                         }               
                     </ChildContent>

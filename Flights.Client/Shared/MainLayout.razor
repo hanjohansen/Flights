@@ -1,10 +1,9 @@
 ﻿@using Flights.Client.Service.Port
-@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 
 @inherits LayoutComponentBase
 
 @inject IThemeInfoProvider ThemeInfoProvider
-@inject ProtectedLocalStorage BrowserStorage
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <PageTitle>Flights</PageTitle>
 
@@ -39,14 +38,14 @@
     {
         if (firstRender)
         {
-            var isDarkResult = await BrowserStorage.GetAsync<bool>(BrowserStorageThemeKey);
+            var isDark = await LocalStorage.GetItemAsync<bool>(BrowserStorageThemeKey);
 
-            if (isDarkResult.Success)
+            if (isDark)
             {
-                IsDark = isDarkResult.Value;
+                IsDark = isDark;
                 ThemeInfoProvider.IsDarkMode = IsDark;
                 StateHasChanged();
-            }
+            } 
         }
     }
 
@@ -55,7 +54,7 @@
         IsDark = !IsDark;
         
         ThemeInfoProvider.IsDarkMode = IsDark;
-        await BrowserStorage.SetAsync(BrowserStorageThemeKey, IsDark);
+        await LocalStorage.SetItemAsync(BrowserStorageThemeKey, IsDark);
     }
 
     private string GetThemeClass(){

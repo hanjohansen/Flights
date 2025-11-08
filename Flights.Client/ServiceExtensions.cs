@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Microsoft.EntityFrameworkCore;
 using Flights.Infrastructure.Data;
 using Flights.Infrastructure.Data.Repos;
@@ -19,6 +20,7 @@ public static class ServiceExtensions
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddMudServices();
+        builder.Services.AddBlazoredLocalStorage();
 
         return builder;
     }
