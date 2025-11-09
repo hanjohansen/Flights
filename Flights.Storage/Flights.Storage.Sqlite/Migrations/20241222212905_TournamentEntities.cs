@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Flights.Infrastructure.Data.Migrations
+namespace Flights.Storage.Sqlite.Migrations
 {
     /// <inheritdoc />
     public partial class TournamentEntities : Migration

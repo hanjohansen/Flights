@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Flights.Infrastructure.Data.Migrations
+namespace Flights.Storage.Sqlite.Migrations
 {
     [DbContext(typeof(FlightsDbContext))]
-    [Migration("20241107153702_Shanghai2AtC")]
-    partial class Shanghai2AtC
+    [Migration("20240924084436_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,44 +101,16 @@ namespace Flights.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("players", (string)null);
-                });
-
-            modelBuilder.Entity("Flights.Domain.Entities.PlayerFileEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("PlayerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("StoragePath")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("player_files", (string)null);
                 });
 
             modelBuilder.Entity("Flights.Domain.Entities.RoundStatEntity", b =>
@@ -208,17 +180,6 @@ namespace Flights.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("Flights.Domain.Entities.PlayerFileEntity", b =>
-                {
-                    b.HasOne("Flights.Domain.Entities.PlayerEntity", "Player")
-                        .WithMany("Files")
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Player");
                 });
 
             modelBuilder.Entity("Flights.Domain.Entities.RoundStatEntity", b =>
@@ -320,8 +281,6 @@ namespace Flights.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Flights.Domain.Entities.PlayerEntity", b =>
                 {
-                    b.Navigation("Files");
-
                     b.Navigation("Games");
                 });
 #pragma warning restore 612, 618

@@ -3,19 +3,16 @@ using System;
 using Flights.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Flights.Infrastructure.Data.Migrations
+namespace Flights.Storage.Sqlite.Migrations
 {
     [DbContext(typeof(FlightsDbContext))]
-    [Migration("20250211200052_AddPlayerCount")]
-    partial class AddPlayerCount
+    partial class FlightsDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
@@ -27,6 +24,9 @@ namespace Flights.Infrastructure.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("FinishAfterFirstRank")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FinishLocked")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("Finished")
@@ -201,7 +201,7 @@ namespace Flights.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset?>("Finished")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("FirstRoundPlayers")
+                    b.Property<int>("FirstRoundPlayersPerGame")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("InModifier")

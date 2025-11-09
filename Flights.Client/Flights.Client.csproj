@@ -10,6 +10,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Flights.Domain\Flights.Domain.csproj" />
     <ProjectReference Include="..\Flights.Infrastructure\Flights.Infrastructure.csproj" />
+    <ProjectReference Include="..\Flights.Storage\Flights.Storage.MySql\Flights.Storage.MySql.csproj" />
+    <ProjectReference Include="..\Flights.Storage\Flights.Storage.Sqlite\Flights.Storage.Sqlite.csproj" />
     <ProjectReference Include="..\Flights.Util\Flights.Util.csproj" />
   </ItemGroup>
 

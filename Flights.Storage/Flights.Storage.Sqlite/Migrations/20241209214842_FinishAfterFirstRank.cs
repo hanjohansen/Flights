@@ -2,28 +2,28 @@
 
 #nullable disable
 
-namespace Flights.Infrastructure.Data.Migrations
+namespace Flights.Storage.Sqlite.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPlayerCount : Migration
+    public partial class FinishAfterFirstRank : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "FirstRoundPlayersPerGame",
-                table: "tournaments",
+            migrationBuilder.AddColumn<bool>(
+                name: "FinishAfterFirstRank",
+                table: "games",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 2);
+                defaultValue: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "FirstRoundPlayersPerGame",
-                table: "tournaments");
+                name: "FinishAfterFirstRank",
+                table: "games");
         }
     }
 }

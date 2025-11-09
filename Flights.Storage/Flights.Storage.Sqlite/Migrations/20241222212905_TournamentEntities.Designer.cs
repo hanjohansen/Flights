@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Flights.Infrastructure.Data.Migrations
+namespace Flights.Storage.Sqlite.Migrations
 {
     [DbContext(typeof(FlightsDbContext))]
-    [Migration("20251027192300_AddFinishBlock")]
-    partial class AddFinishBlock
+    [Migration("20241222212905_TournamentEntities")]
+    partial class TournamentEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,14 +29,8 @@ namespace Flights.Infrastructure.Data.Migrations
                     b.Property<bool>("FinishAfterFirstRank")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("FinishLocked")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTimeOffset?>("Finished")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("GameNumber")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("InModifier")
                         .IsRequired()
@@ -204,9 +198,6 @@ namespace Flights.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset?>("Finished")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("FirstRoundPlayersPerGame")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("InModifier")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -220,9 +211,6 @@ namespace Flights.Infrastructure.Data.Migrations
 
                     b.Property<DateTimeOffset>("Started")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("TournamentNumber")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Type")
                         .IsRequired()

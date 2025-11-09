@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Flights.Client.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Flights.Infrastructure.Data;
 using Flights.Infrastructure.Data.Repos;
@@ -7,6 +8,8 @@ using Flights.Client.Service.Port.FileStorage;
 using Flights.Client.Service.FileStorage;
 using Flights.Client.Service.Port;
 using Flights.Client.Service;
+using Flights.Storage.MySql;
+using Flights.Storage.Sqlite;
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
 
@@ -26,12 +29,28 @@ public static class ServiceExtensions
     }
     
     public static WebApplicationBuilder AddGamesDatabase(this WebApplicationBuilder builder){
+        
+        var storageConfig = builder.Configuration.GetSection("Storage").Get<StorageConfiguration>();
+        
+        if(storageConfig == null)
+            throw new ApplicationException("Storage configuration is missing");
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-        builder.Services.AddDbContextFactory<FlightsDbContext>(options => {
-            options.UseSqlite(connectionString);
-        });
+        switch (storageConfig.DbProvider)
+        {
+            case "Sqlite":
+                builder.Services.AddDbContextFactory<FlightsDbContext>(options => {
+                    options.UseSqlite(storageConfig.ConnectionString, opts => { opts.MigrationsAssembly(typeof(StorageSqlite).Assembly.GetName().Name!); });
+                });
+                break;
+            case "MySql":
+                builder.Services.AddDbContextFactory<FlightsDbContext>(options =>
+                {
+                    options.UseMySql(storageConfig.ConnectionString,ServerVersion.AutoDetect(storageConfig.ConnectionString), opts => { opts.MigrationsAssembly(typeof(StorageMySql).Assembly.GetName().Name!); });
+                });
+                break;
+            default:
+                throw new ApplicationException($"Unknown DbProvider '{storageConfig.DbProvider}'");
+        }
 
         builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
         builder.Services.AddScoped<IPlayerFileRepository, PlayerFileRepository>();
