@@ -19,6 +19,7 @@ public class AroundTheClockSimTest
         var rand = new Random();
     
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.AroundTheClock, 
             false,

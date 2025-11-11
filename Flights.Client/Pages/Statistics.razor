@@ -1,5 +1,6 @@
 @page "/stats"
 
+@using Flights.Client.Authentication
 @using Flights.Client.Shared.Toolkit
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
@@ -8,6 +9,7 @@
 
 @inject NavigationManager NavigationManager
 @inject IStatRepository StatRepo;
+@inject IAuthenticationService AuthService
 
 <PageTitle>Statistics</PageTitle>
 
@@ -54,8 +56,12 @@
 
     private async Task LoadData()
     {
-        GameCount = await StatRepo.GetTotalGameCount();
-        PlayerWins = await StatRepo.GetTotalPlayerWins();
+        var tenantId = AuthService.Tenant?.Id;
+        if (tenantId == null)
+            return;
+        
+        GameCount = await StatRepo.GetTotalGameCount(tenantId.Value);
+        PlayerWins = await StatRepo.GetTotalPlayerWins(tenantId.Value);
         
         IsLoading = false;
     }

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @page "/games"
+@using Flights.Client.Authentication
 @using Flights.Client.Rtc
 @using Flights.Infrastructure.Port
 @using Flights.Client.Shared.Toolkit
@@ -7,6 +8,7 @@
 @using Flights.Domain.ReadModels
 
 @inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthenticationService;
 @inject IGameRepository GamesRepo
 
 @inherits RtcHubComponent
@@ -68,8 +70,12 @@
 
     private async Task ReloadGames()
     {
-        var games = await GamesRepo.GetGames();
-        Games = games.Take(20).ToList();
+        var tenantId = AuthenticationService.Tenant?.Id;
+        if (tenantId != null)
+        {
+            var games = await GamesRepo.GetGames(tenantId.Value);
+            Games = games.Take(20).ToList();
+        }
     }
 
     private void GoToPlayers()

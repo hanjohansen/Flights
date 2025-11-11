@@ -10,14 +10,21 @@
 <MudThemeProvider Theme="@_customTheme" @bind-IsDarkMode="@IsDark"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
-<MudSnackbarProvider/>
-
-<MudLayout class="@GetThemeClass()">
+<MudSnackbarProvider class="mt-6"/>
+       
+<MudLayout  class="@GetThemeClass()">
     <AppBar ToggleTheme="@ToggleTheme"/>
     <MudMainContent class="flex flex-1 overflow-hidden">
-        <div class="pt-1 flex flex-1 overflow-hidden">
-            @Body
-        </div>        
+        <AuthorizeView>
+            <Authorized>
+                <div class="pt-1 flex flex-1 overflow-hidden">
+                    @Body
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <Login/>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudMainContent>
 </MudLayout>
 

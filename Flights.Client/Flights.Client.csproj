@@ -30,4 +30,5 @@
     <PackageReference Include="Blazor.Heroicons" Version="2.2.0" />
     <PackageReference Include="MudBlazor" Version="8.14.0" />
   </ItemGroup>
+
 </Project>

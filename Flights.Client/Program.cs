@@ -4,6 +4,7 @@ using Flights.Client.Rtc;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.AddAuth();
 builder.AddGamesDatabase();
 builder.AddFileStorage();
 builder.AddSignalRServices();

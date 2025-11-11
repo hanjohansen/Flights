@@ -11,10 +11,10 @@ public class TournamentTest : DbTestBase
         var tRepo = CreateTournamentRepo(conn);
         var pRepo = CreatePlayerRepo(conn);
 
-        var players = await pRepo.GetPlayers();
+        var players = await pRepo.GetPlayers(DefaultTenantId);
         players = players.Take(5).ToList();
 
-        var state = await tRepo.CreateTournament(players.Select(x => x.Id).ToList(), 2,
+        var state = await tRepo.CreateTournament(DefaultTenantId, players.Select(x => x.Id).ToList(), 2,
             GameType.X01, false,301, InOutModifier.None, InOutModifier.Double);
 
         var model = await tRepo.GetTournament(state.Id);

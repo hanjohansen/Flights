@@ -7,6 +7,9 @@ public enum InOutModifier {None, Double, Triple, FullBull}
 
 public class GameEntity : BaseEntity
 {
+    public Guid TenantId { get; set; }
+    public TenantEntity Tenant { get; set; } = null!;
+    
     public int GameNumber {get;set;}
 
     public GameType Type { get; set;}

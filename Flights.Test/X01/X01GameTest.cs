@@ -12,6 +12,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(2);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -40,6 +41,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(2);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -92,6 +94,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(2);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -146,6 +149,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(2);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -200,6 +204,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(2);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -254,6 +259,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -319,6 +325,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -390,6 +397,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -460,6 +468,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -523,6 +532,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             true, //!!! quick finish
@@ -575,6 +585,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(4);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             true, //!!! quick finish
@@ -636,6 +647,7 @@ public class X01GameTest{
         var players = _helper.GetPlayers(4);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             true, //!!! quick finish

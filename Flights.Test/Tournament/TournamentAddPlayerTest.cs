@@ -15,7 +15,7 @@ public class TournamentAddPlayerTest
         
         players.Remove(lastPlayer);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
 
         var gameId = model.Entity.Rounds.First().Games.Last().Id;
         

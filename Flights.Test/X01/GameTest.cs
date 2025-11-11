@@ -12,6 +12,7 @@ public class GameTest
         var players = _helper.GetPlayers(4);
     
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -53,6 +54,7 @@ public class GameTest
         var players = _helper.GetPlayers(4);
     
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,
@@ -92,6 +94,7 @@ public class GameTest
         var players = _helper.GetPlayers(2);
     
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.X01, 
             false,

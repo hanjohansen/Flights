@@ -14,7 +14,7 @@ public class TournamentInitTest
         var players = _helpers.GetPlayers(3);
 
         Assert.Throws<FlightsGameException>(() =>
-            TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None));
+            TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None));
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class TournamentInitTest
     {
         var players = _helpers.GetPlayers(5);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2);
@@ -46,7 +46,7 @@ public class TournamentInitTest
     {
         var players = _helpers.GetPlayers(4);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2);
@@ -67,7 +67,7 @@ public class TournamentInitTest
     {
         var players = _helpers.GetPlayers(6);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 4);
@@ -93,7 +93,7 @@ public class TournamentInitTest
     {
         var players = _helpers.GetPlayers(7);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 3);

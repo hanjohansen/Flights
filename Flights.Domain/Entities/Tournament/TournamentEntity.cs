@@ -4,6 +4,9 @@ namespace Flights.Domain.Entities.Tournament;
 
 public class TournamentEntity : BaseEntity
 {
+    public Guid TenantId { get; set; }
+    public TenantEntity Tenant { get; set; } = null!;
+    
     public int TournamentNumber {get;set;}
     
     public GameType Type {get; set;}

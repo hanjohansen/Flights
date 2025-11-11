@@ -14,7 +14,7 @@ public class DebugReplay
         
         var playerCount = data.Max(x => x.Player);
         var players = new TestHelpers().GetPlayers(playerCount + 1);
-        var model = GameModel.Create(players, GameType.CtCricket, false, 0, InOutModifier.None, InOutModifier.None);
+        var model = GameModel.Create(Guid.Empty, players, GameType.CtCricket, false, 0, InOutModifier.None, InOutModifier.None);
 
         var state = model.SolveGameState();
 

@@ -10,12 +10,15 @@ public class RtcHubClient : IAsyncDisposable
 
     public event GameEventHandler? GameEventReceived;
     
-    public async Task Connect(string baseUrl)
+    public async Task Connect(string baseUrl, Guid tenantId)
     {
         var uri = baseUrl.TrimEnd('/') + RtcHub.HubUrl;
         
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl(uri)
+            .WithUrl(uri, options =>
+            {
+                options.Headers.Add("x-tenant-id", tenantId.ToString());
+            })
             .Build();
         
         _hubConnection.On<RtcUiMessage>(RtcHub.GetBroadcast, OnGameEventReceived);

@@ -11,6 +11,6 @@ public class StatRepoTest : DbTestBase
 
         var statsRepo = CreateStatsRepo(conn);
 
-        var results = await statsRepo.GetTotalPlayerWins();
+        var results = await statsRepo.GetTotalPlayerWins(DefaultTenantId);
     }
 }

@@ -14,7 +14,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //five players, three per game => 3+2 
         var players = _helpers.GetPlayers(5);
 
-        var model = TournamentModel.Create(players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2);
@@ -32,7 +32,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //six players, three per game
         var players = _helpers.GetPlayers(6);
 
-        var model = TournamentModel.Create(players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2);
@@ -50,7 +50,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //seven players, three per game => 3+3+wildcard
         var players = _helpers.GetPlayers(7);
 
-        var model = TournamentModel.Create(players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 3); //2 plus losers cup
@@ -73,7 +73,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //eight players, three per game => 3+3+wildcard
         var players = _helpers.GetPlayers(8);
 
-        var model = TournamentModel.Create(players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 4); //3 plus losers cup
@@ -99,7 +99,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //nine players, three per game => 3+3+wildcard
         var players = _helpers.GetPlayers(9);
 
-        var model = TournamentModel.Create(players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 4); //3 plus losers cup
@@ -125,7 +125,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //six players, four per game => 4+2
         var players = _helpers.GetPlayers(6);
 
-        var model = TournamentModel.Create(players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2); 
@@ -143,7 +143,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //seven players, four per game => 4+3
         var players = _helpers.GetPlayers(7);
 
-        var model = TournamentModel.Create(players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2); 
@@ -161,7 +161,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //eight players, four per game => 4+4
         var players = _helpers.GetPlayers(8);
 
-        var model = TournamentModel.Create(players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 2); 
@@ -179,7 +179,7 @@ public class TournamentWithMultiplePlayersPerGameTests
         //eight players, four per game => 4+4+loserscup
         var players = _helpers.GetPlayers(9);
 
-        var model = TournamentModel.Create(players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 4, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.First().Games.Count == 3); 
@@ -203,12 +203,12 @@ public class TournamentWithMultiplePlayersPerGameTests
 
         Assert.Throws<FlightsGameException>(() =>
         {
-            TournamentModel.Create(players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+            TournamentModel.Create(Guid.Empty, players, 3, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         });
         
         Assert.Throws<FlightsGameException>(() =>
         {                                                      //!!!
-            TournamentModel.Create(players, 1, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+            TournamentModel.Create(Guid.Empty, players, 1, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         });
     }
 }

@@ -24,10 +24,6 @@
             "--verbose"
           ],
           "stopAtEntry": false,
-          "serverReadyAction": {
-            "action": "openExternally",
-            "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-          },
           "env": {
             "ASPNETCORE_ENVIRONMENT": "Development"
           },
@@ -40,14 +36,10 @@
           "type": "coreclr",
           "request": "launch",
           "preLaunchTask": "build-client",
-          "program": "${workspaceFolder}/Flights.Client/bin/Debug/net7.0/Flights.Client.dll",
+          "program": "${workspaceFolder}/Flights.Client/bin/Debug/net8.0/Flights.Client.dll",
           "args": [],
           "cwd": "${workspaceFolder}/Flights.Client",
           "stopAtEntry": false,
-          "serverReadyAction": {
-            "action": "openExternally",
-            "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-          },
           "env": {
             "ASPNETCORE_ENVIRONMENT": "Development"
           },

@@ -14,10 +14,13 @@
     <MudSpacer />
     <Clock/>
     <MudSpacer />
-    <MudIconButton Icon="@Icons.Material.Filled.Contrast" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleTheme"/>    
-    <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleFullscreen"/>    
-    <div class="text-xs mt-1">
-        @GetVersion()
+    <div class="flex flex-row items-center">
+        <AppBarUserInfo/>
+        <MudIconButton Icon="@Icons.Material.Filled.Contrast" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleTheme"/>    
+        <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleFullscreen"/>    
+        <div class="text-xs mt-1">
+            @GetVersion()
+        </div>
     </div>
 </MudAppBar>
 

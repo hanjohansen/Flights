@@ -12,6 +12,7 @@ public class CtCricketTest
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.CtCricket, 
             false,
@@ -42,6 +43,7 @@ public class CtCricketTest
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.CtCricket, 
             false,
@@ -76,6 +78,7 @@ public class CtCricketTest
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.CtCricket, 
             false,
@@ -121,6 +124,7 @@ public class CtCricketTest
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.CtCricket, 
             false,
@@ -205,6 +209,7 @@ public class CtCricketTest
         var players = _helper.GetPlayers(3);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.CtCricket, 
             false,
@@ -287,6 +292,7 @@ public class CtCricketTest
         var players = _helper.GetPlayers(4);
         
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.CtCricket, 
             false,

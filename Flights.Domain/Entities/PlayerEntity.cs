@@ -4,6 +4,9 @@ using Flights.Domain.Entities.Tournament;
 namespace Flights.Domain.Entities;
 public class PlayerEntity : BaseEntity
 {
+    public Guid TenantId { get; set; }
+    public TenantEntity Tenant { get; set; } = null!;
+    
     public string Name {get;set;} = null!;
 
     public bool Deleted {get;set;}

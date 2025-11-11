@@ -7,13 +7,14 @@ namespace Flights.Infrastructure.Data.Repos;
 
 public class StatRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IStatRepository
 {
-    public async Task<GameCountState> GetTotalGameCount(){
+    public async Task<GameCountState> GetTotalGameCount(Guid tenantId){
         await using var db = await dbFactory.CreateDbContextAsync();
 
         var games = await db.Games
             .AsNoTracking()
             .Include(x => x.Players)
             .ThenInclude(x => x.Player)
+            .Where(x  => x.TenantId == tenantId)
             .ToListAsync();
 
         int? x01 = null;
@@ -77,7 +78,7 @@ public class StatRepository(IDbContextFactory<FlightsDbContext> dbFactory) : ISt
         return new GameCountState(games.Count, x01, cricket, ctCricket, atClock, playerStats.OrderByDescending(x => x.GameCount.Total).ToList());
     }
 
-    public async Task<List<PlayerWins>> GetTotalPlayerWins()
+    public async Task<List<PlayerWins>> GetTotalPlayerWins(Guid tenantId)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
@@ -89,6 +90,7 @@ public class StatRepository(IDbContextFactory<FlightsDbContext> dbFactory) : ISt
             .Include(x => x.Rounds)
             .ThenInclude(x => x.Game)
             .Select(x => x.Rounds.OrderBy(y => y.Number).LastOrDefault())
+            .Where(x => x!.Game.TenantId == tenantId)
             .ToListAsync();
 
         var playerDict = new Dictionary<Guid, PlayerWins>();

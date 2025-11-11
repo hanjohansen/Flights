@@ -8,6 +8,7 @@ namespace Flights.Infrastructure.Data;
 
 public class FlightsDbContext(DbContextOptions<FlightsDbContext> options) : DbContext(options)
 {
+    public virtual DbSet<TenantEntity> Tenants { get; set; } = null!;
     public virtual DbSet<GameEntity> Games { get; set; } = null!;
     public virtual DbSet<PlayerEntity> Players { get; set; } = null!;
     public virtual DbSet<PlayerFileEntity> PlayerFiles { get; set; } = null!;

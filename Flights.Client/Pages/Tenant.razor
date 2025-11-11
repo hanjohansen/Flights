@@ -1,0 +1,162 @@
+@page "/tenant"
+@using Flights.Client.Authentication
+@using Flights.Client.Service.Port
+@using Flights.Client.Shared.Toolkit
+
+@inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthenticationService;
+@inject ITenantService TenantService
+@inject ISnackbar Snackbar
+
+<PageTitle>Tenant</PageTitle>
+
+<div class="flex w-full flex-row justify-center mt-4 overflow-hidden">
+    <div class="flex flex-col mr-8">
+        <BigRoundButton OnClick="@GoToGames" Type="BigRoundButton.ButtonType.Secondary">
+            <MudIcon Icon="@Icons.Material.Filled.ArrowBack" Size="Size.Large"
+                Style="@($"color:{Colors.Gray.Lighten5};")"></MudIcon>
+        </BigRoundButton>
+    </div>
+    <div class="overflow-y-auto pr-6">
+        <MudPaper Elevation="3">
+            <div class="p-8">
+                <div class="text-4xl">
+                    Account
+                </div>
+                <div class="pt-8">
+                    <div class="text-2xl mb-4">
+                        Username
+                    </div>
+                    <div class="flex flex-row">
+                        <div class="w-96 mt-1">
+                            <MudTextField InputType="InputType.Text" Variant="Variant.Text"
+                                @bind-Value="Username" Immediate="true" />
+                        </div>
+                        <div class="ml-4">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Success" Size="Size.Large"
+                                StartIcon="@Icons.Material.Filled.Check" Disabled="@(OriginalUserName == Username)" OnClick="@(async(_) => await ChangeName())">Save
+                            </MudButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-12">
+                    <div class="flex flex-row mb-4">
+                        <div class="text-2xl mt-1">
+                            Password
+                        </div>
+                        @if(!EditingPassword){
+                            <div class="ml-8">
+                                <MudButton Variant="Variant.Filled" Color="Color.Info" Size="Size.Large" OnClick="@((_) => EditPassword(true))">Change Password</MudButton>
+                            </div>
+                        }
+                    </div>
+                    @if(EditingPassword){
+                        <div>
+                            <div class="mb-8">
+                                <MudTextField Label="Current password" InputType="InputType.Password" Variant="Variant.Text"
+                                    @bind-Value="CurrentPassword" Immediate="true" />
+                            </div>
+                            <div class="mb-4">
+                                <MudTextField Label="New password" InputType="InputType.Password" Variant="Variant.Text"
+                                    @bind-Value="NewPassword1" Immediate="true" />
+                            </div>
+                            <div>
+                                <MudTextField Label="Repeat new password" InputType="InputType.Password" Variant="Variant.Text"
+                                    @bind-Value="NewPassword2" Immediate="true" />
+                            </div>
+                            @if(!string.IsNullOrEmpty(PasswordError)){
+                                <div class="text-center text-red-600">
+                                    @PasswordError
+                                </div>
+                            }
+                            <div class="flex flex-row mt-4 justify-end">
+                                <div class="mr-4">
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Success" Size="Size.Large"
+                                               StartIcon="@Icons.Material.Filled.Check" OnClick="@(async(_) => await ChangePassword())">Save</MudButton>
+                                </div>
+                                <div>
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Default" Size="Size.Large" 
+                                               StartIcon="@Icons.Material.Filled.Cancel" OnClick="@((_) => EditPassword(false))">Cancel</MudButton>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </MudPaper>
+    </div>
+</div>
+
+@code {
+    private string OriginalUserName { get; set; } = string.Empty;
+    private string Username { get; set; } = string.Empty;
+
+    private bool EditingPassword {get;set;}
+
+    private string CurrentPassword {get;set;} = string.Empty;
+    private string NewPassword1 {get;set;} = string.Empty;
+    private string NewPassword2 {get;set;} = string.Empty;
+    private string PasswordError { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Username = AuthenticationService.Tenant?.Name ?? string.Empty;
+        OriginalUserName = Username;
+    }
+
+    private async Task ChangeName()
+    {
+        try
+        {
+            await TenantService.RenameTenant(Username);
+            OriginalUserName = Username;
+            Snackbar.Add("Renaming done!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task ChangePassword()
+    {
+        if (NewPassword1 != NewPassword2)
+        {
+            PasswordError = "Passwords do not match";
+            return;
+        }
+
+        try
+        {
+            await TenantService.ChangeTenantPassword(CurrentPassword, NewPassword2);
+            Snackbar.Add("Password changed!", Severity.Success);
+            CurrentPassword = String.Empty;
+            NewPassword1 = String.Empty;
+            NewPassword2 = String.Empty;
+            PasswordError = String.Empty;
+            EditingPassword = false;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+    }
+
+    private void EditPassword(bool edit){
+        EditingPassword = edit;
+
+        if(edit == false){
+            CurrentPassword = string.Empty;
+            NewPassword1 = string.Empty;
+            NewPassword2 = string.Empty;
+            PasswordError = string.Empty;
+        }
+    }
+
+    private void GoToGames()
+    {
+        NavigationManager.NavigateTo("/games");
+    }
+}

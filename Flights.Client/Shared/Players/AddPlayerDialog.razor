@@ -1,5 +1,7 @@
-﻿@using Flights.Infrastructure.Port
+﻿@using Flights.Client.Authentication
+@using Flights.Infrastructure.Port
 
+@inject IAuthenticationService AuthService
 @inject ISnackbar Snackbar
 @inject IPlayerRepository PlayerRepo
 
@@ -26,7 +28,10 @@
     {
         try
         {
-            await PlayerRepo.CreatePlayer(PlayerName);
+            var tenantId = AuthService.Tenant?.Id;
+            if(tenantId != null)
+                await PlayerRepo.CreatePlayer(tenantId.Value, PlayerName);
+            
             MudDialog.Close(DialogResult.Ok(true));
         }
         catch(Exception ex)

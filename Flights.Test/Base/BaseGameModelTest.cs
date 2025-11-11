@@ -43,7 +43,7 @@ public class BaseGameModelTest
     public void Washmachine_Validation(){
         var players = GetTwoPlayers();
 
-        var gameModel = GameModel.Create(players, GameType.X01, false,301, InOutModifier.None, InOutModifier.None);
+        var gameModel = GameModel.Create(Guid.Empty, players, GameType.X01, false,301, InOutModifier.None, InOutModifier.None);
         var gameState = gameModel.SolveGameState();
 
         Assert.True(gameState.Round == 1);
@@ -65,7 +65,7 @@ public class BaseGameModelTest
     public void GameRound_Should_Be_Added(){
         var players = GetTwoPlayers();
 
-        var gameModel = GameModel.Create(players, GameType.X01, false,301, InOutModifier.None, InOutModifier.None);
+        var gameModel = GameModel.Create(Guid.Empty, players, GameType.X01, false,301, InOutModifier.None, InOutModifier.None);
         var gameState = gameModel.SolveGameState();
 
         Assert.True(gameState.Round == 1);
@@ -97,7 +97,7 @@ public class BaseGameModelTest
     public void GameRound_Should_Not_AllowUnknownPlayer(){
         var players = GetTwoPlayers();
 
-        var gameModel = GameModel.Create(players, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var gameModel = GameModel.Create(Guid.Empty, players, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         gameModel.SolveGameState();
 
         Assert.Throws<FlightsGameException>(() => {

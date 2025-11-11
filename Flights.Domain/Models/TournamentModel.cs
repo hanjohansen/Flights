@@ -13,13 +13,14 @@ public class TournamentModel
     public readonly TournamentEntity Entity;
     private readonly ITournamentSolver _solver;
     
-    public static TournamentModel Create(List<PlayerEntity> players, int firstRoundPlayersPerGame, GameType type, bool semiFinalWithLosersCup, int x01Target, InOutModifier inMod, InOutModifier outMod)
+    public static TournamentModel Create(Guid tenantId, List<PlayerEntity> players, int firstRoundPlayersPerGame, GameType type, bool semiFinalWithLosersCup, int x01Target, InOutModifier inMod, InOutModifier outMod)
     {
         if (players.Count < 4)
             throw new FlightsGameException("Minimum of four players required for tournament!");
         
         var tournament = new TournamentEntity
         {
+            TenantId = tenantId,
             Type = type,
             SemiFinalWithLosersCup = semiFinalWithLosersCup,
             FirstRoundPlayersPerGame = firstRoundPlayersPerGame,

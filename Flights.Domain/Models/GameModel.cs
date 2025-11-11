@@ -7,7 +7,7 @@ using Flights.Domain.State.Solvers;
 namespace Flights.Domain.Models;
 public class GameModel
 {
-    public static GameModel Create(List<PlayerEntity> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod, InOutModifier outMod){
+    public static GameModel Create(Guid tenantId, List<PlayerEntity> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod, InOutModifier outMod){
 
         var gamePlayers = players.Select(p => new GamePlayerEntity
         {
@@ -17,6 +17,7 @@ public class GameModel
 
         var model = new GameModel(new GameEntity
         {
+            TenantId = tenantId,
             Type = type,
             X01Target = x01Target,
             InModifier = inMod,

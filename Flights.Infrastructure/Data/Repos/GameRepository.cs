@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Flights.Infrastructure.Data.Repos;
 public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGameRepository
 {
-    public async Task<GameState> CreateGame(List<Guid> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod, InOutModifier outMod )
+    public async Task<GameState> CreateGame(Guid tenantId, List<Guid> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod, InOutModifier outMod )
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
@@ -17,7 +17,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
 
         var selectedPlayers = players.Select(id => allPlayers.First(x => x.Id == id)).ToList();
 
-        var model = GameModel.Create(selectedPlayers, type, finishAfterFirstRank, x01Target, inMod, outMod);
+        var model = GameModel.Create(tenantId, selectedPlayers, type, finishAfterFirstRank, x01Target, inMod, outMod);
         model.Entity.GameNumber = await GetNextGameNumber(db);
 
         await db.Games.AddAsync(model.Entity);
@@ -33,7 +33,9 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
 
         var players = sourceGame.Entity.Players.Select(x => x.Player.Id).ToList();
         
-        return await CreateGame(players,
+        return await CreateGame(
+            sourceGame.Entity.TenantId,
+            players,
             sourceGame.Entity.Type,
             sourceGame.Entity.FinishAfterFirstRank,
             sourceGame.Entity.X01Target,
@@ -59,7 +61,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
         return newState;
     }
 
-    public async Task<List<GameListItemReadModel>> GetGames()
+    public async Task<List<GameListItemReadModel>> GetGames(Guid tenantId)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
@@ -71,7 +73,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
             .AsNoTracking()
             .Include(x => x.Players)
             .ThenInclude(x => x.Player)
-            .Where(x => x.TournamentGameId == null)
+            .Where(x => x.TournamentGameId == null && x.TenantId == tenantId)
             .OrderByDescending(x => x.GameNumber)
             .Take(20)
             .ToListAsync();
@@ -86,6 +88,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
             .Include(x => x.Players)
             .ThenInclude(x => x.Player)
             .OrderByDescending(x => x.TournamentNumber)
+            .Where(x => x.TenantId == tenantId)
             .Take(20)
             .ToListAsync();
         

@@ -13,7 +13,6 @@ public class CricketFinishTest : DbTestBase
         var gId = Guid.Parse("7CF7717C-6120-4136-B193-C16374DCB50F");
 
         var context = await CreateFactory(TestDb).CreateDbContextAsync();
-        await context.Database.MigrateAsync();
 
         var game = await context.Games
             .AsNoTrackingWithIdentityResolution()
@@ -28,6 +27,7 @@ public class CricketFinishTest : DbTestBase
         var players = game.Rounds.First().RoundStats.Select(x => x.Player).ToList();
 
         var model = GameModel.Create(
+            DefaultTenantId,
             players, 
             GameType.Cricket,
             false,

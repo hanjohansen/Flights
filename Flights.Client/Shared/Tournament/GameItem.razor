@@ -1,12 +1,13 @@
+@using Flights.Client.Authentication
 @using Flights.Client.Shared.Game
 @using Flights.Domain.Entities
-@using Flights.Domain.Entities.Game
 @using Flights.Domain.State
 @using Flights.Infrastructure.Port
 
 @inject IWebHostEnvironment Environment
 @inject NavigationManager NavigationManager
 @inject IPlayerRepository PlayerRepo
+@inject IAuthenticationService AuthService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
@@ -181,11 +182,13 @@
         if (Controls.AddPlayerToGame == null)
             return;
 
-
-
+        var tenantId = AuthService.Tenant?.Id;
+        if (tenantId == null)
+            return;
+        
         //load and filter players
         var existingPlayerIds = Controls.CurrentTournament.Players.Select(x => x.Id);
-        var allPlayers = await PlayerRepo.GetPlayers();
+        var allPlayers = await PlayerRepo.GetPlayers(tenantId.Value);
         var availablePlayers = allPlayers.Where(x => existingPlayerIds.Contains(x.Id) == false).ToList();
         
         //show dialog

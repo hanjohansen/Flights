@@ -11,7 +11,7 @@ public class TournamentTest
         var testHelpers = new TestHelpers();
         var players = testHelpers.GetPlayers(4);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 2);
@@ -52,7 +52,7 @@ public class TournamentTest
         var testHelpers = new TestHelpers();
         var players = testHelpers.GetPlayers(5);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 2);
@@ -89,7 +89,7 @@ public class TournamentTest
         var testHelpers = new TestHelpers();
         var players = testHelpers.GetPlayers(6);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 4);
@@ -146,7 +146,7 @@ public class TournamentTest
         var testHelpers = new TestHelpers();
         var players = testHelpers.GetPlayers(7);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 3);
@@ -178,7 +178,7 @@ public class TournamentTest
         testHelpers.FinishGame(final.Game!);
         
         //resolve
-        var state = model.ResolveTournamentState();
+        model.ResolveTournamentState();
         Assert.True(model.Entity.Rounds.Count == 3);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 1);
 

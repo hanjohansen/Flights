@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using Flights.Client.Configuration;
+using Flights.Client.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Flights.Infrastructure.Data;
 using Flights.Infrastructure.Data.Repos;
@@ -10,6 +11,8 @@ using Flights.Client.Service.Port;
 using Flights.Client.Service;
 using Flights.Storage.MySql;
 using Flights.Storage.Sqlite;
+using Flights.Infrastructure.Security;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
 
@@ -25,6 +28,20 @@ public static class ServiceExtensions
         builder.Services.AddMudServices();
         builder.Services.AddBlazoredLocalStorage();
 
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddAuth(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddMemoryCache();
+        builder.Services.AddAuthorization();
+        
+        builder.Services.AddScoped<ITenantService, TenantService>();
+        builder.Services.AddScoped<IHashingService, BCryptor>();
+        builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+        builder.Services.AddScoped<IUserSessionCache, UserSessionCache>();
+        builder.Services.AddScoped<AuthenticationStateProvider, FlightsAuthenticationStateProvider>();
+        
         return builder;
     }
     
@@ -52,6 +69,7 @@ public static class ServiceExtensions
                 throw new ApplicationException($"Unknown DbProvider '{storageConfig.DbProvider}'");
         }
 
+        builder.Services.AddScoped<ITenantRepository, TenantRepository>();
         builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
         builder.Services.AddScoped<IPlayerFileRepository, PlayerFileRepository>();
         builder.Services.AddScoped<IGameRepository, GameRepository>();

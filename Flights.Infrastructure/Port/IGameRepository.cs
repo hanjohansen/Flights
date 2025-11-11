@@ -7,7 +7,7 @@ namespace Flights.Infrastructure.Port;
 
 public interface IGameRepository
 {
-    Task<GameState> CreateGame(List<Guid> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod,
+    Task<GameState> CreateGame(Guid tenantId, List<Guid> players, GameType type, bool finishAfterFirstRank, int x01Target, InOutModifier inMod,
         InOutModifier outMod);
 
     Task<GameState> ReplayGame(Guid gameId);
@@ -16,7 +16,7 @@ public interface IGameRepository
 
     Task<(GameState, StatModel)> RevertLastDart(Guid gameId);
 
-    Task<List<GameListItemReadModel>> GetGames();
+    Task<List<GameListItemReadModel>> GetGames(Guid tenantId);
 
     Task<GameModel> GetGame(Guid id);
 

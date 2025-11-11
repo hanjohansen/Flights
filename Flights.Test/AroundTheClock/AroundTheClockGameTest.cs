@@ -12,6 +12,7 @@ public class AroundTheClockGameTest
         var players = _helper.GetPlayers(2);
             
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.AroundTheClock, 
             false,
@@ -42,6 +43,7 @@ public class AroundTheClockGameTest
         var players = _helper.GetPlayers(3);
             
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.AroundTheClock, 
             false,
@@ -290,6 +292,7 @@ public class AroundTheClockGameTest
         var players = _helper.GetPlayers(3);
 
         var model = GameModel.Create(
+            Guid.Empty,
             players,
             GameType.AroundTheClock,
             false,

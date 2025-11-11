@@ -5,6 +5,8 @@ namespace Flights.Domain.State.Solvers.Tournament;
 
 public partial class TournamentSolver(TournamentEntity entity) : ITournamentSolver
 {
+    private Guid TenantId =>  entity.TenantId;
+    
     public TournamentState Solve()
     {
         CalculateTournamentState();

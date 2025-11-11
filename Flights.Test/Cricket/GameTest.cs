@@ -12,6 +12,7 @@ public class GameTest
         var players = _helper.GetPlayers(2);
     
         var model = GameModel.Create(
+            Guid.Empty,
             players, 
             GameType.Cricket, 
             false,

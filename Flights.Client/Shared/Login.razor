@@ -1,0 +1,60 @@
+@using Flights.Client.Authentication
+
+@inject IAuthenticationService AuthenticationService
+
+<div class="flex w-full justify-center items-center">
+    <div class="mud-elevation-4 bg-light-surface border rounded-lg border-gray-300 dark:bg-dark-surface dark:border-dark-border">
+        <div class="m-4">
+            <div>
+                <MudTextField @bind-Value="User" Label="User" Variant="Variant.Text"></MudTextField>
+            </div>
+            <div class="mt-4">
+                <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Text"
+                    InputType="InputType.Password"></MudTextField>
+            </div>
+            <div class="text-center text-red-600">
+                @Error
+            </div>
+            <div class="text-center mt-4">
+                <MudButton Color="Color.Primary" OnClick="@DoLogin">Login</MudButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string User { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string Error { get; set; } = string.Empty;
+    
+    private async Task DoLogin()
+    {
+        try
+        {
+            await AuthenticationService.Authenticate(User, Password);
+        }
+        catch (Exception _)
+        {
+            Password = string.Empty;
+            Error = "Invalid user name or password";
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await AuthenticationService.TryReauthenticate();
+            }
+            catch (Exception _)
+            {
+                
+            }
+        }
+        
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}

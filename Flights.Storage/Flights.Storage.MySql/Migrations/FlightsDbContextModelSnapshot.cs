@@ -51,6 +51,9 @@ namespace Flights.Storage.MySql
                     b.Property<DateTimeOffset>("Started")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
                     b.Property<Guid?>("TournamentGameId")
                         .HasColumnType("char(36)");
 
@@ -62,6 +65,8 @@ namespace Flights.Storage.MySql
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("TournamentGameId")
                         .IsUnique();
@@ -164,7 +169,12 @@ namespace Flights.Storage.MySql
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("players", (string)null);
                 });
@@ -197,6 +207,25 @@ namespace Flights.Storage.MySql
                     b.ToTable("player_files", (string)null);
                 });
 
+            modelBuilder.Entity("Flights.Domain.Entities.TenantEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tenants", (string)null);
+                });
+
             modelBuilder.Entity("Flights.Domain.Entities.Tournament.TournamentEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -223,6 +252,9 @@ namespace Flights.Storage.MySql
                     b.Property<DateTimeOffset>("Started")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("char(36)");
+
                     b.Property<int>("TournamentNumber")
                         .HasColumnType("int");
 
@@ -234,6 +266,8 @@ namespace Flights.Storage.MySql
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("tournaments", (string)null);
                 });
@@ -313,10 +347,18 @@ namespace Flights.Storage.MySql
 
             modelBuilder.Entity("Flights.Domain.Entities.Game.GameEntity", b =>
                 {
+                    b.HasOne("Flights.Domain.Entities.TenantEntity", "Tenant")
+                        .WithMany("Games")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Flights.Domain.Entities.Tournament.TournamentGameEntity", "TournamentGame")
                         .WithOne("Game")
                         .HasForeignKey("Flights.Domain.Entities.Game.GameEntity", "TournamentGameId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Tenant");
 
                     b.Navigation("TournamentGame");
                 });
@@ -436,6 +478,17 @@ namespace Flights.Storage.MySql
                     b.Navigation("ThirdDart");
                 });
 
+            modelBuilder.Entity("Flights.Domain.Entities.PlayerEntity", b =>
+                {
+                    b.HasOne("Flights.Domain.Entities.TenantEntity", "Tenant")
+                        .WithMany("Players")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("Flights.Domain.Entities.PlayerFileEntity", b =>
                 {
                     b.HasOne("Flights.Domain.Entities.PlayerEntity", "Player")
@@ -445,6 +498,17 @@ namespace Flights.Storage.MySql
                         .IsRequired();
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("Flights.Domain.Entities.Tournament.TournamentEntity", b =>
+                {
+                    b.HasOne("Flights.Domain.Entities.TenantEntity", "Tenant")
+                        .WithMany("Tournaments")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Flights.Domain.Entities.Tournament.TournamentGameEntity", b =>
@@ -512,6 +576,15 @@ namespace Flights.Storage.MySql
                     b.Navigation("Files");
 
                     b.Navigation("Games");
+
+                    b.Navigation("Tournaments");
+                });
+
+            modelBuilder.Entity("Flights.Domain.Entities.TenantEntity", b =>
+                {
+                    b.Navigation("Games");
+
+                    b.Navigation("Players");
 
                     b.Navigation("Tournaments");
                 });

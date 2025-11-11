@@ -1,6 +1,8 @@
+@using Flights.Client.Authentication
 @using Flights.Client.Rtc
 
 @inject NavigationManager NavigationManager
+@inject IAuthenticationService AuthenticationService;
 
 @implements IAsyncDisposable
 
@@ -12,15 +14,16 @@
     protected override async Task OnInitializedAsync()
     {
         var baseUrl = NavigationManager.BaseUri;
-        await _rtcHubClient.Connect(baseUrl);
+        var tenantId = AuthenticationService.Tenant?.Id;
+        
+        if(tenantId != null)
+            await _rtcHubClient.Connect(baseUrl, tenantId.Value);
     }
     
     protected async Task Broadcast(UiEventType messageType, Guid? id)
     {
         if (id != null)
-        {
             await _rtcHubClient.PublishGameEvent(messageType, id.Value);
-        }
     }
     
     public async ValueTask DisposeAsync()

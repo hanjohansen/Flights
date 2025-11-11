@@ -15,7 +15,7 @@ namespace Flights.Storage.Sqlite.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
 
             modelBuilder.Entity("Flights.Domain.Entities.Game.GameEntity", b =>
                 {
@@ -46,6 +46,9 @@ namespace Flights.Storage.Sqlite.Migrations
                     b.Property<DateTimeOffset>("Started")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid?>("TournamentGameId")
                         .HasColumnType("TEXT");
 
@@ -57,6 +60,8 @@ namespace Flights.Storage.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("TournamentGameId")
                         .IsUnique();
@@ -159,7 +164,12 @@ namespace Flights.Storage.Sqlite.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("players", (string)null);
                 });
@@ -192,6 +202,25 @@ namespace Flights.Storage.Sqlite.Migrations
                     b.ToTable("player_files", (string)null);
                 });
 
+            modelBuilder.Entity("Flights.Domain.Entities.TenantEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tenants", (string)null);
+                });
+
             modelBuilder.Entity("Flights.Domain.Entities.Tournament.TournamentEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -218,6 +247,9 @@ namespace Flights.Storage.Sqlite.Migrations
                     b.Property<DateTimeOffset>("Started")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("TournamentNumber")
                         .HasColumnType("INTEGER");
 
@@ -229,6 +261,8 @@ namespace Flights.Storage.Sqlite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("tournaments", (string)null);
                 });
@@ -308,10 +342,18 @@ namespace Flights.Storage.Sqlite.Migrations
 
             modelBuilder.Entity("Flights.Domain.Entities.Game.GameEntity", b =>
                 {
+                    b.HasOne("Flights.Domain.Entities.TenantEntity", "Tenant")
+                        .WithMany("Games")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Flights.Domain.Entities.Tournament.TournamentGameEntity", "TournamentGame")
                         .WithOne("Game")
                         .HasForeignKey("Flights.Domain.Entities.Game.GameEntity", "TournamentGameId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Tenant");
 
                     b.Navigation("TournamentGame");
                 });
@@ -431,6 +473,17 @@ namespace Flights.Storage.Sqlite.Migrations
                     b.Navigation("ThirdDart");
                 });
 
+            modelBuilder.Entity("Flights.Domain.Entities.PlayerEntity", b =>
+                {
+                    b.HasOne("Flights.Domain.Entities.TenantEntity", "Tenant")
+                        .WithMany("Players")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("Flights.Domain.Entities.PlayerFileEntity", b =>
                 {
                     b.HasOne("Flights.Domain.Entities.PlayerEntity", "Player")
@@ -440,6 +493,17 @@ namespace Flights.Storage.Sqlite.Migrations
                         .IsRequired();
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("Flights.Domain.Entities.Tournament.TournamentEntity", b =>
+                {
+                    b.HasOne("Flights.Domain.Entities.TenantEntity", "Tenant")
+                        .WithMany("Tournaments")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("Flights.Domain.Entities.Tournament.TournamentGameEntity", b =>
@@ -507,6 +571,15 @@ namespace Flights.Storage.Sqlite.Migrations
                     b.Navigation("Files");
 
                     b.Navigation("Games");
+
+                    b.Navigation("Tournaments");
+                });
+
+            modelBuilder.Entity("Flights.Domain.Entities.TenantEntity", b =>
+                {
+                    b.Navigation("Games");
+
+                    b.Navigation("Players");
 
                     b.Navigation("Tournaments");
                 });

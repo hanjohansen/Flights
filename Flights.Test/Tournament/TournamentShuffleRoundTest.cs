@@ -12,7 +12,7 @@ public class TournamentShuffleRoundTest
         var testHelpers = new TestHelpers();
         var players = testHelpers.GetPlayers(7);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 3);
@@ -60,7 +60,7 @@ public class TournamentShuffleRoundTest
         var testHelpers = new TestHelpers();
         var players = testHelpers.GetPlayers(8);
 
-        var model = TournamentModel.Create(players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
+        var model = TournamentModel.Create(Guid.Empty, players, 2, GameType.X01, false, 301, InOutModifier.None, InOutModifier.None);
         
         Assert.True(model.Entity.Rounds.Count == 1);
         Assert.True(model.Entity.Rounds.Last().Games.Count == 4);

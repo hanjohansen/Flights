@@ -17,7 +17,7 @@ public class RepoTest
     public async Task RunOrderTest(){
         var repo = GetGameRepo();
 
-        var games = await repo.GetGames();
+        var games = await repo.GetGames(Guid.Empty);
 
         var model = await repo.GetGame(Guid.Parse("C9A63575-7F40-4990-B5E8-1A48820B398C"));
         model.SolveGameState();

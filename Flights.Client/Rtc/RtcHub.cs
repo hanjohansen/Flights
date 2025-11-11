@@ -12,8 +12,36 @@ public class RtcHub : Hub
     public const string SendBroadcast = nameof(Broadcast);
     public const string GetBroadcast = "ReceiveBroadcast";
 
+    public override async Task OnConnectedAsync()
+    {
+        var authUserId = TryGetTenantIdFromHeaders();
+
+        if (authUserId != null)
+            await Groups.AddToGroupAsync(Context.ConnectionId, authUserId.ToString() ?? "");
+        
+        await base.OnConnectedAsync();
+    }
+    
     public async Task Broadcast(RtcUiMessage message)
     {
-        await Clients.All.SendAsync(GetBroadcast, message);
+        var authUserId  = TryGetTenantIdFromHeaders();
+        
+        if (authUserId != null)
+            await Clients.Group(authUserId.ToString() ?? "").SendAsync(GetBroadcast, message);
+    }
+
+    private Guid? TryGetTenantIdFromHeaders()
+    {
+        var headers = Context.GetHttpContext()?.Request.Headers;
+        var tenantIdHeader = headers?.FirstOrDefault(x => x.Key == "x-tenant-id");
+        var tenantIdString = tenantIdHeader?.Value.FirstOrDefault();
+
+        if (tenantIdString == null)
+            return null;
+
+        if (Guid.TryParse(tenantIdString, out Guid id))
+            return id;
+        
+        return null;
     }
 }

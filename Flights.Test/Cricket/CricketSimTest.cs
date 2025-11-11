@@ -14,6 +14,7 @@ public class CricketSimTest : CricketSimBase
             Debug.WriteLine("running sim #" + i);
             
             var game = GameModel.Create(
+                Guid.Empty,
                 players, 
                 GameType.Cricket,
                 false,
@@ -33,6 +34,7 @@ public class CricketSimTest : CricketSimBase
             Debug.WriteLine("running sim #" + i);
             
             var game = GameModel.Create(
+                Guid.Empty,
                 players, 
                 GameType.Cricket,
                 true,
@@ -52,6 +54,7 @@ public class CricketSimTest : CricketSimBase
             Debug.WriteLine("running sim #" + i);
             
             var game = GameModel.Create(
+                Guid.Empty,
                 players, 
                 GameType.CtCricket,
                 false,
@@ -71,6 +74,7 @@ public class CricketSimTest : CricketSimBase
             Debug.WriteLine("running sim #" + i);
             
             var game = GameModel.Create(
+                Guid.Empty,
                 players, 
                 GameType.CtCricket,
                 true,

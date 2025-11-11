@@ -42,7 +42,7 @@ public partial class TournamentSolver
             .Select(x => x.Player)
             .ToList();
 
-        var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+        var game = GameModel.Create(TenantId, gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
             entity.OutModifier);
             
         round.Games.Add(new TournamentGameEntity
@@ -54,7 +54,7 @@ public partial class TournamentSolver
         
         //second
         gamePlayers = players.TakeLast(3).Select(x => x.Player).ToList();
-        game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+        game = GameModel.Create(TenantId, gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
             entity.OutModifier);
             
         round.Games.Add(new TournamentGameEntity
@@ -111,7 +111,7 @@ public partial class TournamentSolver
         foreach (var group in playerGroups)
         {
             var gamePlayers = group.Select(x => x.Player).ToList();
-            var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+            var game = GameModel.Create(TenantId, gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
                 entity.OutModifier);
             
             round.Games.Add(new TournamentGameEntity
@@ -176,7 +176,7 @@ public partial class TournamentSolver
                 players[i + 1].Player
             };
 
-            var game = GameModel.Create(gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
+            var game = GameModel.Create(TenantId, gamePlayers, entity.Type, true, entity.X01Target, entity.InModifier,
                 entity.OutModifier);
             
             round.Games.Add(new TournamentGameEntity
@@ -223,7 +223,7 @@ public partial class TournamentSolver
                 losers.Add(gameLoser.Player);
         }
         
-        var loserCupGame = GameModel.Create(losers, entity.Type, true, entity.X01Target, entity.InModifier,
+        var loserCupGame = GameModel.Create(TenantId, losers, entity.Type, true, entity.X01Target, entity.InModifier,
             entity.OutModifier);
 
         var loserCup = lastRound.Games.First(x => x.IsLosersCup);

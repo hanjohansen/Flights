@@ -1,0 +1,34 @@
+@using Flights.Client.Authentication
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager NavigationManager
+
+<div class="mr-4">
+    <AuthorizeView>
+        <MudMenu>
+            <ActivatorContent>
+                <div class="flex flex-row">
+                    <div>
+                        <MudIcon Icon="@Icons.Material.Filled.Groups" Size="Size.Medium"/>
+                    </div>
+                </div>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem IconColor="Color.Dark" Icon="@Icons.Material.Filled.Person" OnClick="@GoToTenant">
+                    @context.User.Identity?.Name</MudMenuItem>
+                <MudMenuItem IconColor="Color.Dark" Icon="@Icons.Material.Filled.Logout" OnClick="@DoLogout">
+                    Logout</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </AuthorizeView>
+</div>
+
+@code{
+    private async Task DoLogout(){
+        await AuthenticationService.Unauthenticate();
+    }
+
+    private void GoToTenant()
+    {
+        NavigationManager.NavigateTo("/tenant");
+    }
+}

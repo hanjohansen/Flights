@@ -1,4 +1,5 @@
 ﻿@page "/creategame"
+@using Flights.Client.Authentication
 @using Flights.Client.Shared.Games
 @using Flights.Domain.Entities
 @using Flights.Infrastructure.Port
@@ -10,6 +11,7 @@
 @inject IGameRepository GameRepo
 @inject ITournamentRepository TournamentRepo
 @inject IPlayerRepository PlayerRepo
+@inject IAuthenticationService AuthService
 @inject NavigationManager NavigationManager
 
 <div class="flex flex-1 flex-row justify-center mt-4">
@@ -26,7 +28,7 @@
         </div>
     </div>
     <div>
-        <MudPaper class="p-4">
+        <MudPaper class="p-4" Elevation="3">
             <MudGrid>
                 <MudItem>
                     <div class="text-lg">
@@ -134,7 +136,10 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        Players = await PlayerRepo.GetPlayers();
+        var tenantId = AuthService.Tenant?.Id;
+        
+        if(tenantId != null)
+            Players = await PlayerRepo.GetPlayers(tenantId.Value);
     }
 
     private void SelectionChanged(Guid playerId){
@@ -142,14 +147,6 @@
             SelectedPlayers.Remove(playerId);
         else
             SelectedPlayers.Add(playerId);
-    }
-
-    private void SelectAll()
-    {
-        if (Players.Count == SelectedPlayers.Count)
-            SelectedPlayers = new List<Guid>();
-        else
-            SelectedPlayers = Players.Select(x => x.Id).ToList();
     }
     
     private async Task HandleNewGame(){
@@ -177,8 +174,13 @@
             
         if (ShufflePlayers)
             players.Shuffle();
-            
-        var state = await GameRepo.CreateGame(players, GameType, QuickFinish, X01Value, InModifier, OutModifier);
+
+        var tenantId = AuthService.Tenant?.Id;
+
+        if (tenantId == null)
+            return;
+        
+        var state = await GameRepo.CreateGame(tenantId.Value, players, GameType, QuickFinish, X01Value, InModifier, OutModifier);
 
         NavigationManager.NavigateTo("/game/" + state.Id);
     }
@@ -193,7 +195,11 @@
         var players = SelectedPlayers.ToList();
         players.Shuffle();
 
-        var state = await TournamentRepo.CreateTournament(players, PlayersPerGame, GameType, LosersCupForThirdRank, X01Value, InModifier, OutModifier);
+        var tenantId = AuthService.Tenant?.Id;
+        if (tenantId == null)
+            return;
+
+        var state = await TournamentRepo.CreateTournament(tenantId.Value, players, PlayersPerGame, GameType, LosersCupForThirdRank, X01Value, InModifier, OutModifier);
         
         NavigationManager.NavigateTo("/tournament/" + state.Id);
     }

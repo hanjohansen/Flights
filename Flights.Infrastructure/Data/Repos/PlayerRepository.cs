@@ -6,19 +6,19 @@ using Microsoft.EntityFrameworkCore;
 namespace Flights.Infrastructure.Data.Repos;
 public class PlayerRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IPlayerRepository
 {
-    public async Task<PlayerEntity> CreatePlayer(string name)
+    public async Task<PlayerEntity> CreatePlayer(Guid tenantId, string name)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
         if(string.IsNullOrEmpty(name))
             throw new FlightsGameException("Name must not be empty!");
 
-        var players = await GetPlayersReadOnlyInternal(db, true);
+        var players = await GetPlayersReadOnlyInternal(db, tenantId, true);
 
         if(players.Any(x => x.Name == name))
             throw new FlightsGameException("A player with that name already exists!");
 
-        var player = new PlayerEntity {Name = name};
+        var player = new PlayerEntity {TenantId = tenantId, Name = name};
 
         await db.Players.AddAsync(player);
         await db.SaveChangesAsync();
@@ -42,7 +42,7 @@ public class PlayerRepository(IDbContextFactory<FlightsDbContext> dbFactory) : I
         await using var db = await dbFactory.CreateDbContextAsync();
 
         var player = await GetPlayerInternal(db, playerId, readOnly:false);
-        var allPlayers = await GetPlayersReadOnlyInternal(db, true);
+        var allPlayers = await GetPlayersReadOnlyInternal(db, player.TenantId, true);
 
         var existing = allPlayers.FirstOrDefault(x => x.Name == newName && x.Id != playerId);
 
@@ -55,11 +55,11 @@ public class PlayerRepository(IDbContextFactory<FlightsDbContext> dbFactory) : I
         return player;
     }
 
-    public async Task<List<PlayerEntity>> GetPlayers()
+    public async Task<List<PlayerEntity>> GetPlayers(Guid tenantId)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
-        return await GetPlayersReadOnlyInternal(db, false);
+        return await GetPlayersReadOnlyInternal(db, tenantId, false);
     }
 
     private async Task<PlayerEntity> GetPlayerInternal(FlightsDbContext db, Guid playerId, bool readOnly){
@@ -76,12 +76,14 @@ public class PlayerRepository(IDbContextFactory<FlightsDbContext> dbFactory) : I
         return player;
     }
 
-    private async Task<List<PlayerEntity>> GetPlayersReadOnlyInternal(FlightsDbContext db, bool includeDeleted){
+    private async Task<List<PlayerEntity>> GetPlayersReadOnlyInternal(FlightsDbContext db, Guid tenantId, bool includeDeleted){
         var query = db.Players
             .AsNoTracking();
 
-        if(!includeDeleted)
-            query = query.Where(x => x.Deleted == false);
+        if (!includeDeleted)
+            query = query.Where(x => x.TenantId == tenantId && x.Deleted == false);
+        else
+            query = query.Where(x => x.TenantId == tenantId);
         
         var players = await query
             .OrderBy(x => x.Name)
