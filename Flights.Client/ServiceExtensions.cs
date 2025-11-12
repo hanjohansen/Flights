@@ -1,4 +1,3 @@
-using Blazored.LocalStorage;
 using Flights.Client.Configuration;
 using Flights.Client.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +22,11 @@ public static class ServiceExtensions
     public static WebApplicationBuilder AddUiServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IThemeInfoProvider, ThemeInfoProvider>();
+        builder.Services.AddScoped<IBrowserStorage, BrowserStorage>();
+        
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
         builder.Services.AddMudServices();
-        builder.Services.AddBlazoredLocalStorage();
 
         return builder;
     }

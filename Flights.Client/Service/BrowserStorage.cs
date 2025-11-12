@@ -1,0 +1,47 @@
+using Flights.Client.Service.Port;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
+namespace Flights.Client.Service;
+
+public class BrowserStorage(ProtectedSessionStorage sessionStorage, ProtectedLocalStorage localStorage) : IBrowserStorage
+{
+    public async Task SetBrowserItem<T>(string key, T item) where T : notnull
+    {
+        await localStorage.SetAsync(key, item);
+    }
+    
+    public async Task<T?> GetBrowserItem<T>(string key)
+    {
+        var valTask = await localStorage.GetAsync<T>(key);
+
+        if (valTask.Success)
+            return valTask.Value;
+
+        return default;
+    }
+
+    public async Task RemoveBrowserItem(string key)
+    {
+        await localStorage.DeleteAsync(key);
+    }
+
+    public async Task SetSessionItem<T>(string key, T item) where T : notnull
+    {
+        await sessionStorage.SetAsync(key, item);
+    }
+    
+    public async Task<T?> GetSessionItem<T>(string key)
+    {
+        var valTask = await sessionStorage.GetAsync<T>(key);
+
+        if (valTask.Success)
+            return valTask.Value;
+
+        return default;
+    }
+
+    public async Task RemoveSessionItem(string key)
+    {
+        await sessionStorage.DeleteAsync(key);
+    }
+}

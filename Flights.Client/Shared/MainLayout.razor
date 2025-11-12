@@ -3,7 +3,7 @@
 @inherits LayoutComponentBase
 
 @inject IThemeInfoProvider ThemeInfoProvider
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IBrowserStorage BrowserStorage
 
 <PageTitle>Flights</PageTitle>
 
@@ -45,11 +45,11 @@
     {
         if (firstRender)
         {
-            var isDark = await LocalStorage.GetItemAsync<bool>(BrowserStorageThemeKey);
+            var isDark = await BrowserStorage.GetBrowserItem<bool?>(BrowserStorageThemeKey);
 
-            if (isDark)
+            if (isDark == true)
             {
-                IsDark = isDark;
+                IsDark = true;
                 ThemeInfoProvider.IsDarkMode = IsDark;
                 StateHasChanged();
             } 
@@ -61,7 +61,7 @@
         IsDark = !IsDark;
         
         ThemeInfoProvider.IsDarkMode = IsDark;
-        await LocalStorage.SetItemAsync(BrowserStorageThemeKey, IsDark);
+        await BrowserStorage.SetBrowserItem(BrowserStorageThemeKey, IsDark);
     }
 
     private string GetThemeClass(){

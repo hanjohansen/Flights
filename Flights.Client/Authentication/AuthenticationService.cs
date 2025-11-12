@@ -1,7 +1,7 @@
+using Flights.Client.Service.Port;
 using Flights.Domain.Exception;
 using Flights.Infrastructure.Port;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace Flights.Client.Authentication;
 
@@ -17,7 +17,7 @@ public interface IAuthenticationService
     Task Unauthenticate();
 }
 
-public class AuthenticationService(AuthenticationStateProvider authStateProvider, ITenantRepository tenantRepo, IHashingService hashService, ProtectedSessionStorage sessionStorage, IUserSessionCache sessionCache) : IAuthenticationService
+public class AuthenticationService(AuthenticationStateProvider authStateProvider, ITenantRepository tenantRepo, IHashingService hashService, IBrowserStorage browserStorage, IUserSessionCache sessionCache) : IAuthenticationService
 {
     public FlightsAuthenticationStateProvider AuthStateProvider { get; } = (FlightsAuthenticationStateProvider)authStateProvider;
 
@@ -39,30 +39,28 @@ public class AuthenticationService(AuthenticationStateProvider authStateProvider
             throw new FlightsAuthException("Invalid password");
         
         await AuthStateProvider.Login(tenant.Id, tenant.Name);
-        await sessionStorage.SetAsync(SessionStoreKey, tenant.Id);
+        await browserStorage.SetSessionItem(SessionStoreKey, tenant.Id);
     }
 
     public async Task TryReauthenticate()
     {
         //check if sessionId exists in browser storage
-        var sessionIdResult = await sessionStorage.GetAsync<Guid>(SessionStoreKey);
-        if (!sessionIdResult.Success)
+        var sessionId = await browserStorage.GetSessionItem<Guid?>(SessionStoreKey);
+        if (sessionId == null)
             return;
-        
-        var userId =  sessionIdResult.Value;
 
         //check if active session exists for id
-        if (!sessionCache.HasUserSession(userId))
+        if (!sessionCache.HasUserSession(sessionId.Value))
             return;
         
         //reauth tenant
-        var tenant = await tenantRepo.GetTenantById(userId);
+        var tenant = await tenantRepo.GetTenantById(sessionId.Value);
         await AuthStateProvider.Login(tenant.Id, tenant.Name);
     }
 
     public async Task Unauthenticate()
     {
         AuthStateProvider.Logout();
-        await sessionStorage.DeleteAsync(SessionStoreKey);
+        await browserStorage.RemoveSessionItem(SessionStoreKey);
     }
 }
