@@ -25,6 +25,8 @@
 @code{
     private async Task DoLogout(){
         await AuthenticationService.Unauthenticate();
+        NavigationManager.NavigateTo("/");
+
     }
 
     private void GoToTenant()

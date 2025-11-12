@@ -1,9 +1,11 @@
-﻿@using Flights.Client.Service.Port
+﻿@using Flights.Client.Authentication
+@using Flights.Client.Service.Port
 
 @inherits LayoutComponentBase
 
 @inject IThemeInfoProvider ThemeInfoProvider
 @inject IBrowserStorage BrowserStorage
+@inject IAuthenticationService AuthenticationService
 
 <PageTitle>Flights</PageTitle>
 
@@ -40,19 +42,22 @@
             AppbarHeight = "40px"
         }
     };
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if(AuthenticationService.Tenant == null)
+            await AuthenticationService.TryAutoAuthenticate();
+
         if (firstRender)
         {
             var isDark = await BrowserStorage.GetBrowserItem<bool?>(BrowserStorageThemeKey);
-
+            
             if (isDark == true)
             {
                 IsDark = true;
                 ThemeInfoProvider.IsDarkMode = IsDark;
                 StateHasChanged();
-            } 
+            }
         }
     }
 

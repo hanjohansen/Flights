@@ -7,6 +7,15 @@ namespace Flights.Infrastructure.Data.Repos;
 
 public class TenantRepository(IDbContextFactory<FlightsDbContext> dbFactory) : ITenantRepository
 {
+    public async Task<List<Guid>> GetAllTenantIds()
+    {
+        await using var db = await dbFactory.CreateDbContextAsync();
+        
+        var ids = await db.Tenants.Select(x => x.Id).ToListAsync();
+        
+        return ids;
+    }
+
     public async Task<TenantEntity> GetTenantByName(string name)
     {
         await using var db = await dbFactory.CreateDbContextAsync();

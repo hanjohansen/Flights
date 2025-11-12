@@ -35,6 +35,9 @@ public static class ServiceExtensions
     {
         builder.Services.AddMemoryCache();
         builder.Services.AddAuthorization();
+
+        builder.Services.AddOptions<AuthConfiguration>()
+            .BindConfiguration(AuthConfiguration.ConfigurationKey);
         
         builder.Services.AddScoped<ITenantService, TenantService>();
         builder.Services.AddScoped<IHashingService, BCryptor>();
