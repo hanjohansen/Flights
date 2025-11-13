@@ -14,7 +14,7 @@
 <MudDialogProvider/>
 <MudSnackbarProvider class="mt-6"/>
        
-<MudLayout  class="@GetThemeClass()">
+<div class="@GetThemeClass()">
     <AppBar ToggleTheme="@ToggleTheme"/>
     <MudMainContent class="flex flex-1 overflow-hidden">
         <AuthorizeView>
@@ -28,7 +28,7 @@
             </NotAuthorized>
         </AuthorizeView>
     </MudMainContent>
-</MudLayout>
+</div>
 
 @code{
     private const string BrowserStorageThemeKey = "DarkMode";
@@ -39,7 +39,7 @@
     {
         LayoutProperties = new LayoutProperties
         {
-            AppbarHeight = "40px"
+            AppbarHeight = "0px"
         }
     };
 
@@ -70,7 +70,7 @@
     }
 
     private string GetThemeClass(){
-        var baseClass = "flex min-h-screen max-h-screen bg-light-background overflow-hidden dark:bg-dark-background";
+        var baseClass = "flex flex-col min-h-screen max-h-screen bg-light-background overflow-hidden dark:bg-dark-background";
 
         if(IsDark)
         baseClass += " dark ";

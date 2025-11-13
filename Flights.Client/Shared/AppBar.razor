@@ -4,29 +4,39 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
 
-<MudAppBar Elevation="3" Style="@($"background:{Colors.Indigo.Darken4};")">
-    <div class="flex flex-row cursor-pointer" @onclick="GoToIndex">
-        <div class="w-4 h-4 mt-1">
-            <img src="dart.svg" />
+<div class="flex flex-row px-4 py-2 border-b border-light-border dark:border-dark-border text-[#777777] dark:text-[#919294]">
+    <div class="grid w-full grid-cols-3">
+        <div>
+            <div class="flex flex-row cursor-pointer" @onclick="GoToIndex">
+                <svg class="fill-current w-6 h-6" viewBox="0 0 40 40">
+                    <path d="m 5.47763,5.4596886 c 0,0 6.742623,-3.3580051 10.113266,-5.03900244 a 4.1085562,4.0947713 0 0 1 1.976217,-0.41891945 c 1.022135,0.06250545 2.237756,1.04796359 2.237756,1.04796359 L 32.025121,13.230312 V 26.248733 H 26.33666 v 5.669375 H 13.062246 L 1.0528259,19.948981 C 0.40431714,19.28403 0,18.346448 0,17.428815 0,17.004576 0.24018841,16.340955 0.42166409,15.959273 Z M 6.3836742,6.3626927 V 22.038259 c 0.00267,0.722138 0.028022,1.361821 0.6645211,2.005493 l 6.5678187,6.544454 H 25.002279 V 24.918828 Z M 22.469626,5.4610185 C 21.270017,4.2694254 20.055733,3.0937912 18.813424,1.9460849 18.410442,1.5910008 18.05683,1.3236903 17.385637,1.3316697 16.891917,1.3502883 16.224726,1.5910008 16.224726,1.5910008 L 8.4613038,5.4596886 Z"/>
+                </svg>
+                <MudText Typo="Typo.button" HtmlTag="h3" Class="ml-3">Flights</MudText>
+            </div>
         </div>
-        <MudText Typo="Typo.button" HtmlTag="h3" Class="ml-3">Flights</MudText>
-    </div>
-    <MudSpacer />
-    <Clock/>
-    <MudSpacer />
-    <div class="flex flex-row items-center">
-        <AppBarUserInfo/>
-        <MudIconButton Icon="@Icons.Material.Filled.Contrast" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleTheme"/>    
-        <MudIconButton Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit" OnClick="ToggleFullscreen"/>    
-        <div class="text-xs mt-1">
-            @GetVersion()
+        <div class="flex justify-center align-middle">
+            <Clock />
+        </div>
+        <div class="flex justify-end">
+            <div class="flex flex-row items-center ">
+                <AppBarUserInfo />
+                <div class="mr-4" @onclick="ToggleTheme">
+                    <MudIcon Icon="@Icons.Material.Filled.Contrast" Size="Size.Medium" Color="Color.Inherit"/>
+                </div>
+                <div class="mr-4" @onclick="ToggleFullscreen">
+                    <MudIcon Icon="@Icons.Material.Filled.Fullscreen" Size="Size.Medium" Color="Color.Inherit"/>
+                </div>
+                <div class="text-xs mt-1">
+                    @GetVersion()
+                </div>
+            </div>
         </div>
     </div>
-</MudAppBar>
+</div>
 
-@code{
+@code {
     [Parameter]
-    public required EventCallback ToggleTheme {get;set;}
+    public required EventCallback ToggleTheme { get; set; }
 
     private string GetVersion()
     {
@@ -41,7 +51,8 @@
         await JsRuntime.InvokeVoidAsync("toggleFullScreen");
     }
 
-    public async Task DoToggleTheme(){
+    public async Task DoToggleTheme()
+    {
         await ToggleTheme.InvokeAsync();
     }
 

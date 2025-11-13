@@ -12,7 +12,7 @@ module.exports = {
         //general
         'light-background': '#d1d1d1',
         'light-surface': '#ffffff',
-        'light-border': '#f3f4f6',
+        'light-border': '#b6b7b1',
 
         'dark-background': '#010409',        
         'dark-surface': '#212427',
