@@ -59,19 +59,11 @@ public class GameModel
         if (Entity.FinishLocked || Entity.Finished != null)
             throw new FlightsGameException("Game is finished");
 
-        if(playerStat.Player.Id != playerId){
+        if(playerStat.Player.Id != playerId)
             throw new FlightsGameException("Its " + playerStat.Player.Name + "'s turn!");
-        }
 
         dart.Validate();
         var dartStat = new DartStatEntity {Modifier=dart.Modifier, Value = dart.Value};
-
-        if (dartStat.Value == 26 && playerStat.AnyDartThrown())
-            throw new FlightsGameException("Waschmachine not allowed!");
-        
-        var is26Present = playerStat.GetDartsList().Any(x => x.Value == 26);
-        if(is26Present && dartStat.Value != 0)
-            throw new FlightsGameException("Waschmachine has been thrown! Only 0 or miss are allowed!");
 
         if(playerStat.FirstDart == null){
             playerStat.FirstDart = dartStat;

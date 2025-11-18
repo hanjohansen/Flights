@@ -11,7 +11,7 @@
                 <ScoreButton Number="@i" ReportScore="@ReportScore"/>
             </div>
         }
-        <ScoreButton Number="26" Disabled="@(SelectedModifier != DartModifier.None || GetOpenDartsCount() != 3)" ReportScore="@ReportScore">
+        <ScoreButton Number="0" Disabled="@(SelectedModifier != DartModifier.None || ShouldDisableWashmachine())" ReportScore="@ReportWashmachine">
             <MudIcon Icon="@Icons.Material.Filled.LocalLaundryService" Size="@Size.Large"/>
         </ScoreButton>
         <BullsButton SelectedModifier="@SelectedModifier" ReportScore="@ReportScore"/>
@@ -74,6 +74,31 @@
         
         await Controls.ReportNullDart();
     }
+    
+    private async Task ReportWashmachine(int score){
+        if (Controls.ReportScore == null || ShouldDisableWashmachine())
+            return;
+        
+        var currentGame = Controls.CurrentGame;
+        var currentPlayer = currentGame.PlayerStates.First(x => x.PlayerId == currentGame.CurrentPlayerId);
+        var remainingDarts = currentPlayer.Darts?.RemainingDarts() ?? 3;
+
+        var values = (currentPlayer.Darts?.GetDartsList() ?? []).Select(x => x.Value).ToList();
+        
+        for (int i = 0; i < remainingDarts; i++)
+        {
+            var addedValue = 0;
+            if(values.All(x => x != 1))
+                addedValue = 1;
+            if(values.All(x => x != 5))
+                addedValue = 5;
+            if(values.All(x => x != 20))
+                addedValue = 20;
+            
+            values.Add(addedValue);
+            await Controls.ReportScore(StatModel.Init(addedValue));
+        }
+    }
 
     private void GoToGames(){
         if (Controls.CurrentGame.TournamentId != null)
@@ -82,19 +107,26 @@
             NavigationManager.NavigateTo("/games");
     }
     
-    private int GetOpenDartsCount(){
+    private bool ShouldDisableWashmachine(){
         if(Controls.CurrentGame.CurrentPlayerId == null)
-            return 3;
+            return true;
 
         var currentGame = Controls.CurrentGame;
         var currentPlayer = currentGame.PlayerStates.First(x => x.PlayerId == currentGame.CurrentPlayerId);
-        var darts = currentPlayer.Darts;
 
-        if(darts == null)
-            return 3;
+        if (currentPlayer.Darts == null)
+            return false;
+        
+        var darts = currentPlayer.Darts.GetDartsList();
+        List<int> allowed = [1, 5, 20];
 
-        var dartsThrown = darts.GetDartsList().Count;
+        var modifierPresent = darts.Any(x => x.Modifier != DartModifier.None);
+        var invalidValuePresent = darts.Any(x => !allowed.Contains(x.Value));
+        var duplicatedValue = darts.Count != darts.Distinct().Count();
+        
+        if (modifierPresent || invalidValuePresent || duplicatedValue)
+            return true;
 
-        return 3 - dartsThrown;
+        return false;
     }
 }

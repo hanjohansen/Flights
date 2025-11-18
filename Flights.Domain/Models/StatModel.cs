@@ -12,7 +12,7 @@ public record StatModel(DartModifier Modifier, int Value){
     }
     
     public void Validate(){
-        if((Value < 0 || Value > 20) && Value != 25 && Value != 26)
+        if((Value < 0 || Value > 20) && Value != 25)
             throw new FlightsGameException("Invalid value (" + Value + ")!");
 
         if(Value == 0 && 
