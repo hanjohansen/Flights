@@ -1,0 +1,30 @@
+@using Flights.Domain.State
+
+<div class="flex flex-row">
+    <div class="">
+        @if(State.Has60){
+            <MudIcon Icon="@Icons.Material.Filled.Grade" Size="Size.Medium" Color="Color.Warning"/>
+        }else{
+            <MudIcon Icon="@Icons.Material.Outlined.Grade" Size="Size.Medium" Color="Color.Default"/>
+        }        
+    </div>
+    <div class="-ml-1">
+        @if(State.Has120){
+            <MudIcon Icon="@Icons.Material.Filled.Grade" Size="Size.Medium" Color="Color.Warning"/>
+        }else{
+            <MudIcon Icon="@Icons.Material.Outlined.Grade" Size="Size.Medium" Color="Color.Default"/>
+        }    
+    </div>
+    <div class="-ml-1">
+        @if(State.Has180){
+            <MudIcon Icon="@Icons.Material.Filled.Grade" Size="Size.Medium" Color="Color.Warning"/>
+        }else{
+            <MudIcon Icon="@Icons.Material.Outlined.Grade" Size="Size.Medium" Color="Color.Default"/>
+        }    
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public required X01State State {get;set;}
+}

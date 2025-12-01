@@ -41,4 +41,17 @@ public class RoundStatEntity : BaseEntity
 
         return result;
     }
+
+    public bool IsWashmachine()
+    {
+        var darts = GetDartsList();
+
+        if (darts.Count != 3)
+            return false;
+
+        var washDarts = darts.Count(x => x.Modifier == DartModifier.None
+                                         && (x.Value == 1 || x.Value == 5 || x.Value == 20));
+
+        return washDarts == 3;
+    }
 }

@@ -2,8 +2,8 @@
 
 <div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3 mr-2 bg-light-surface dark:bg-dark-surface">
     <div class="@GetBorderClasses()">
-        <div class="grid grid-cols-2 @GetNameAndPointsClasses()">
-            <div class="grid grid-cols-4">
+        <div class="grid grid-cols-2 @GetNameAndPointsClasses() ">
+            <div class="grid grid-cols-5">
                 <div class="col-span-3 pl-4">
                     <MudStack Spacing="0">
                         <div class="text-4xl">
@@ -44,15 +44,36 @@
                             <MudIcon Icon="@Icons.Material.Filled.HideSource" Size="Size.Medium" Color="Color.Default"/>
                         </div>
                         <div class="ml-2 mt-0 text-lg">
-                            @Player.PointAvg
+                            @Player.X01State!.PointAvg
                         </div>
                     </div>
                     <div class="flex flex-row items-center mt-1">
                         <div class="">
-                            <MudIcon Icon="@Icons.Material.Outlined.Grade" Size="Size.Medium" Color="Color.Default"/>
+                            <MudIcon Icon="@Icons.Material.Filled.Grade" Size="Size.Medium" Color="Color.Default"/>
                         </div>
                         <div class="ml-2 mt-0 text-lg">
-                            @Player.PointMax
+                            @Player.X01State.PointMax
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col pt-5 text-[#777777] dark:text-[#919294]">
+                    <div class="flex flex-row items-center mt-1">
+                        <Triple20Indicator State="@Player.X01State"></Triple20Indicator>
+                    </div>
+                    <div class="flex flex-row items-center mt-2 ml-2">
+                        <div class="">
+                            <MudIcon Icon="@Icons.Material.Filled.LocalLaundryService" Size="Size.Medium" Color="Color.Default"/>
+                        </div>
+                        <div class="ml-2 mt-0 text-lg">
+                            @Player.X01State!.WashmachineCount
+                        </div>
+                    </div>
+                    <div class="flex flex-row items-center mt-1 ml-2">
+                        <div class="">
+                            <MudIcon Icon="@Icons.Material.Outlined.Clear" Size="Size.Medium" Color="Color.Default"/>
+                        </div>
+                        <div class="ml-2 mt-0 text-lg">
+                            @Player.X01State!.Misses
                         </div>
                     </div>
                 </div>

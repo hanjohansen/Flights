@@ -24,9 +24,8 @@ public record PlayerState(
     bool IsBust,
     int? Rank,
     int Points,
-    decimal PointAvg,
-    int PointMax,
     DartsState? Darts,
+    X01State? X01State,
     List<DartsState>? Checkouts = null,
     CricketState? CricketState = null,
     AroundTheClockState? AroundTheClockState = null);
@@ -96,6 +95,16 @@ public record DartState(
         }
     }
 }
+
+public record X01State(
+    decimal PointAvg,
+    int PointMax,
+    bool Has60,
+    bool Has120,
+    bool Has180,
+    int WashmachineCount,
+    int Misses
+);
 
 public enum CricketValue {None, Single, Double, Open, Closed}
 

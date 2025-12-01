@@ -230,8 +230,8 @@ public class X01Solver(GameEntity entity) : IGameSolver
             List<DartsState> checkout = [];
 
             if(entity.OutModifier == InOutModifier.Double)
-                checkout = _checkoutRepo.GetCheckout(refStat.EndPoints, remainingDarts);            
-            
+                checkout = _checkoutRepo.GetCheckout(refStat.EndPoints, remainingDarts);
+
             stateResult.Add(new PlayerState(
                 refStat.Player.Id,
                 refStat.Player.Name,
@@ -239,9 +239,8 @@ public class X01Solver(GameEntity entity) : IGameSolver
                 refStat.IsBust,
                 refStat.Rank,
                 refStat.EndPoints,
-                CountPlayerAverage(playerStats.Player.Id),
-                GetMaxPointsInRounds(playerStats.Player.Id),
                 dartState,
+                CalculatePlayerState(playerStats.Player.Id),
                 checkout));
         }
 
@@ -266,30 +265,70 @@ public class X01Solver(GameEntity entity) : IGameSolver
         return nextPlayer?.Player.Id;
     }
 
-    private decimal CountPlayerAverage(Guid playerId){
-        var allRounds = entity.Rounds.SelectMany(x => x.RoundStats)
-            .Where(x => x.Player.Id == playerId && x.GetDartsList().Count != 0)
-            .ToList();
-
-        var allPoints = allRounds.Select(x => x.StartPoints - x.EndPoints).Sum();
-
-        if(allRounds.Count == 0)
-            return 0;
-
-        var avg = allPoints / (allRounds.Count * 1.0m);
-        return Math.Round(avg, 1);
-    }
-
-    private int GetMaxPointsInRounds(Guid playerId)
+    private X01State CalculatePlayerState(Guid playerId)
     {
-        var allRounds = entity.Rounds.SelectMany(x => x.RoundStats)
-            .Where(x => x.Player.Id == playerId && x.GetDartsList().Count != 0 && x.IsBust == false)
-            .ToList();
-        
-        if(allRounds.Count == 0)
-            return 0;
+        var avg = 0m;
+        var max = 0;
+        var has60 = false;
+        var has120 = false;
+        var has180 = false;
+        var washes = 0;
+        var misses = 0;
 
-        var max = allRounds.Max(x => x.GetDartsList().Sum(y => y.GetCalculatedValue()));
-        return max;
+        var roundCount = 0;
+        
+        var allRounds = entity.Rounds.SelectMany(x => x.RoundStats)
+            .Where(x => x.Player.Id == playerId)
+            .ToList();
+
+        foreach (var round in allRounds)
+        {
+            var darts = round.GetDartsList();
+            if (darts.Count == 0)
+                continue;
+
+            roundCount++;
+
+            if (round.IsBust)
+            {
+                misses++;
+                continue;
+            }
+
+            var roundPoints = darts.Sum(x => x.GetCalculatedValue());
+            avg += roundPoints;
+            
+            if(roundPoints > max)
+                max = roundPoints;
+
+            var triple20Count = darts.Count(x => x is { Modifier: DartModifier.Triple, Value: 20 });
+            
+            if(triple20Count == 3)
+                has180 = true;
+            
+            if(triple20Count >= 2)
+                has120 = true;
+            
+            if(triple20Count >= 1)
+                has60 = true;
+
+            if (round.IsWashmachine())
+                washes++;
+            
+            if (darts.Count == 3 && roundPoints == 0)
+                misses++;
+        }
+        
+        if(roundCount > 0)
+            avg /= (roundCount * 1.0m);
+        
+        return new X01State(
+            Math.Round(avg, 1),
+            max,
+            has60,
+            has120,
+            has180,
+            washes,
+            misses);
     }
 }

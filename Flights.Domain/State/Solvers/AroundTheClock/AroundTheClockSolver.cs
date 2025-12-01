@@ -99,9 +99,8 @@ public class AroundTheClockSolver(GameEntity game) : IGameSolver
                 IsBust: false,
                 Rank: null,
                 Points: dto.Points,
-                PointAvg: 0,
-                PointMax: 0,
                 Darts: dto.Darts,
+                null,
                 null,
                 null,
                 dto.ToState());
