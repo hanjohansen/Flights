@@ -21,8 +21,9 @@
     </div>
     <div class="flex flex-col overflow-y-auto pr-3">
         @if(IsLoading){
-            <div>
+            <div class="w-96 text-center text-2xl mt-4">
                 Loading..
+                <MudProgressLinear Color="Color.Default" Indeterminate="true"/>
             </div>
         }
         @if(GameCount != null){
@@ -52,7 +53,12 @@
         NavigationManager.NavigateTo("/");
     }
 
-    protected override async Task OnInitializedAsync() => await LoadData();
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(firstRender){
+            await LoadData();
+            StateHasChanged();
+        }
+    }
 
     private async Task LoadData()
     {
