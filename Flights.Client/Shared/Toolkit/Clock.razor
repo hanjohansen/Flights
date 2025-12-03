@@ -1,5 +1,3 @@
-@implements IAsyncDisposable
-
 @inject IJSRuntime JsRuntime
 
 <div id="clock-div" class="font-bold align-middle">
@@ -11,10 +9,5 @@
     {
         if (firstRender)
             await JsRuntime.InvokeVoidAsync("startClock");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await JsRuntime.InvokeVoidAsync("stopClock");
     }
 }
