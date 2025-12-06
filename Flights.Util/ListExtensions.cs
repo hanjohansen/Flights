@@ -63,4 +63,16 @@ public static class ListExtensions
         
         return last;
     }
+
+    public static bool Matches<T>(this List<T> list, List<T> otherList)
+    {
+        if (list.Count != otherList.Count)
+            return false;
+        
+        foreach(var other in otherList)
+            if (!list.Contains(other))
+                return false;
+
+        return true;
+    }
 }

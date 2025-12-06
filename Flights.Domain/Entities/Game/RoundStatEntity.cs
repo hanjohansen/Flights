@@ -1,3 +1,5 @@
+using Flights.Util;
+
 namespace Flights.Domain.Entities.Game;
 public class RoundStatEntity : BaseEntity
 {
@@ -42,16 +44,20 @@ public class RoundStatEntity : BaseEntity
         return result;
     }
 
+    private static readonly List<int> Washmachine = [1, 5, 20];
+
     public bool IsWashmachine()
     {
         var darts = GetDartsList();
 
         if (darts.Count != 3)
             return false;
+        
+        if (darts.Any(x => x.Modifier != DartModifier.None))
+            return false;
 
-        var washDarts = darts.Count(x => x.Modifier == DartModifier.None
-                                         && (x.Value == 1 || x.Value == 5 || x.Value == 20));
+        var points = darts.Select(x => x.Value).ToList();
 
-        return washDarts == 3;
+        return points.Matches(Washmachine);
     }
 }
