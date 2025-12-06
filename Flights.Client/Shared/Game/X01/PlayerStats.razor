@@ -27,15 +27,16 @@
                 </div>
                 <div class="flex flex-col pt-5 text-[#777777] dark:text-[#919294]">
                     <div class="flex flex-row items-center">
-                        <div class="ml-1 text-2xl">
+                        <div class="ml-1 text-2xl mr-[14px]">
                             <span>&Sigma;</span>
                         </div>
-                        <div class="ml-[14px] text-lg">
-                            @(Player.Darts?.Sum() ?? 0)
-                        </div>
                         @if(Player.IsBust){
-                            <div class="ml-2">
+                            <div class="">
                                 <MudIcon Icon="@Icons.Material.Filled.Clear" Size="Size.Medium" Color="Color.Error"/>
+                            </div>
+                        }else{
+                            <div class="text-lg">
+                                @(Player.Darts?.Sum() ?? 0)
                             </div>
                         }
                     </div>
