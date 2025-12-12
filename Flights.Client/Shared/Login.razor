@@ -33,7 +33,7 @@
         {
             await AuthenticationService.Authenticate(User, Password);
         }
-        catch (Exception _)
+        catch (Exception)
         {
             Password = string.Empty;
             Error = "Invalid user name or password";
@@ -48,9 +48,9 @@
             {
                 await AuthenticationService.TryReauthenticate();
             }
-            catch (Exception _)
+            catch (Exception)
             {
-                
+                //nothing to do
             }
         }
         
