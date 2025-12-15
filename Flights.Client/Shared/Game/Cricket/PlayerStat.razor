@@ -1,3 +1,4 @@
+@using Flights.Client.Shared.Toolkit
 @using Flights.Domain.State
 
 <div id="@Player.PlayerId" class="flex flex-none rounded-lg mr-2 mb-1 shadow-lg w-[175px] bg-light-surface dark:bg-dark-surface">
@@ -13,7 +14,7 @@
                             <PlayerDarts Darts="@Player.Darts"/>
                         </div>
                         <div class="text-6xl font-bold">
-                            @Player.Points
+                            <AnimatedPoints Points="@Player.Points"/>
                         </div>
                     </div>
                     

@@ -1,3 +1,4 @@
+@using Flights.Client.Shared.Toolkit
 @using Flights.Domain.State
 
 <div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3 mr-2 bg-light-surface dark:bg-dark-surface">
@@ -11,7 +12,8 @@
                         </div>
                         <div class="text-8xl font-bold">
                             @if(Player.Rank == null){
-                                @Player.Points   
+                                <AnimatedPoints Points="@Player.Points"/>
+                                @* @Player.Points    *@
                             }else{
                                 <div class="flex flex-row">
                                     <div class="">
