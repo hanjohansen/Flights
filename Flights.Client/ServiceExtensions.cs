@@ -14,6 +14,7 @@ using Flights.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using MudBlazor.Services;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace Flights.Client;
 
@@ -113,5 +114,17 @@ public static class ServiceExtensions
                 context.Database.Migrate();
 
         return app;  
+    }
+
+    public static WebApplicationBuilder AddDataProtectionApi(this WebApplicationBuilder builder)
+    {
+        var keysPath = Path.Combine(Directory.GetCurrentDirectory(), "dpapi-keys");
+
+        builder.Services
+            .AddDataProtection()
+            .SetApplicationName("flights")
+            .PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+
+        return builder;
     }
 }

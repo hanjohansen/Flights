@@ -6,6 +6,7 @@ obj
 Storage
 storage
 apidata
+dpapi-keys
 
 node_modules
 
