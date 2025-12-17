@@ -25,8 +25,8 @@ public static class ServiceExtensions
         builder.Services.AddScoped<IThemeInfoProvider, ThemeInfoProvider>();
         builder.Services.AddScoped<IBrowserStorage, BrowserStorage>();
         
-        builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor();
+        builder.Services.AddRazorComponents()
+            .AddInteractiveServerComponents();
         builder.Services.AddMudServices();
 
         return builder;

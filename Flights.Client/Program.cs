@@ -3,7 +3,7 @@ using Flights.Client.Rtc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// setup
 builder.AddAuth();
 builder.AddDataProtectionApi();
 builder.AddGamesDatabase();
@@ -11,25 +11,15 @@ builder.AddFileStorage();
 builder.AddSignalRServices();
 builder.AddUiServices();
 
+// run
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.UseResponseCompression();
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
 app.UseDatabaseMigrations();
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
+app.UseAntiforgery();
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 app.MapHub<RtcHub>(RtcHub.HubUrl);
 
 app.Run();
