@@ -116,6 +116,16 @@ public static class ServiceExtensions
         return app;  
     }
 
+    public static WebApplication UseStaticAssets(this WebApplication app){
+
+        app.UseStaticAssets(); //needed for non statics => jingles & sound effects
+
+        app.MapStaticAssets()
+            .ShortCircuit();
+
+        return app;  
+    }
+
     public static WebApplicationBuilder AddDataProtectionApi(this WebApplicationBuilder builder)
     {
         var keysPath = Path.Combine(Directory.GetCurrentDirectory(), "dpapi-keys");

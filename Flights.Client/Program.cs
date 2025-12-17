@@ -15,7 +15,7 @@ builder.AddUiServices();
 var app = builder.Build();
 
 app.UseDatabaseMigrations();
-app.UseStaticFiles();
+app.UseStaticAssets();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()

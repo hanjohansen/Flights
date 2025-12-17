@@ -4,22 +4,22 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <base href="/" />
-        <link rel="icon" type="image/png" href="dart.png"/>
-        <link rel="stylesheet" href="/css/styles.css"/>
-        <link rel="stylesheet" href="/css/custom.css"/>
-        <link rel="stylesheet" href="/css/font.css"/>        
-        <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css"/>
+        <link rel="icon" type="image/png" href="@Assets["dart.png"]"/>
+        <link rel="stylesheet" href="@Assets["css/styles.css"]"/>
+        <link rel="stylesheet" href="@Assets["css/custom.css"]"/>
+        <link rel="stylesheet" href="@Assets["css/font.css"]"/>        
+        <link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]"/>
         <HeadOutlet @rendermode="InteractiveServer" />
     </head>
     <body>  
         <Routes @rendermode="InteractiveServer" />
         <script src="_framework/blazor.web.js"></script>
-        <script src="_content/MudBlazor/MudBlazor.min.js"></script>
-        <script src="js/fullscreen.js"></script>
-        <script src="js/scrolling.js"></script>
-        <script src="js/focus.js"></script>
-        <script src="js/sound.js"></script>
-        <script src="js/clock.js"></script>
-        <script src="js/counter.js"></script>
+        <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
+        <script src="@Assets["js/fullscreen.js"]"></script>
+        <script src="@Assets["js/scrolling.js"]"></script>
+        <script src="@Assets["js/focus.js"]"></script>
+        <script src="@Assets["js/sound.js"]"></script>
+        <script src="@Assets["js/clock.js"]"></script>
+        <script src="@Assets["js/counter.js"]"></script>
     </body>
 </html>
