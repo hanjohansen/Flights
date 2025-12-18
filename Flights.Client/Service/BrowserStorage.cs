@@ -50,7 +50,7 @@ public class BrowserStorage(ProtectedSessionStorage sessionStorage, ProtectedLoc
         await localStorage.SetAsync(key, storageItem);
     }
 
-        public async Task SetBrowserItem<T>(string key, T item, TimeSpan duration) where T : notnull
+    public async Task SetBrowserItem<T>(string key, T item, TimeSpan duration) where T : notnull
     {
         var storageItem = new StorageItem<T>(item, duration);
 
@@ -119,17 +119,62 @@ public class BrowserStorage(ProtectedSessionStorage sessionStorage, ProtectedLoc
 
     public async Task SetSessionItem<T>(string key, T item) where T : notnull
     {
-        await sessionStorage.SetAsync(key, item);
+        var storageItem = new StorageItem<T>(item);
+        await sessionStorage.SetAsync(key, storageItem);
+    }
+
+    public async Task SetSessionItem<T>(string key, T item, TimeSpan duration) where T : notnull
+    {
+        var storageItem = new StorageItem<T>(item, duration);
+        await sessionStorage.SetAsync(key, storageItem);
     }
 
     public async Task<T?> GetSessionItem<T>(string key)
     {
         try
         {
-            var valTask = await sessionStorage.GetAsync<T>(key);
+            var valTask = await sessionStorage.GetAsync<StorageItem<T>>(key);
 
-            if (valTask.Success)
-                return valTask.Value;
+            if (valTask.Success && valTask.Value != null)
+            {
+                if(valTask.Value?.IsExpired() == true)
+                {
+                    await RemoveSessionItem(key);
+                    return default;
+                }
+
+                return valTask.Value!.Item;
+            }
+        }
+        catch (Exception)
+        {
+            await RemoveSessionItem(key);
+        }
+
+        return default;
+    }
+
+    public async Task<T?> GetAndTouchSessionItem<T>(string key)
+    {
+        try
+        {
+            var valTask = await sessionStorage.GetAsync<StorageItem<T>>(key);
+
+            if (valTask.Success && valTask.Value != null)
+            {
+                if(valTask.Value?.IsExpired() == true)
+                {
+                    await RemoveSessionItem(key);
+                    return default;
+                }
+
+                var storageItem = valTask.Value!;
+                storageItem.Touch();
+
+                await sessionStorage.SetAsync(key, storageItem);
+
+                return storageItem.Item;
+            }
         }
         catch (Exception)
         {

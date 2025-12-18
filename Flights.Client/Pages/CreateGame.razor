@@ -1,5 +1,6 @@
 ﻿@page "/creategame"
 @using Flights.Client.Authentication
+@using Flights.Client.Service.Port
 @using Flights.Client.Shared.Games
 @using Flights.Domain.Entities
 @using Flights.Infrastructure.Port
@@ -13,6 +14,7 @@
 @inject IPlayerRepository PlayerRepo
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavigationManager
+@inject IBrowserStorage BrowserStorage
 
 <div class="flex flex-1 flex-row justify-center mt-4">
     <div class="flex flex-col mr-8">
@@ -132,6 +134,8 @@
     private List<Guid> SelectedPlayers { get; set; } = new();
 
     private bool ShufflePlayers { get; set; }
+
+    private const string PlayersStorageKey = "UsedPlayers";
     
     protected override async Task OnInitializedAsync()
     {
@@ -140,6 +144,24 @@
         
         if(tenantId != null)
             Players = await PlayerRepo.GetPlayers(tenantId.Value);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+        if(!firstRender)
+            return;
+
+        try{
+            var preselectedPlayerIds = await BrowserStorage.GetSessionItem<List<Guid>>(PlayersStorageKey);
+
+            if(preselectedPlayerIds == null)
+                return;
+
+            foreach(var id in preselectedPlayerIds)
+                if(Players.Any(x => x.Id == id))
+                    SelectedPlayers.Add(id);
+            
+            StateHasChanged();
+        }catch(Exception){}
     }
 
     private void SelectionChanged(Guid playerId){
@@ -161,6 +183,8 @@
                 await CreateNewTournament();
             else
                 await CreateNewGame();
+
+            await BrowserStorage.SetSessionItem<List<Guid>>(PlayersStorageKey, SelectedPlayers, TimeSpan.FromHours(2));
         }
         catch (Exception ex)
         {
