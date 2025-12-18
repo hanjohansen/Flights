@@ -192,7 +192,7 @@ public class TournamentRepository(IDbContextFactory<FlightsDbContext> dbFactory)
         try{
             var nr = await db.Tournaments.Select(x => x.TournamentNumber).MaxAsync();
             return nr += 1;
-        }catch(InvalidOperationException _){
+        }catch(InvalidOperationException){
             return 1;
         }
     }

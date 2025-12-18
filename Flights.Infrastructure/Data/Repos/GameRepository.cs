@@ -164,7 +164,7 @@ public class GameRepository(IDbContextFactory<FlightsDbContext> dbFactory) : IGa
             var nr = await db.Games.Select(x => x.GameNumber).MaxAsync();
             return nr+=1;
         }
-        catch(InvalidOperationException _){
+        catch(InvalidOperationException){
             return 1;
         }
     }
