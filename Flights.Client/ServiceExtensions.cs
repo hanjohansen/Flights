@@ -118,7 +118,7 @@ public static class ServiceExtensions
 
     public static WebApplication UseStaticAssets(this WebApplication app){
 
-        app.UseStaticAssets(); //needed for non statics => jingles & sound effects
+        app.UseStaticFiles(); //needed for non statics => jingles & sound effects
 
         app.MapStaticAssets()
             .ShortCircuit();
