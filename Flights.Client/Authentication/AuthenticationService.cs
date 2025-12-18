@@ -49,13 +49,13 @@ public class AuthenticationService(
             throw new FlightsAuthException("Invalid password");
         
         await AuthStateProvider.Login(tenant.Id, tenant.Name);
-        await browserStorage.SetSessionItem(SessionStoreKey, tenant.Id);
+        await browserStorage.SetBrowserItem(SessionStoreKey, tenant.Id, TimeSpan.FromDays(3));
     }
 
     public async Task TryReauthenticate()
     {
         //check if sessionId exists in browser storage
-        var sessionId = await browserStorage.GetSessionItem<Guid?>(SessionStoreKey);
+        var sessionId = await browserStorage.GetAndTouchBrowserItem<Guid?>(SessionStoreKey);
         if (sessionId == null)
             return;
 
@@ -82,12 +82,12 @@ public class AuthenticationService(
         var tenant =  await tenantRepo.GetTenantById(tenantId);
         
         await AuthStateProvider.Login(tenant.Id, tenant.Name);
-        await browserStorage.SetSessionItem(SessionStoreKey, tenantId);
+        await browserStorage.SetBrowserItem(SessionStoreKey, tenant.Id, TimeSpan.FromDays(3));
     }
 
     public async Task Unauthenticate()
     {
         AuthStateProvider.Logout();
-        await browserStorage.RemoveSessionItem(SessionStoreKey);
+        await browserStorage.RemoveBrowserItem(SessionStoreKey);
     }
 }
