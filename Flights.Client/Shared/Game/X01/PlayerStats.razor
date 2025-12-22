@@ -12,8 +12,7 @@
                         </div>
                         <div class="text-8xl font-bold">
                             @if(Player.Rank == null){
-                                <AnimatedPoints Points="@Player.Points"/>
-                                @* @Player.Points    *@
+                                <RollingNumber Number="@Player.Points" RollerHeight="6rem"/>
                             }else{
                                 <div class="flex flex-row">
                                     <div class="">

@@ -3,7 +3,7 @@
 
 <div id="@Player.PlayerId" class="rounded-lg mb-2 shadow-lg mud-elevation-3 mr-2 bg-light-surface dark:bg-dark-surface">
     <div class="@GetBorderClasses()">
-        <div class="grid grid-cols-5 text-gray-600 py-2">
+        <div class="grid grid-cols-5 text-gray-600">
             <div class="grid grid-cols-4 @GetNameAndPointsClasses()">
                 <div class="col-span-3 pl-4">
                     <MudStack Spacing="0">
@@ -12,7 +12,7 @@
                         </div>
                         <div class="text-8xl font-bold">
                             @if(Player.Rank == null){
-                                <AnimatedPoints Points="@Player.Points"/>
+                                <RollingNumber Number="@Player.Points" RollerHeight="6rem"/>
                             }else{
                                 <div class="flex flex-row">
                                     <div class="">
@@ -27,7 +27,7 @@
                     </MudStack>
                 </div>
             </div>
-            <div class="col-span-4 mr-2">
+            <div class="col-span-4 content-center mr-2">
                 <PlayerPoints Points="@Player.AroundTheClockState"/>
             </div>
         </div>        
@@ -43,8 +43,8 @@
 
     private string GetNameAndPointsClasses(){
         return Player.PlayerId == CurrentPlayerId
-            ? "text-light-player-text-active py-2 dark:text-dark-player-text-active"
-            : "text-light-player-text-inactive py-2 dark:text-dark-player-text-inactive";
+            ? "text-light-player-text-active pt-2 dark:text-dark-player-text-active"
+            : "text-light-player-text-inactive pt-2 dark:text-dark-player-text-inactive";
     }
 
     private string GetBorderClasses(){

@@ -1,0 +1,109 @@
+
+<div class="roller" style="--roll-duration:@RollDuration; --roller-height:@RollerHeight">
+    @foreach (var c in Chars)
+    {
+        <span class="roller-stack" style="--offset:@c.Offset%">
+            <span class="roller-numbers">
+                <span>0</span>
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+                <span>6</span>
+                <span>7</span>
+                <span>8</span>
+                <span>9</span>
+            </span>
+        </span>
+    }
+</div>
+
+<style>
+    .roller {
+        height: var(--roller-height, 1s); 
+        display: flex;
+        flex-direction: row;
+    }
+
+    .roller-stack {
+        overflow: hidden;
+        user-select: none;
+        left: 0;
+        display: inline-flex;
+        align-items: start;
+        justify-content: top;
+        flex-direction: column;
+              
+    }
+    .roller-numbers {
+        display: inline-flex;
+        flex-direction: column;
+        transition: transform var(--roll-duration, 1s);  
+    }
+
+    .roller-stack .roller-numbers {
+        transform: translateY(var(--offset, 0%));
+    }
+</style>
+
+@code {
+    [Parameter]
+    public required int Number { get; set; } = 0;
+
+    [Parameter]
+    public string RollerHeight {get;set;} = "1rem";
+
+    [Parameter]
+    public string RollDuration {get;set;} = "750ms";
+
+    private int LastNumber = 0;
+
+    private List<Num> Chars = new List<Num>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        UpdateData();
+
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        if (Number != LastNumber)
+        {
+            UpdateData();
+            LastNumber = Number;
+        }
+
+        await base.OnParametersSetAsync();
+    }
+
+    private void UpdateData()
+    {
+        Chars.Clear();
+
+        var numberString = Number.ToString();
+        foreach (var c in numberString)
+            Chars.Add(new Num(c, GetOffset(c)));
+    }
+
+    private string GetOffset(char c){
+        return c switch{
+            '0' => "-0",
+            '1' => "-10",
+            '2' => "-20",
+            '3' => "-30",
+            '4' => "-40",
+            '5' => "-50",
+            '6' => "-60",
+            '7' => "-70",
+            '8' => "-80",
+            '9' => "-90",
+            _ => "0"
+        };
+    }
+
+    public record Num(char Number, string Offset);
+}
