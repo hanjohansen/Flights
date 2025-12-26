@@ -8,7 +8,7 @@ public record FileData(
 
 public interface IFileStorage
 {
-    Task<FileData> StoreFile(IBrowserFile file, string subFolder, string[] allowedExt);
+    Task<FileData> StoreFile(string fileName, byte[] fileData, string subFolder);
 
     void DeleteFile(string storagePath);
 }
