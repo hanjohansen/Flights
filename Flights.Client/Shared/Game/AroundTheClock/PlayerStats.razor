@@ -12,7 +12,7 @@
                         </div>
                         <div class="text-8xl font-bold">
                             @if(Player.Rank == null){
-                                <RollingNumber Number="@Player.Points" RollerHeight="6rem"/>
+                                @Player.Points
                             }else{
                                 <div class="flex flex-row">
                                     <div class="">
