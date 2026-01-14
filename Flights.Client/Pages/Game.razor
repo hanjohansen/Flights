@@ -1,5 +1,7 @@
 ﻿@page "/game/{GameId:guid}"
 
+@using Flights.Client.Configuration.Logging
+@using Flights.Client.Shared.Error
 @using Flights.Domain.Exception
 @using Flights.Domain.Models
 @using Flights.Domain.State
@@ -11,11 +13,12 @@
 
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo
+@inject AppLogger<Game> Logger
 
 @inherits RtcHubComponent
 
 <div class="flex flex-1 overflow-hidden">
-    @if (GameControls != null)
+    @if (GameControls != null && CurrentException is null)
     {
         <CascadingValue Value="@GameControls">
             <CascadingValue Value="@UndoControls">
@@ -23,6 +26,10 @@
                 <JinglePlayer @ref="_jinglePlayer" GameId="@GameId"/>
             </CascadingValue>
         </CascadingValue>
+    }
+    @if(CurrentException != null)
+    {
+        <Error500/>
     }
 </div>
 
@@ -121,16 +128,19 @@
         if(GameControls == null)
             return;
 
-        try{
+        try
+        {
             var (state, stat) = await GameRepo.RevertLastDart(GameId);
-            
+
             _undoStack.Add(stat);
             GameControls.CurrentGame = state;
             await InvokeAsync(StateHasChanged);
             await Broadcast(UiEventType.UpdatedGame, GameControls.CurrentGame.Id);
-        }catch(FlightsGameException ex){
+        }
+        catch (FlightsGameException ex)
+        {
             Snackbar.Add(ex.Message, Severity.Error);
-        }            
+        }
     }
 
     public async Task RequestRedoDart()
@@ -200,5 +210,11 @@
         
         if(oldRank == null && newRank != null)
             await _jinglePlayer!.PlayJingle(playerId.Value);
+    }
+    
+    protected override Task OnErrorAsync(Exception ex)
+    {
+        Logger.LogError(GameId, ex, "Game error boundary");
+        return Task.CompletedTask;
     }
 }

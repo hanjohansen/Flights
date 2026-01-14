@@ -1,5 +1,6 @@
 ﻿@page "/viewer"
 
+@using Flights.Client.Configuration.Logging
 @using Flights.Client.Rtc
 @using Flights.Client.Shared.Game
 @using Flights.Domain.Exception
@@ -9,6 +10,7 @@
 @inject ISnackbar Snackbar
 @inject IGameRepository GameRepo;
 @inject ITournamentRepository TournamentRepo;
+@inject AppLogger<Viewer> Logger
 
 @inherits RtcHubComponent
 
@@ -95,6 +97,11 @@
         {
             Snackbar.Add(ex.Message, Severity.Error);
         }
+        catch(Exception ex)
+        {
+            Logger.LogError(ex, "Reloading game threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
+        }
     }
     
     private async Task ReloadTournament(Guid tournamentId)
@@ -118,6 +125,11 @@
         catch (FlightsGameException ex)
         {
             Snackbar.Add(ex.Message, Severity.Error);
+        }
+        catch(Exception ex)
+        {
+            Logger.LogError(ex, "Reloading tounament threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
         }
     }
 }

@@ -1,0 +1,24 @@
+@inject NavigationManager NavigationManager
+
+<ErrorBase>
+    <div class="">
+        <div class="text-8xl font-bold">
+            404
+        </div>
+        <div class="text-4xl">
+            Looks like you missed
+        </div>
+        <div class="mt-8">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Home" Color="Color.Info"  Size="Size.Large"
+                onClick="GoHome">Home</MudButton>
+        </div>
+        
+    </div>
+</ErrorBase>
+
+@code{
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

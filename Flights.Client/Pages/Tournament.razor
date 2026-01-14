@@ -1,6 +1,8 @@
 ﻿@page "/tournament/{TournamentId:guid}"
 
+@using Flights.Client.Configuration.Logging
 @using Flights.Client.Rtc
+@using Flights.Client.Shared.Error
 @using Flights.Client.Shared.Game
 @using Flights.Client.Shared.Tournament
 @using Flights.Domain.Exception
@@ -8,15 +10,20 @@
 
 @inject ITournamentRepository TournamentRepo
 @inject ISnackbar Snackbar
+@inject AppLogger<Tournament> Logger
 
 @inherits RtcHubComponent
 
 <div class="flex flex-1">
-    @if (Controls != null)
+    @if (Controls != null && CurrentException is null)
     {
         <CascadingValue Value="@Controls">
             <TournamentBaseComponent/>
         </CascadingValue>
+    }
+    @if(CurrentException != null)
+    {
+        <Error500/>
     }
 </div>
 
@@ -165,5 +172,11 @@
         {
             Snackbar.Add("unknown error:" + e.Message, Severity.Error);
         }
+    }
+
+    protected override Task OnErrorAsync(Exception ex)
+    {
+        Logger.LogError(ex, "[TMID:{0}] Tournament error boundary", TournamentId);
+        return Task.CompletedTask;
     }
 }

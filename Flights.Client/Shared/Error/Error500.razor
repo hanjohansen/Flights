@@ -1,0 +1,24 @@
+@inject NavigationManager NavigationManager
+
+<ErrorBase>
+    <div class="">
+        <div class="text-8xl font-bold">
+            500
+        </div>
+        <div class="text-4xl">
+            Something went very wrong
+        </div>
+        <div class="mt-8">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Info"  Size="Size.Large"
+                onClick="ReloadPage">Reload page</MudButton>
+        </div>
+        
+    </div>
+</ErrorBase>
+
+@code{
+    private void ReloadPage()
+{
+     NavigationManager.NavigateTo(NavigationManager.Uri, true);
+}
+}

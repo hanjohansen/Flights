@@ -51,7 +51,7 @@ public static class ServiceExtensions
     
     public static WebApplicationBuilder AddGamesDatabase(this WebApplicationBuilder builder){
         
-        var storageConfig = builder.Configuration.GetSection("Storage").Get<StorageConfiguration>();
+        var storageConfig = builder.Configuration.GetSection(StorageConfiguration.ConfigurationKey).Get<StorageConfiguration>();
         
         if(storageConfig == null)
             throw new ApplicationException("Storage configuration is missing");

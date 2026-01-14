@@ -1,5 +1,6 @@
 @page "/tenant"
 @using Flights.Client.Authentication
+@using Flights.Client.Configuration.Logging
 @using Flights.Client.Service.Port
 @using Flights.Client.Shared.Toolkit
 
@@ -7,6 +8,7 @@
 @inject IAuthenticationService AuthenticationService;
 @inject ITenantService TenantService
 @inject ISnackbar Snackbar
+@inject AppLogger<Tenant> Logger
 
 <PageTitle>Tenant</PageTitle>
 
@@ -116,7 +118,8 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add(ex.Message, Severity.Error);
+            Logger.LogError(ex, "Changing tenant name threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
         }
     }
 
@@ -140,7 +143,8 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add(ex.Message, Severity.Error);
+            Logger.LogError(ex, "Changing tenant password threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
         }
     }
 

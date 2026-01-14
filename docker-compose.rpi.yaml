@@ -6,10 +6,12 @@ services:
     environment:
         - TZ=Europe/Berlin
         - Auth:AllowAutoLogin=true
+        - App:UseRquestLogging=false
     ports:
       - 127.0.0.1:8080:8080
     volumes:
       - ./apidata:/app/apidata:rw
       - ./dpapi-keys:/app/dpapi-keys:rw
       - ./storage:/app/wwwroot/Storage:rw
+      - ./logs:/app/logs:rw
     restart: always

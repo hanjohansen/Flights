@@ -1,6 +1,10 @@
 @using Flights.Client.Authentication
+@using Flights.Client.Configuration.Logging
+@using Flights.Domain.Exception
 
+@inject ISnackbar Snackbar
 @inject IAuthenticationService AuthenticationService
+@inject AppLogger<Login> Logger
 
 <div class="flex w-full justify-center items-center">
     <div class="mud-elevation-4 bg-light-surface border rounded-lg border-gray-300 dark:bg-dark-surface dark:border-dark-border">
@@ -33,10 +37,15 @@
         {
             await AuthenticationService.Authenticate(User, Password);
         }
-        catch (Exception)
+        catch (FlightsAuthException)
         {
             Password = string.Empty;
             Error = "Invalid user name or password";
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Login threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
         }
     }
 
@@ -48,9 +57,10 @@
             {
                 await AuthenticationService.TryReauthenticate();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //nothing to do
+                Logger.LogError(ex, "Relogin threw an error");
+                Snackbar.Add("An unexpected error occured", Severity.Error);
             }
         }
         

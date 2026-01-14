@@ -1,5 +1,6 @@
 ﻿@page "/players"
 @using Flights.Client.Authentication
+@using Flights.Client.Configuration.Logging
 @using Flights.Client.Shared.Players
 @using Flights.Domain.Entities
 @using Flights.Infrastructure.Port
@@ -9,6 +10,8 @@
 @inject IPlayerRepository PlayerRepo
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavigationManager
+@inject AppLogger<Players> Logger
+@inject ISnackbar Snackbar
 
 <PageTitle>Players</PageTitle>
 
@@ -51,8 +54,14 @@
     private async Task RefreshPlayers()
     {
         var tenantId = AuthService.Tenant?.Id;
-        if(tenantId != null)
-            AvailablePlayers = await PlayerRepo.GetPlayers(tenantId.Value);
+
+        try{
+            if(tenantId != null)
+                AvailablePlayers = await PlayerRepo.GetPlayers(tenantId.Value);
+        }catch(Exception ex){
+            Logger.LogError(ex, "Loading players threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
+        }
     }
     
     private async Task HandleNewPlayer()

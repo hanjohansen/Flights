@@ -16,14 +16,11 @@ public class TenantRepository(IDbContextFactory<FlightsDbContext> dbFactory) : I
         return ids;
     }
 
-    public async Task<TenantEntity> GetTenantByName(string name)
+    public async Task<TenantEntity?> GetTenantByName(string name)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
 
         var tenant = await db.Tenants.FirstOrDefaultAsync(x => x.Name == name);
-
-        if (tenant == null)
-            throw new FlightsGameException("Tenant not found!");
         
         return tenant;
     }

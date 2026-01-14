@@ -10,4 +10,5 @@ services:
       - ./apidata:/app/apidata:rw
       - ./dpapi-keys:/app/dpapi-keys:rw
       - ./storage:/app/wwwroot/Storage:rw
+      - ./logs:/app/logs:rw
     restart: always

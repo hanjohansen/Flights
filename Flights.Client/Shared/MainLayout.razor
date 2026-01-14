@@ -45,11 +45,11 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(AuthenticationService.Tenant == null)
-            await AuthenticationService.TryAutoAuthenticate();
-
         if (firstRender)
         {
+            if(AuthenticationService.Tenant == null)
+                await AuthenticationService.TryAutoAuthenticate();
+            
             var isDark = await BrowserStorage.GetBrowserItem<bool?>(BrowserStorageThemeKey);
             
             if (isDark == true)

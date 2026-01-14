@@ -1,6 +1,7 @@
 ﻿@page "/creategame"
 @using Flights.Client.Authentication
 @using Flights.Client.Service.Port
+@using Flights.Client.Configuration.Logging
 @using Flights.Client.Shared.Games
 @using Flights.Domain.Entities
 @using Flights.Infrastructure.Port
@@ -15,6 +16,7 @@
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavigationManager
 @inject IBrowserStorage BrowserStorage
+@inject AppLogger<CreateGame> Logger
 
 <div class="flex flex-1 flex-row justify-center mt-4">
     <div class="flex flex-col mr-8">
@@ -142,8 +144,14 @@
         await base.OnInitializedAsync();
         var tenantId = AuthService.Tenant?.Id;
         
-        if(tenantId != null)
-            Players = await PlayerRepo.GetPlayers(tenantId.Value);
+        try{
+            if(tenantId != null)
+                Players = await PlayerRepo.GetPlayers(tenantId.Value);
+        }catch(Exception ex){
+            Logger.LogError(ex, "Loading available players threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
+        }
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender){
@@ -188,7 +196,8 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add(ex.Message, Severity.Error);
+            Logger.LogError(ex, "Creating new game threw an error");
+            Snackbar.Add("An unexpected error occured", Severity.Error);
         }
     }
 

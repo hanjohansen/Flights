@@ -1,4 +1,5 @@
 @page "/player/{PlayerId:guid}"
+@using Flights.Client.Configuration.Logging
 @using Flights.Client.Shared.Player
 @using Flights.Client.Shared.Toolkit
 @using Flights.Domain.Entities
@@ -10,6 +11,7 @@
 @inject IPlayerRepository PlayerRepo
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JsRuntime
+@inject AppLogger<Player> Logger
 
 <PageTitle>@PlayerEntity?.Name</PageTitle>
 
@@ -112,8 +114,9 @@
         {
             Snackbar.Add(ex.Message, Severity.Error);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Logger.LogError(ex, "Saving player name threw an error");
             Snackbar.Add("Weird unexpected error occured", Severity.Error);
         }
     }
@@ -127,9 +130,13 @@
 
         if (!result?.Canceled ?? false)
         {
-            await PlayerRepo.DeletePlayer(PlayerId);
-            Snackbar.Add("Player deleted", Severity.Success);
-            GoToPlayers();
+            try{
+                await PlayerRepo.DeletePlayer(PlayerId);
+                Snackbar.Add("Player deleted", Severity.Success);
+                GoToPlayers();
+            }catch(Exception ex){
+                Logger.LogError(ex, "Deleting player threw an error");
+            }
         }
     }
 

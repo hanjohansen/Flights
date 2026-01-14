@@ -6,7 +6,7 @@ public interface ITenantRepository
 {
     Task<List<Guid>> GetAllTenantIds();
     
-    Task<TenantEntity> GetTenantByName(string name);
+    Task<TenantEntity?> GetTenantByName(string name);
     
     Task<TenantEntity> GetTenantById(Guid id);
     
