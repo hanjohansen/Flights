@@ -1,0 +1,16 @@
+{
+  "name": "flightsfront",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tw-build": "npx tailwindcss -i ./tw.css -o ./page/css/tailslim.css",
+    "tw-watch": "npx tailwindcss -i ./tw.css -o ./page/css/tailslim.css --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

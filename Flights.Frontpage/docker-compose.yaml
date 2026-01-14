@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: dev-nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
+      - ./page:/usr/share/nginx/html
+    ports:
+      - 8000:80
